@@ -10,6 +10,4 @@ import java.util.List;
 public interface VehicleModelRepository extends JpaRepository<VehicleModel, Long> {
 
     List<VehicleModel> findAllByManufacturerId(Long manufacturerId);
-
-    VehicleModel findAllById(Long vehicleId);
 }
