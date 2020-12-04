@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_vehicle_part")
+@Table(name = "tbl_part_category")
 public class PartCategory {
 
     @Id

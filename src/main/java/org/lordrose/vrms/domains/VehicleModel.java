@@ -26,7 +26,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_vehicle_type")
+@Table(name = "tbl_vehicle_model")
 public class VehicleModel {
 
     @Id
