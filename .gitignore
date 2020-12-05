@@ -141,3 +141,9 @@ firebase-config.json
 # ESLint
 ######################
 .eslintcache
+
+######################
+# Project Specific
+######################
+DataLoader.java
+main/java/org.lordrose.vrms/bootstrap/**
