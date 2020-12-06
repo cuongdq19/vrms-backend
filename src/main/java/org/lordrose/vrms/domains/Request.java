@@ -57,7 +57,7 @@ public class Request extends TimeAuditable<LocalDateTime> {
     private Set<ServiceRequest> services = new HashSet<>();
 
     @OneToMany(mappedBy = "request")
-    private Set<RequestPart> catalogDetails = new HashSet<>();
+    private Set<RequestPart> partDetails = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "level_detail_id")

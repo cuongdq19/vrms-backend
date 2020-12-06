@@ -53,8 +53,8 @@ public class User extends TimeAuditable<LocalDateTime> {
     @Column(name = "imageUrl", length = 1000)
     private String imageUrl;
 
-    @Column(name = "is_disable")
-    private Boolean isDisable;
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @Column(name = "device_token")
     private String deviceToken;

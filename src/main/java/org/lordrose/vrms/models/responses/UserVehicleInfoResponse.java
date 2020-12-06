@@ -6,17 +6,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VehicleResponse {
+public class UserVehicleInfoResponse {
 
-    private Long id;
-    private String plateNumber;
-    private String vinNumber;
-    private String color;
-    private Long boughtDate;
-    private VehicleModelResponse model;
+    private Long userId;
+    private String phoneNumber;
+    private String fullName;
+    private Boolean gender;
+    private List<VehicleRequestInfoResponse> vehicles;
 }

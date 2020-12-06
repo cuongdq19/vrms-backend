@@ -1,15 +1,24 @@
 package org.lordrose.vrms.converters;
 
+import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.Vehicle;
+import org.lordrose.vrms.models.responses.VehicleRequestInfoResponse;
 import org.lordrose.vrms.models.responses.VehicleResponse;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutResponse;
+import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
 
 public class VehicleConverter {
+
+    private final String abc = "abc";
 
     public static VehicleResponse toVehicleResponse(Vehicle vehicle) {
         return VehicleResponse.builder()
@@ -18,10 +27,7 @@ public class VehicleConverter {
                 .vinNumber(vehicle.getVinNumber())
                 .color(vehicle.getColor())
                 .boughtDate(toSeconds(vehicle.getBoughtDate()))
-                .modelId(vehicle.getModel().getId())
-                .modelName(vehicle.getModel().getName())
-                .manufacturerId(vehicle.getModel().getManufacturer().getId())
-                .manufacturerName(vehicle.getModel().getManufacturer().getName())
+                .model(toModelResponse(vehicle.getModel()))
                 .build();
     }
 
@@ -29,5 +35,22 @@ public class VehicleConverter {
         return vehicles.stream()
                 .map(VehicleConverter::toVehicleResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static VehicleRequestInfoResponse toVehicleRequestInfoResponse(Vehicle vehicle,
+                                                                          Request request) {
+        return VehicleRequestInfoResponse.builder()
+                .vehicle(toVehicleResponse(vehicle))
+                .request(toRequestCheckoutResponse(request))
+                .build();
+    }
+
+    public static List<VehicleRequestInfoResponse> toVehicleRequestInfoResponses(Map<Vehicle, Optional<Request>> vehicles) {
+        List<VehicleRequestInfoResponse> responses = new ArrayList<>();
+        vehicles.forEach((vehicle, request) ->
+                responses.add(
+                        toVehicleRequestInfoResponse(vehicle,
+                                request.orElse(null))));
+        return responses;
     }
 }

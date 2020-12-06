@@ -11,12 +11,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VehicleResponse {
+public class VehicleModelResponse {
 
     private Long id;
-    private String plateNumber;
-    private String vinNumber;
-    private String color;
-    private Long boughtDate;
-    private VehicleModelResponse model;
+    private String name;
+    private String year;
+    private String fuelType;
+    private String gearbox;
+    private String imageUrl;
+    private Long manufacturerId;
+    private String manufacturerName;
 }

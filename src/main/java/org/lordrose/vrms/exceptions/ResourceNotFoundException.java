@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceNotFoundException extends RuntimeException {
 
     private static final String MESSAGE_WITH_ID = "Resource with ID: ";
+    private static final String MESSAGE_WITH_VALUE = "Resource: ";
     private static final String NOT_FOUND_MESSAGE = " is not found!";
 
     public ResourceNotFoundException(String message) {
@@ -15,5 +16,9 @@ public class ResourceNotFoundException extends RuntimeException {
 
     public static ResourceNotFoundException newExceptionWithId(String id) {
         return new ResourceNotFoundException(MESSAGE_WITH_ID + id + NOT_FOUND_MESSAGE);
+    }
+
+    public static ResourceNotFoundException newExceptionWithValue(String value) {
+        return new ResourceNotFoundException(MESSAGE_WITH_VALUE + value + NOT_FOUND_MESSAGE);
     }
 }
