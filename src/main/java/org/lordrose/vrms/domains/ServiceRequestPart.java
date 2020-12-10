@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,29 +22,28 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_service_type_detail")
-public class ServiceTypeDetail {
+@Table(name = "tbl_service_request_part")
+public class ServiceRequestPart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "price")
+    private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "type_id", nullable = false)
-    private ServiceType type;
+    @JoinColumn(name = "service_id")
+    private Service service;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "part_category_id")
-    private PartCategory partCategory;
+    @ManyToOne
+    @JoinColumn(name = "part_id")
+    private VehiclePart vehiclePart;
 
-    public Long getPartCategoryId() {
-        return partCategory == null ? null : partCategory.getId();
-    }
-
-    public String getPartCategoryName() {
-        return partCategory == null ? "" : partCategory.getName();
-    }
+    @OneToOne
+    @JoinColumn(name = "service_request_id", referencedColumnName = "id")
+    private ServiceRequest serviceRequest;
 }

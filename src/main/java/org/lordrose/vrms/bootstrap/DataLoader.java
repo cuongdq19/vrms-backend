@@ -54,6 +54,12 @@ public class DataLoader implements CommandLineRunner {
         ServiceType checkup = serviceTypeRepository.save(ServiceType.builder()
                 .name("Kiem tra")
                 .build());
+        ServiceType replace = serviceTypeRepository.save(ServiceType.builder()
+                .name("Thay the")
+                .build());
+        ServiceType cleanup = serviceTypeRepository.save(ServiceType.builder()
+                .name("Ve sinh")
+                .build());
         ServiceTypeDetail wheelCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
                 .name("Kiem tra banh xe")
                 .type(checkup)
