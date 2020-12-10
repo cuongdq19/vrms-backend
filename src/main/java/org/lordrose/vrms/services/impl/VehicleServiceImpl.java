@@ -35,15 +35,15 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleResponse findById(Long id) {
         return toVehicleResponse(vehicleRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString())));
+                .orElseThrow(() -> newExceptionWithId(id)));
     }
 
     @Override
     public VehicleResponse create(VehicleRequest request) {
         VehicleModel model = modelRepository.findById(request.getModelId())
-                .orElseThrow(() -> newExceptionWithId(request.getModelId().toString()));
+                .orElseThrow(() -> newExceptionWithId(request.getModelId()));
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> newExceptionWithId(request.getUserId().toString()));
+                .orElseThrow(() -> newExceptionWithId(request.getUserId()));
         Vehicle saved = vehicleRepository.save(Vehicle.builder()
                 .plateNumber(request.getPlateNumber())
                 .vinNumber(request.getVinNumber())
@@ -58,7 +58,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleResponse delete(Long id) {
         Vehicle result = vehicleRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString()));
+                .orElseThrow(() -> newExceptionWithId(id));
         vehicleRepository.deleteById(result.getId());
         return toVehicleResponse(result);
     }
@@ -66,9 +66,9 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleResponse update(Long id, VehicleRequest request) {
         Vehicle result = vehicleRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString()));
+                .orElseThrow(() -> newExceptionWithId(id));
         VehicleModel model = modelRepository.findById(request.getModelId())
-                .orElseThrow(() -> newExceptionWithId(request.getModelId().toString()));
+                .orElseThrow(() -> newExceptionWithId(request.getModelId()));
 
         result.setPlateNumber(request.getPlateNumber());
         result.setVinNumber(request.getVinNumber());

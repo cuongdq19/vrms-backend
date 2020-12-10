@@ -10,6 +10,14 @@ public class FeedbackConverter {
 
     public static FeedbackResponse toFeedbackResponse(Feedback feedback) {
         return FeedbackResponse.builder()
+                .id(feedback.getId())
+                .ratings(feedback.getRatings())
+                .content(feedback.getContent())
+                .imageUrls(feedback.getImageUrls())
+                .userId(feedback.getUser().getId())
+                .fullName(feedback.getUser().getFullName())
+                .userImageUrl(feedback.getUser().getImageUrl())
+                .requestId(feedback.getRequest().getId())
                 .build();
     }
 

@@ -8,7 +8,6 @@ import org.lordrose.vrms.models.responses.ProviderDistanceResponse;
 import org.lordrose.vrms.models.responses.SlotResponse;
 import org.lordrose.vrms.models.responses.TechnicianResponse;
 import org.lordrose.vrms.services.ProviderService;
-import org.lordrose.vrms.services.RecommendingService;
 import org.lordrose.vrms.services.RequestSchedulingService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +26,6 @@ public class ProviderController {
 
     private final RequestSchedulingService schedulingService;
     private final ProviderService providerService;
-    private final RecommendingService recommendingService;
 
     @GetMapping("/{providerId}/bookings/{secondsOfDate}")
     public List<SlotResponse> getAllAvailableSlots(@PathVariable Long providerId,
@@ -42,7 +40,7 @@ public class ProviderController {
 
     @PostMapping
     public List<ProviderDistanceResponse> getAll(@RequestBody GeoPoint currentPos) {
-        return recommendingService.recommendProviders(currentPos);
+        return providerService.findAll(currentPos);
     }
 
     @PostMapping("/{id}")

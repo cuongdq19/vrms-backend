@@ -18,6 +18,10 @@ public class ResourceNotFoundException extends RuntimeException {
         return new ResourceNotFoundException(MESSAGE_WITH_ID + id + NOT_FOUND_MESSAGE);
     }
 
+    public static ResourceNotFoundException newExceptionWithId(Long id) {
+        return new ResourceNotFoundException(MESSAGE_WITH_ID + id + NOT_FOUND_MESSAGE);
+    }
+
     public static ResourceNotFoundException newExceptionWithValue(String value) {
         return new ResourceNotFoundException(MESSAGE_WITH_VALUE + value + NOT_FOUND_MESSAGE);
     }

@@ -1,4 +1,4 @@
-package org.lordrose.vrms.converters;
+package org.lordrose.vrms.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.models.requests.ServiceRequest;

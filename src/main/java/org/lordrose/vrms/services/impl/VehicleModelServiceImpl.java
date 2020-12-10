@@ -36,7 +36,7 @@ public class VehicleModelServiceImpl implements VehicleModelService {
     @Override
     public VehicleModelResponse create(VehicleModelRequest request) {
         Manufacturer manufacturer = manufacturerRepository.findById(request.getManufacturerId())
-                .orElseThrow(() -> newExceptionWithId(request.getManufacturerId().toString()));
+                .orElseThrow(() -> newExceptionWithId(request.getManufacturerId()));
         VehicleModel saved = modelRepository.save(VehicleModel.builder()
                 .name(request.getName())
                 .year(request.getYear())
@@ -51,9 +51,9 @@ public class VehicleModelServiceImpl implements VehicleModelService {
     @Override
     public VehicleModelResponse update(Long id, VehicleModelRequest request) {
         Manufacturer manufacturer = manufacturerRepository.findById(request.getManufacturerId())
-                .orElseThrow(() -> newExceptionWithId(request.getManufacturerId().toString()));
+                .orElseThrow(() -> newExceptionWithId(request.getManufacturerId()));
         VehicleModel result = modelRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString()));
+                .orElseThrow(() -> newExceptionWithId(id));
 
         result.setName(request.getName());
         result.setYear(request.getYear());
@@ -68,7 +68,7 @@ public class VehicleModelServiceImpl implements VehicleModelService {
     @Override
     public VehicleModelResponse delete(Long id) {
         VehicleModel result = modelRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString()));
+                .orElseThrow(() -> newExceptionWithId(id));
 
         modelRepository.deleteById(id);
 

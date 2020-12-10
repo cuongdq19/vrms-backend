@@ -14,4 +14,13 @@ import lombok.Setter;
 public class ProviderDistanceResponse {
 
     private Long id;
+    private String name;
+    private String address;
+    private String[] imageUrls;
+    private String openTime;
+    private String closeTime;
+    private Long manufacturerId;
+    private String manufacturerName;
+    private Double ratings;
+    private Double distance;
 }

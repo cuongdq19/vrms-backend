@@ -11,5 +11,6 @@ import java.util.List;
 public interface PartRepository extends JpaRepository<VehiclePart, Long> {
 
     List<VehiclePart> findAllByProviderId(Long providerId);
+
     List<VehiclePart> findAllByProviderIdAndModelsContains(Long providerId, VehicleModel model);
 }

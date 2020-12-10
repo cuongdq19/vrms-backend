@@ -34,7 +34,7 @@ public class ModelGroupServiceImpl implements ModelGroupService {
     @Override
     public GroupResponse create(Long providerId, GroupRequest request) {
         Provider provider = providerRepository.findById(providerId)
-                .orElseThrow(() -> newExceptionWithId(providerId.toString()));
+                .orElseThrow(() -> newExceptionWithId(providerId));
         ModelGroup result = ModelGroup.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -51,7 +51,7 @@ public class ModelGroupServiceImpl implements ModelGroupService {
     @Override
     public GroupResponse updateGroupModels(Long groupId, GroupRequest request) {
         ModelGroup result = groupRepository.findById(groupId)
-                .orElseThrow(() -> newExceptionWithId(groupId.toString()));
+                .orElseThrow(() -> newExceptionWithId(groupId));
 
         result.setName(request.getName());
         result.setDescription(request.getDescription());

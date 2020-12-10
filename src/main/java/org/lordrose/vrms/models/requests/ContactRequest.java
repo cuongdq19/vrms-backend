@@ -11,5 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ContactRequest {
 
-    private String name;
+    private String fullName;
+    private String address;
+    private String phoneNumber;
+    private String email;
 }

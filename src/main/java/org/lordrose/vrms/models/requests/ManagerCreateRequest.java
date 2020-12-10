@@ -11,5 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ManagerCreateRequest {
 
-    private String name;
+    private String username;
+    private String fullName;
+    private Boolean gender;
 }

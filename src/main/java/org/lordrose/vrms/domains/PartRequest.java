@@ -8,15 +8,12 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -24,28 +21,24 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_service_detail")
-public class ServiceDetail {
+@Table(name = "tbl_request_part")
+public class PartRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "quantity")
+    private Integer quantity;
+
     @Column(name = "price")
     private Double price;
 
-    @OneToMany(mappedBy = "serviceDetail")
-    private Set<VehiclePart> parts;
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private Request request;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "provider_id", nullable = false)
-    private Provider provider;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "group_id", nullable = false)
-    private ModelGroup modelGroup;
+    @ManyToOne
+    @JoinColumn(name = "part_id")
+    private VehiclePart vehiclePart;
 }

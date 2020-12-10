@@ -8,11 +8,13 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -21,29 +23,25 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_service")
-public class Service {
+@Table(name = "tbl_service_type_detail")
+public class ServiceTypeDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "price")
-    private Double price;
+    @Column(name = "name")
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
-    private ServiceTypeDetail typeDetail;
+    private ServiceType type;
 
-    @ManyToOne
-    @JoinColumn(name = "provider_id", nullable = false)
-    private Provider provider;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "part_category_id")
+    private PartCategory partCategory;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", nullable = false)
-    private ModelGroup modelGroup;
-
-    @ManyToOne
-    @JoinColumn(name = "package_id")
-    private ServicePackage servicePackage;
+    public String getPartCategoryName() {
+        return partCategory == null ? "" : partCategory.getName();
+    }
 }

@@ -11,5 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FeedbackRequest {
 
-    private String name;
+    private Integer ratings;
+    private String content;
+    private String imageUrls;
 }

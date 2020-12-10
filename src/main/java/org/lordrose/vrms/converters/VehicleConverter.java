@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutResponse;
+import static org.lordrose.vrms.converters.RequestConverter.toRequestHistoryResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
 
@@ -41,7 +41,7 @@ public class VehicleConverter {
                                                                           Request request) {
         return VehicleRequestInfoResponse.builder()
                 .vehicle(toVehicleResponse(vehicle))
-                .request(toRequestCheckoutResponse(request))
+                .request(toRequestHistoryResponse(request))
                 .build();
     }
 

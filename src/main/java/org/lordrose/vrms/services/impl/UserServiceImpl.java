@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     public UserInfoResponse createEmployee(Long providerId, EmployeeRequest request,
                                            MultipartFile image) {
         Provider provider = providerRepository.findById(providerId)
-                .orElseThrow(() -> newExceptionWithId(providerId.toString()));
+                .orElseThrow(() -> newExceptionWithId(providerId));
         Role role;
         User saved;
         if ("TECHNICIAN".equalsIgnoreCase(request.getRoleName())) {
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     public UserInfoResponse updateEmployee(Long userId, EmployeeRequest request,
                                            MultipartFile image) {
         User saved = userRepository.findById(userId)
-                .orElseThrow(() -> newExceptionWithId(userId.toString()));
+                .orElseThrow(() -> newExceptionWithId(userId));
 
         if (!"TECHNICIAN".equalsIgnoreCase(request.getRoleName())) {
             saved.setPassword(request.getPassword());
@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResponse toggleUserStatus(Long userId) {
         User result = userRepository.findById(userId)
-                .orElseThrow(() -> newExceptionWithId(userId.toString()));
+                .orElseThrow(() -> newExceptionWithId(userId));
 
         result.setIsActive(!result.getIsActive());
 
@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResponse updateUserInfo(Long id, UserInfoRequest request) {
         User result = userRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString()));
+                .orElseThrow(() -> newExceptionWithId(id));
 
         result.setFullName(request.getFullName());
         result.setGender(request.getGender());

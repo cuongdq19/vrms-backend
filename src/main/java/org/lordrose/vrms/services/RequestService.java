@@ -14,9 +14,9 @@ public interface RequestService {
 
     List<RequestHistoryDetailResponse> findAllByVehicleId(Long vehicleId);
 
-    RequestCheckOutResponse findRequestById(Long requestId);
-
     List<RequestCheckOutResponse> findAllByProviderId(Long providerId);
+
+    RequestCheckOutResponse findRequestById(Long requestId);
 
     RequestCheckOutResponse create(RequestInfoRequest request);
 

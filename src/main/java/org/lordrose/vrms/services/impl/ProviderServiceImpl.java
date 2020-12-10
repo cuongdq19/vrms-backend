@@ -9,15 +9,20 @@ import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.models.requests.ProviderRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.ProviderDetailResponse;
+import org.lordrose.vrms.models.responses.ProviderDistanceResponse;
 import org.lordrose.vrms.models.responses.TechnicianResponse;
 import org.lordrose.vrms.repositories.FeedbackRepository;
 import org.lordrose.vrms.repositories.ManufacturerRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.repositories.UserRepository;
+import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.ProviderService;
+import org.lordrose.vrms.utils.FileUrlUtils;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,6 +33,7 @@ import static org.lordrose.vrms.converters.ProviderConverter.toProviderDetailRes
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.utils.DateTimeUtils.toLocalDateTime;
 import static org.lordrose.vrms.utils.DateTimeUtils.toLocalTime;
+import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
 
 @RequiredArgsConstructor
 @Service
@@ -38,6 +44,7 @@ public class ProviderServiceImpl implements ProviderService {
     private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
+    private final FeedbackService feedbackService;
 
     @Override
     public List<ProviderDetailResponse> findAll() {
@@ -45,9 +52,33 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
+    public List<ProviderDistanceResponse> findAll(GeoPoint currentPos) {
+        List<Provider> providers = providerRepository.findAll();
+
+        return providers.stream()
+                .map(provider -> ProviderDistanceResponse.builder()
+                        .id(provider.getId())
+                        .name(provider.getName())
+                        .address(provider.getAddress())
+                        .imageUrls(FileUrlUtils.getUrlsAsArray(provider.getImageUrls()))
+                        .openTime(provider.getOpenTime().toString())
+                        .closeTime(provider.getCloseTime().toString())
+                        .manufacturerId(provider.getManufacturerId())
+                        .manufacturerName(provider.getManufacturerName())
+                        .ratings(feedbackService.getAverageRating(provider.getId()))
+                        .distance(calculate(currentPos, GeoPoint.builder()
+                                .latitude(provider.getLatitude())
+                                .longitude(provider.getLongitude())
+                                .build()))
+                        .build())
+                .sorted(Comparator.comparingDouble(ProviderDistanceResponse::getDistance))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ProviderDetailResponse update(Long id, ProviderRequest request) {
         Provider result = providerRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id.toString()));
+                .orElseThrow(() -> newExceptionWithId(id));
         Manufacturer manufacturer = manufacturerRepository.findById(request.getManufacturerId())
                 .orElse(null);
 

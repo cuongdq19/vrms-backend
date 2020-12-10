@@ -8,12 +8,13 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,25 +22,16 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_service_request")
-public class ServiceRequest {
+@Table(name = "tbl_service_type")
+public class ServiceType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "price")
-    private Double price;
+    @Column(name = "name")
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Service service;
-
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private Request request;
-
-    @ManyToOne
-    @JoinColumn(name = "package_id")
-    private PackageRequest servicePackage;
+    @OneToMany(mappedBy = "type", fetch = FetchType.EAGER)
+    private Set<ServiceTypeDetail> details;
 }

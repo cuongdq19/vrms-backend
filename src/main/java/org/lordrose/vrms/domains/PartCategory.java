@@ -28,10 +28,4 @@ public class PartCategory {
 
     @Column(name = "name")
     private String name;
-
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "image_url")
-    private String imageUrl;
 }

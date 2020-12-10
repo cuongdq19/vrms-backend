@@ -13,5 +13,6 @@ import lombok.Setter;
 @Builder
 public class SlotResponse {
 
-    private String abc;
+    private Long beginTime;
+    private Boolean isUnavailable;
 }

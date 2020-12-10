@@ -12,7 +12,7 @@ public interface PartService {
 
     List<PartResponse> findAllByProviderIdAndModelId(Long providerId, Long modelId);
 
-    PartResponse create(PartRequest product, MultipartFile[] images);
+    PartResponse create(PartRequest request, MultipartFile[] images);
 
     PartResponse delete(Long partId);
 

@@ -9,7 +9,6 @@ import org.lordrose.vrms.domains.bases.TimeAuditable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,16 +54,12 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
     private Integer monthsPerMaintenance;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private PartCategory category;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
     @ManyToOne
-    @JoinColumn(name = "service_detail_id")
-    private ServiceDetail serviceDetail;
+    @JoinColumn(name = "category_id")
+    private PartCategory category;
 
     @ManyToMany
     @JoinTable(name = "tbl_vehicle_part_model",
