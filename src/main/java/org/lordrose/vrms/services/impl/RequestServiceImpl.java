@@ -22,8 +22,8 @@ import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.PartRequestRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
-import org.lordrose.vrms.repositories.ServiceDetailRepository;
 import org.lordrose.vrms.repositories.ServicePackageRepository;
+import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceRequestRepository;
 import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
@@ -50,7 +50,7 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final ProviderRepository providerRepository;
     private final VehicleRepository vehicleRepository;
-    private final ServiceDetailRepository serviceDetailRepository;
+    private final ServiceRepository serviceRepository;
     private final ServiceRequestRepository serviceRequestRepository;
     private final PartRepository partRepository;
     private final PartRequestRepository partRequestRepository;
@@ -131,7 +131,7 @@ public class RequestServiceImpl implements RequestService {
                 .collect(Collectors.toSet());
         saved.setPackages(new HashSet<>(packageRequestRepository.saveAll(packages)));
 
-        Set<ServiceRequest> services = serviceDetailRepository.findAllById(serviceIds).stream()
+        Set<ServiceRequest> services = serviceRepository.findAllById(serviceIds).stream()
                 .map(serviceDetail -> ServiceRequest.builder()
                         .price(serviceDetail.getPrice())
                         .service(serviceDetail)

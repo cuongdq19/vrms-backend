@@ -2,6 +2,7 @@ package org.lordrose.vrms.bootstrap;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Manufacturer;
+import org.lordrose.vrms.domains.ModelGroup;
 import org.lordrose.vrms.domains.PartCategory;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.ServiceType;
@@ -10,6 +11,7 @@ import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.domains.Vehicle;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.repositories.ManufacturerRepository;
+import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.PartCategoryRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Component
@@ -35,6 +39,7 @@ public class DataLoader implements CommandLineRunner {
     private final ServiceTypeRepository serviceTypeRepository;
     private final ServiceTypeDetailRepository serviceTypeDetailRepository;
     private final PartCategoryRepository partCategoryRepository;
+    private final ModelGroupRepository groupRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -73,9 +78,17 @@ public class DataLoader implements CommandLineRunner {
                 .imageUrl("image url")
                 .build());
 
-        VehicleModel civic_rs = modelRepository.save(VehicleModel.builder()
+        VehicleModel civic_rs_2019 = modelRepository.save(VehicleModel.builder()
                 .name("Civic RS")
                 .year("2019")
+                .fuelType("Petrol")
+                .gearbox("CVT")
+                .imageUrl("image url")
+                .manufacturer(honda)
+                .build());
+        VehicleModel civic_rs_2020 = modelRepository.save(VehicleModel.builder()
+                .name("Civic RS")
+                .year("2020")
                 .fuelType("Petrol")
                 .gearbox("CVT")
                 .imageUrl("image url")
@@ -95,13 +108,26 @@ public class DataLoader implements CommandLineRunner {
                 .imageUrls("")
                 .build());
 
+        ModelGroup group_1 = groupRepository.save(ModelGroup.builder()
+                .name("test 1")
+                .description("desc")
+                .provider(hondaTC)
+                .models(Stream.of(civic_rs_2019).collect(Collectors.toSet()))
+                .build());
+        ModelGroup group_2 = groupRepository.save(ModelGroup.builder()
+                .name("test 2")
+                .description("desc")
+                .provider(hondaTC)
+                .models(Stream.of(civic_rs_2019, civic_rs_2020).collect(Collectors.toSet()))
+                .build());
+
         Vehicle vehicle_1 = vehicleRepository.save(Vehicle.builder()
                 .plateNumber("plate num")
                 .vinNumber("vin num")
                 .color("red")
                 .boughtDate(LocalDateTime.of(2020, 12, 9, 8, 0))
                 .user(owner_1)
-                .model(civic_rs)
+                .model(civic_rs_2019)
                 .build());
 
         ServiceType testType = serviceTypeRepository.findById(1L)

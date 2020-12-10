@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ServiceDetailRepository extends JpaRepository<Service, Long> {
+public interface ServiceRepository extends JpaRepository<Service, Long> {
 
     List<Service> findAllByTypeDetailIdAndModelGroup_Models_Id(
             Long typeDetailId, Long typeId);
