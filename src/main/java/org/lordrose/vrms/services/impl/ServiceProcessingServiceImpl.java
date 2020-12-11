@@ -13,9 +13,11 @@ import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
+import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ServiceTypeDetailRepository typeDetailRepository;
     private final ProviderRepository providerRepository;
     private final ModelGroupRepository groupRepository;
+    private final VehicleModelRepository modelRepository;
 
     @Override
     public List<ServiceResponse> findAll() {
@@ -63,8 +66,9 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                         .price(group.getPrice())
                         .typeDetail(typeDetail)
                         .provider(provider)
-                        .modelGroup(groupRepository.findById(group.getGroupId())
-                                .orElseThrow(() -> newExceptionWithId(group.getGroupId())))
+                        .modelGroup(groupRepository.save(ModelGroup.builder()
+                                .models(new HashSet<>(modelRepository.findAllById(group.getModelIds())))
+                                .build()))
                         .build()));
 
         return serviceRepository.saveAll(services).stream()
