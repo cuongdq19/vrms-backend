@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,9 +29,6 @@ public class ServiceTypeDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
-
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
     private ServiceType type;
@@ -47,5 +43,9 @@ public class ServiceTypeDetail {
 
     public String getPartCategoryName() {
         return partCategory == null ? "" : partCategory.getName();
+    }
+
+    public String getPartCategorySection() {
+        return partCategory == null ? "" : partCategory.getSection().getName();
     }
 }

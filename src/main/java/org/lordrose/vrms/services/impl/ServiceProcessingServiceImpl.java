@@ -77,7 +77,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                         .price(service.getPrice())
                         .typeDetail(ServiceTypeDetail.builder()
                                 .id(service.getTypeDetail().getId())
-                                .name(service.getTypeDetail().getName())
                                 .type(ServiceType.builder()
                                         .id(service.getTypeDetail().getType().getId())
                                         .name(service.getTypeDetail().getType().getName())

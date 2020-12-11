@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Manufacturer;
 import org.lordrose.vrms.domains.ModelGroup;
 import org.lordrose.vrms.domains.PartCategory;
+import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
@@ -13,6 +14,7 @@ import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.repositories.ManufacturerRepository;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.PartCategoryRepository;
+import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceTypeRepository;
@@ -40,15 +42,27 @@ public class DataLoader implements CommandLineRunner {
     private final ServiceTypeDetailRepository serviceTypeDetailRepository;
     private final PartCategoryRepository partCategoryRepository;
     private final ModelGroupRepository groupRepository;
+    private final PartSectionRepository sectionRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        loadAll();
+        //loadAll();
     }
 
     private void loadAll() {
-        PartCategory wheel = partCategoryRepository.save(PartCategory.builder()
+        PartSection wheel = sectionRepository.save(PartSection.builder()
                 .name("Banh xe")
+                .build());
+        PartSection brakeSystem = sectionRepository.save(PartSection.builder()
+                .name("He thong phanh")
+                .build());
+        PartCategory rim = partCategoryRepository.save(PartCategory.builder()
+                .name("Lazang")
+                .section(wheel)
+                .build());
+        PartCategory brakePad = partCategoryRepository.save(PartCategory.builder()
+                .name("Brake Pad")
+                .section(brakeSystem)
                 .build());
 
         ServiceType checkup = serviceTypeRepository.save(ServiceType.builder()
@@ -61,13 +75,12 @@ public class DataLoader implements CommandLineRunner {
                 .name("Ve sinh")
                 .build());
         ServiceTypeDetail wheelCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
-                .name("Kiem tra banh xe")
                 .type(checkup)
-                .partCategory(wheel)
+                .partCategory(rim)
                 .build());
         ServiceTypeDetail engineCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
-                .name("Dong Co")
                 .type(checkup)
+                .partCategory(brakePad)
                 .build());
         User owner_1 = userRepository.save(User.builder()
                 .phoneNumber("123456")
@@ -139,7 +152,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceType testType = serviceTypeRepository.findById(1L)
                 .orElseThrow();
         testType.getDetails().forEach(detail -> System.out.println(
-                testType.getName() + " - " + detail.getName() +
+                testType.getName() + " - " + detail.getPartCategorySection() +
                         " - " + detail.getPartCategoryName()));
     }
 }

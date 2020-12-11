@@ -11,8 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -21,8 +19,8 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_part_category")
-public class PartCategory {
+@Table(name = "tbl_part_section")
+public class PartSection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +28,4 @@ public class PartCategory {
 
     @Column(name = "name")
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "section_id")
-    private PartSection section;
 }
