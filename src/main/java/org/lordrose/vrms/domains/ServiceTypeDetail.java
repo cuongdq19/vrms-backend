@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -33,7 +31,11 @@ public class ServiceTypeDetail {
     @JoinColumn(name = "type_id", nullable = false)
     private ServiceType type;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
+    @JoinColumn(name = "section_id", nullable = false)
+    private PartSection section;
+
+    @ManyToOne
     @JoinColumn(name = "part_category_id")
     private PartCategory partCategory;
 
@@ -43,9 +45,5 @@ public class ServiceTypeDetail {
 
     public String getPartCategoryName() {
         return partCategory == null ? "" : partCategory.getName();
-    }
-
-    public String getPartCategorySection() {
-        return partCategory == null ? "" : partCategory.getSection().getName();
     }
 }

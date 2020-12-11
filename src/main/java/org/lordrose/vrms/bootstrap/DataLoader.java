@@ -46,7 +46,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //loadAll();
+        loadAll();
     }
 
     private void loadAll() {
@@ -58,11 +58,9 @@ public class DataLoader implements CommandLineRunner {
                 .build());
         PartCategory rim = partCategoryRepository.save(PartCategory.builder()
                 .name("Lazang")
-                .section(wheel)
                 .build());
         PartCategory brakePad = partCategoryRepository.save(PartCategory.builder()
                 .name("Brake Pad")
-                .section(brakeSystem)
                 .build());
 
         ServiceType checkup = serviceTypeRepository.save(ServiceType.builder()
@@ -76,12 +74,24 @@ public class DataLoader implements CommandLineRunner {
                 .build());
         ServiceTypeDetail wheelCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
                 .type(checkup)
-                .partCategory(rim)
+                .section(wheel)
                 .build());
         ServiceTypeDetail engineCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
                 .type(checkup)
-                .partCategory(brakePad)
+                .section(brakeSystem)
                 .build());
+
+        ServiceTypeDetail rimReplace = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
+                .type(replace)
+                .partCategory(rim)
+                .section(wheel)
+                .build());
+        ServiceTypeDetail brakeReplace = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
+                .type(replace)
+                .partCategory(brakePad)
+                .section(brakeSystem)
+                .build());
+
         User owner_1 = userRepository.save(User.builder()
                 .phoneNumber("123456")
                 .password("1")
@@ -149,10 +159,15 @@ public class DataLoader implements CommandLineRunner {
                 .model(civic_rs_2019)
                 .build());
 
-        ServiceType testType = serviceTypeRepository.findById(1L)
+        ServiceType temp_1 = serviceTypeRepository.findById(1L)
                 .orElseThrow();
-        testType.getDetails().forEach(detail -> System.out.println(
-                testType.getName() + " - " + detail.getPartCategorySection() +
+        temp_1.getDetails().forEach(detail -> System.out.println(
+                temp_1.getName() + " - " + detail.getSection().getName() +
+                        " - " + detail.getPartCategoryName()));
+        ServiceType temp_2 = serviceTypeRepository.findById(2L)
+                .orElseThrow();
+        temp_2.getDetails().forEach(detail -> System.out.println(
+                temp_2.getName() + " - " + detail.getSection().getName() +
                         " - " + detail.getPartCategoryName()));
     }
 }
