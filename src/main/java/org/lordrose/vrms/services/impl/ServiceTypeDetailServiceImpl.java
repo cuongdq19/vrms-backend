@@ -20,6 +20,8 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
                 .map(detail -> ServiceTypeDetailResponse.builder()
                         .id(detail.getId())
                         .serviceName(detail.getType().getName())
+                        .sectionId(detail.getSection().getId())
+                        .sectionName(detail.getSection().getName())
                         .categoryId(detail.getPartCategoryId())
                         .categoryName(detail.getPartCategoryName())
                         .build())

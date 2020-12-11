@@ -46,7 +46,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        loadAll();
+        //loadAll();
     }
 
     private void loadAll() {
