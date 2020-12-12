@@ -2,12 +2,7 @@ package org.lordrose.vrms.bootstrap;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Manufacturer;
-import org.lordrose.vrms.domains.ModelGroup;
-import org.lordrose.vrms.domains.PartCategory;
-import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Provider;
-import org.lordrose.vrms.domains.ServiceType;
-import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.domains.Vehicle;
 import org.lordrose.vrms.domains.VehicleModel;
@@ -26,8 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Component
@@ -46,52 +39,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //loadAll();
+        loadAll();
     }
 
     private void loadAll() {
-        PartSection wheel = sectionRepository.save(PartSection.builder()
-                .name("Banh xe")
-                .build());
-        PartSection brakeSystem = sectionRepository.save(PartSection.builder()
-                .name("He thong phanh")
-                .build());
-        PartCategory rim = partCategoryRepository.save(PartCategory.builder()
-                .name("Lazang")
-                .build());
-        PartCategory brakePad = partCategoryRepository.save(PartCategory.builder()
-                .name("Brake Pad")
-                .build());
-
-        ServiceType checkup = serviceTypeRepository.save(ServiceType.builder()
-                .name("Kiem tra")
-                .build());
-        ServiceType replace = serviceTypeRepository.save(ServiceType.builder()
-                .name("Thay the")
-                .build());
-        ServiceType cleanup = serviceTypeRepository.save(ServiceType.builder()
-                .name("Ve sinh")
-                .build());
-        ServiceTypeDetail wheelCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
-                .type(checkup)
-                .section(wheel)
-                .build());
-        ServiceTypeDetail engineCheckup = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
-                .type(checkup)
-                .section(brakeSystem)
-                .build());
-
-        ServiceTypeDetail rimReplace = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
-                .type(replace)
-                .partCategory(rim)
-                .section(wheel)
-                .build());
-        ServiceTypeDetail brakeReplace = serviceTypeDetailRepository.save(ServiceTypeDetail.builder()
-                .type(replace)
-                .partCategory(brakePad)
-                .section(brakeSystem)
-                .build());
-
         User owner_1 = userRepository.save(User.builder()
                 .phoneNumber("123456")
                 .password("1")
@@ -137,19 +88,6 @@ public class DataLoader implements CommandLineRunner {
                 .imageUrls("")
                 .build());
 
-        ModelGroup group_1 = groupRepository.save(ModelGroup.builder()
-                .name("test 1")
-                .description("desc")
-                .provider(hondaTC)
-                .models(Stream.of(civic_rs_2019).collect(Collectors.toSet()))
-                .build());
-        ModelGroup group_2 = groupRepository.save(ModelGroup.builder()
-                .name("test 2")
-                .description("desc")
-                .provider(hondaTC)
-                .models(Stream.of(civic_rs_2019, civic_rs_2020).collect(Collectors.toSet()))
-                .build());
-
         Vehicle vehicle_1 = vehicleRepository.save(Vehicle.builder()
                 .plateNumber("plate num")
                 .vinNumber("vin num")
@@ -158,16 +96,5 @@ public class DataLoader implements CommandLineRunner {
                 .user(owner_1)
                 .model(civic_rs_2019)
                 .build());
-
-        ServiceType temp_1 = serviceTypeRepository.findById(1L)
-                .orElseThrow();
-        temp_1.getDetails().forEach(detail -> System.out.println(
-                temp_1.getName() + " - " + detail.getSection().getName() +
-                        " - " + detail.getPartCategoryName()));
-        ServiceType temp_2 = serviceTypeRepository.findById(2L)
-                .orElseThrow();
-        temp_2.getDetails().forEach(detail -> System.out.println(
-                temp_2.getName() + " - " + detail.getSection().getName() +
-                        " - " + detail.getPartCategoryName()));
     }
 }

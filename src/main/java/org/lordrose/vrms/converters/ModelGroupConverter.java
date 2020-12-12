@@ -7,10 +7,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
+
 public class ModelGroupConverter {
 
     public static GroupResponse toGroupResponse(ModelGroup group) {
         return GroupResponse.builder()
+                .id(group.getId())
+                .models(toModelResponses(group.getModels()))
                 .build();
     }
 

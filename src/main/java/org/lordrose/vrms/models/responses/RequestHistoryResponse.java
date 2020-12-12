@@ -21,7 +21,7 @@ public class RequestHistoryResponse {
     private String status;
     private String technicianName;
     private VehicleModelResponse model;
-    private List<ServiceResponse> services;
+    private List<Object> services;
     private List<PartResponse> parts;
     private List<ExpenseResponse> expenses;
     private ProviderResponse provider;

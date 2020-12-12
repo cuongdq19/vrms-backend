@@ -6,15 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceResponse {
+public class ServiceDetailResponse {
 
-    private ServiceTypeDetailResponse typeDetail;
-    private List<ServiceDetailResponse> serviceDetails;
+    private Long id;
+    private Double price;
+    private GroupResponse group;
 }

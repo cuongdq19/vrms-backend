@@ -19,7 +19,7 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
         return typeDetailRepository.findAllByTypeId(typeId).stream()
                 .map(detail -> ServiceTypeDetailResponse.builder()
                         .id(detail.getId())
-                        .serviceName(detail.getType().getName())
+                        .typeName(detail.getType().getName())
                         .sectionId(detail.getSection().getId())
                         .sectionName(detail.getSection().getName())
                         .categoryId(detail.getPartCategoryId())

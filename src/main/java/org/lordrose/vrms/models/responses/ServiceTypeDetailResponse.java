@@ -14,7 +14,7 @@ import lombok.Setter;
 public class ServiceTypeDetailResponse {
 
     private Long id;
-    private String serviceName;
+    private String typeName;
     private Long sectionId;
     private String sectionName;
     private Long categoryId;
