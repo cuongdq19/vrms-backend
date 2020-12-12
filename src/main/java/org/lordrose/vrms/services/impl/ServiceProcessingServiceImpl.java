@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 
@@ -32,7 +33,9 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
     @Override
     public Object findAllByProviderId(Long providerId) {
-        return toServiceResponses(serviceRepository.findAllByProviderId(providerId));
+        return toAllServicesResponses(
+                serviceRepository.findAllByProviderId(providerId),
+                typeDetailRepository.findAll());
     }
 
     @Override
