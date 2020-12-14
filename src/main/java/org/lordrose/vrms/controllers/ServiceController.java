@@ -22,6 +22,12 @@ public class ServiceController {
         return processingService.findAllByProviderId(providerId);
     }
 
+    @GetMapping("/providers/{providerId}/types/{typeId}")
+    public Object findAllServicesByProviderIdAndTypeId(@PathVariable Long providerId,
+                                                       @PathVariable Long typeId) {
+        return processingService.findAllByProviderIdAndTypeId(providerId, typeId);
+    }
+
     @PostMapping("/providers/{providerId}")
     public Object createService(@PathVariable Long providerId,
                                 @RequestBody ServiceInfoRequest request) {

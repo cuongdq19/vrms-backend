@@ -39,6 +39,13 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     }
 
     @Override
+    public Object findAllByProviderIdAndTypeId(Long providerId, Long typeId) {
+        return toAllServicesResponses(
+                serviceRepository.findAllByProviderIdAndTypeDetailType_Id(providerId, typeId),
+                typeDetailRepository.findAllByTypeId(typeId));
+    }
+
+    @Override
     public Object create(Long providerId, ServiceInfoRequest request) {
         ServiceTypeDetail typeDetail = typeDetailRepository.findById(request.getTypeDetailId())
                 .orElseThrow(() -> newExceptionWithId(request.getTypeDetailId()));

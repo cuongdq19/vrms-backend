@@ -6,5 +6,7 @@ public interface ServiceProcessingService {
 
     Object findAllByProviderId(Long providerId);
 
+    Object findAllByProviderIdAndTypeId(Long providerId, Long typeId);
+
     Object create(Long providerId, ServiceInfoRequest request);
 }
