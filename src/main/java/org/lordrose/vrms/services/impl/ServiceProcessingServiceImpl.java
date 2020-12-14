@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
-import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponses;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 
@@ -80,7 +79,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         validateCreate(request.getTypeDetailId(), providerId, request.getGroupPriceRequest().getModelIds());
 
-        serviceRepository.save(Service.builder()
+        Service service = Service.builder()
                 .price(request.getGroupPriceRequest().getPrice())
                 .typeDetail(typeDetail)
                 .provider(provider)
@@ -89,11 +88,9 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                                 request.getGroupPriceRequest().getModelIds())
                         ))
                         .build()))
-                .build());
+                .build();
 
-        return toServiceResponses(
-                serviceRepository.findAllByTypeDetailIdAndProviderId(request.getTypeDetailId(), providerId)
-        );
+        return toServiceResponse(serviceRepository.save(service));
     }
 
     private void validateUpdate(Service updatingService, Set<Long> modelIds) {
