@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
+import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
@@ -15,12 +16,10 @@ import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
-import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponses;
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 
 @RequiredArgsConstructor
@@ -57,17 +56,39 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> newExceptionWithId(providerId));
 
-        List<Service> services = new ArrayList<>();
-        request.getGroupPriceRequests()
-                .forEach(group -> services.add(Service.builder()
-                        .price(group.getPrice())
-                        .typeDetail(typeDetail)
-                        .provider(provider)
-                        .modelGroup(groupRepository.save(ModelGroup.builder()
-                                .models(new HashSet<>(modelRepository.findAllById(group.getModelIds())))
-                                .build()))
-                        .build()));
+        Service service = Service.builder()
+                .price(request.getGroupPriceRequest().getPrice())
+                .typeDetail(typeDetail)
+                .provider(provider)
+                .modelGroup(groupRepository.save(ModelGroup.builder()
+                        .models(new HashSet<>(modelRepository.findAllById(
+                                request.getGroupPriceRequest().getModelIds())
+                        ))
+                        .build()))
+                .build();
 
-        return toServiceResponses(serviceRepository.saveAll(services));
+        return toServiceResponse(serviceRepository.save(service));
+    }
+
+    @Override
+    public Object update(Long serviceId, GroupPriceRequest request) {
+        Service result = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> newExceptionWithId(serviceId));
+
+        result.setPrice(request.getPrice());
+        result.getModelGroup().getModels().clear();
+        result.getModelGroup().setModels(
+                new HashSet<>(modelRepository.findAllById(request.getModelIds())));
+
+        return toServiceResponse(serviceRepository.save(result));
+    }
+
+    @Override
+    public void delete(Long serviceId) {
+        serviceRepository.findById(serviceId)
+                .ifPresentOrElse(
+                        service -> serviceRepository.deleteById(service.getId()),
+                        () -> {throw newExceptionWithId(serviceId);});
+
     }
 }

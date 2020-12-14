@@ -31,6 +31,13 @@ public class ServiceConverter {
                 .build();
     }
 
+    public static ServiceResponse toServiceResponse(Service service) {
+        return ServiceResponse.builder()
+                .typeDetail(toServiceTypeDetailResponse(service.getTypeDetail()))
+                .serviceDetails(toServiceDetailResponses(List.of(service)))
+                .build();
+    }
+
     public static ServiceResponse toServiceResponse(ServiceTypeDetail detail, List<Service> services) {
         return ServiceResponse.builder()
                 .typeDetail(toServiceTypeDetailResponse(detail))

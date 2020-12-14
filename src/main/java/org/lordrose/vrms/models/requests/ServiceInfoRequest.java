@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceInfoRequest {
 
-    private List<GroupPriceRequest> groupPriceRequests;
+    private GroupPriceRequest groupPriceRequest;
     private Long typeDetailId;
 }

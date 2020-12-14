@@ -13,7 +13,7 @@ public class ModelGroupConverter {
 
     public static GroupResponse toGroupResponse(ModelGroup group) {
         return GroupResponse.builder()
-                .id(group.getId())
+                //.id(group.getId()) remove due to redundancy
                 .models(toModelResponses(group.getModels()))
                 .build();
     }

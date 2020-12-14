@@ -1,8 +1,10 @@
 package org.lordrose.vrms.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.services.ServiceProcessingService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,5 +34,16 @@ public class ServiceController {
     public Object createService(@PathVariable Long providerId,
                                 @RequestBody ServiceInfoRequest request) {
         return processingService.create(providerId, request);
+    }
+
+    @PostMapping("/{serviceId}")
+    public Object updateService(@PathVariable Long serviceId,
+                                @RequestBody GroupPriceRequest request) {
+        return processingService.update(serviceId, request);
+    }
+
+    @DeleteMapping("{serviceId}")
+    public void deleteService(@PathVariable Long serviceId) {
+        processingService.delete(serviceId);
     }
 }

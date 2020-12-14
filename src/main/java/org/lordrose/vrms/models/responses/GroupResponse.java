@@ -15,6 +15,6 @@ import java.util.List;
 @Builder
 public class GroupResponse {
 
-    private Long id;
+    //private Long id; remove due to redundancy
     private List<VehicleModelResponse> models;
 }
