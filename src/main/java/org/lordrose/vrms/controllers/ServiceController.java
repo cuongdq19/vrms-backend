@@ -46,4 +46,10 @@ public class ServiceController {
     public void deleteService(@PathVariable Long serviceId) {
         processingService.delete(serviceId);
     }
+
+    @GetMapping("type-details/{detailId}/providers/{providerId}")
+    public Object getModels(@PathVariable Long detailId,
+                            @PathVariable Long providerId) {
+        return processingService.findAllModels(detailId, providerId);
+    }
 }

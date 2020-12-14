@@ -14,4 +14,6 @@ public interface ServiceProcessingService {
     Object update(Long serviceId, GroupPriceRequest request);
 
     void delete(Long serviceId);
+
+    Object findAllModels(Long detailId, Long providerId);
 }
