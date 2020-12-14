@@ -45,7 +45,8 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
         Map<PartSection, List<ServiceTypeDetail>> bySection = new LinkedHashMap<>(details.stream()
                 .collect(Collectors.groupingBy(ServiceTypeDetail::getSection)));
         return bySection.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey().getName(), e -> e.getValue().stream()
-                        .map(ServiceTypeDetail::getPartCategory)));
+                .collect(Collectors.toMap(e -> e.getKey().getName(),
+                        e -> e.getValue().stream()
+                                .map(ServiceTypeDetail::getPartCategory)));
     }
 }

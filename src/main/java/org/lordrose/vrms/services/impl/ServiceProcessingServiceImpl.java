@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.ModelGroup;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
+import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
+import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 
@@ -27,6 +29,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
     private final ServiceRepository serviceRepository;
     private final ServiceTypeDetailRepository typeDetailRepository;
+    private final ServiceTypeRepository typeRepository;
     private final ProviderRepository providerRepository;
     private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
@@ -40,8 +43,10 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
     @Override
     public Object findAllByProviderIdAndTypeId(Long providerId, Long typeId) {
+        ServiceType type = typeRepository.findById(typeId)
+                .orElseThrow(() -> newExceptionWithId(typeId));
         return toAllServicesResponses(
-                serviceRepository.findAllByProviderIdAndTypeDetailType_Id(providerId, typeId),
+                serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type),
                 typeDetailRepository.findAllByTypeId(typeId));
     }
 
