@@ -19,8 +19,13 @@ public class ServiceTypeDetailController {
         return typeDetailService.findAll(typeId);
     }
 
-    @GetMapping
+    @GetMapping("/sections")
     public Object findAllSectionsWithCategory() {
         return typeDetailService.findAllSectionReplaced();
+    }
+
+    @GetMapping("/categories")
+    public Object findAllCategories() {
+        return typeDetailService.findAllCategories();
     }
 }

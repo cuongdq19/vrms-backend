@@ -14,6 +14,7 @@ import java.util.Set;
 public class PartRequest {
 
     private Long providerId;
+    private Long categoryId;
     private String name ;
     private Double price;
     private String description;

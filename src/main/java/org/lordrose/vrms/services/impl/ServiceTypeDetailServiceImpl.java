@@ -5,6 +5,7 @@ import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.models.responses.ServiceTypeDetailResponse;
+import org.lordrose.vrms.repositories.PartCategoryRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.services.ServiceTypeDetailService;
@@ -23,6 +24,7 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
 
     private final ServiceTypeDetailRepository typeDetailRepository;
     private final ServiceTypeRepository typeRepository;
+    private final PartCategoryRepository categoryRepository;
 
     @Override
     public Object findAll(Long typeId) {
@@ -48,5 +50,10 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
                 .collect(Collectors.toMap(e -> e.getKey().getName(),
                         e -> e.getValue().stream()
                                 .map(ServiceTypeDetail::getPartCategory)));
+    }
+
+    @Override
+    public Object findAllCategories() {
+        return categoryRepository.findAll();
     }
 }

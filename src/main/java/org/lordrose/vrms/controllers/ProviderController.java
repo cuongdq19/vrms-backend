@@ -1,6 +1,8 @@
 package org.lordrose.vrms.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
+import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
 import org.lordrose.vrms.models.requests.ProviderRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.ProviderDetailResponse;
@@ -8,6 +10,7 @@ import org.lordrose.vrms.models.responses.ProviderDistanceResponse;
 import org.lordrose.vrms.models.responses.SlotResponse;
 import org.lordrose.vrms.models.responses.TechnicianResponse;
 import org.lordrose.vrms.services.ProviderService;
+import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.services.RequestSchedulingService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,7 @@ public class ProviderController {
 
     private final RequestSchedulingService schedulingService;
     private final ProviderService providerService;
+    private final ProviderSuggestingService suggestingService;
 
     @GetMapping("/{providerId}/bookings/{secondsOfDate}")
     public List<SlotResponse> getAllAvailableSlots(@PathVariable Long providerId,
@@ -58,5 +62,15 @@ public class ProviderController {
     public List<TechnicianResponse> getAvailableTechnician(@PathVariable Long providerId,
                                                            @PathVariable Long time) {
         return providerService.findAvailableTechnician(providerId, time);
+    }
+
+    @PostMapping("/type-details")
+    public Object findProvidersByTypeDetails(@RequestBody FindProviderWithServicesRequest request) {
+        return suggestingService.findProviders(request);
+    }
+
+    @PostMapping("/part-categories")
+    public Object findProvidersByPartCategories(@RequestBody FindProviderWithCategoryRequest request) {
+        return suggestingService.findProviders(request);
     }
 }

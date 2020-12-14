@@ -1,11 +1,13 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.domains.PartCategory;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.PartRequest;
 import org.lordrose.vrms.models.responses.PartResponse;
+import org.lordrose.vrms.repositories.PartCategoryRepository;
 import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
@@ -28,6 +30,7 @@ public class PartServiceImpl implements PartService {
     private final PartRepository partRepository;
     private final VehicleModelRepository modelRepository;
     private final ProviderRepository providerRepository;
+    private final PartCategoryRepository categoryRepository;
     private final StorageService storageService;
 
     @Override
@@ -48,6 +51,8 @@ public class PartServiceImpl implements PartService {
     public PartResponse create(PartRequest request, MultipartFile[] images) {
         Provider provider = providerRepository.findById(request.getProviderId())
                 .orElseThrow(() -> newExceptionWithId(request.getProviderId()));
+        PartCategory category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> newExceptionWithId(request.getCategoryId()));
         VehiclePart saved = partRepository.save(VehiclePart.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -57,6 +62,7 @@ public class PartServiceImpl implements PartService {
                 .imageUrls(storageService.uploadFiles(images))
                 .models(new HashSet<>(modelRepository.findAllById(request.getModelIds())))
                 .provider(provider)
+                .category(category)
                 .build());
         return toPartResponse(saved);
     }
@@ -65,6 +71,8 @@ public class PartServiceImpl implements PartService {
     public PartResponse update(Long partId, PartRequest request) {
         Provider provider = providerRepository.findById(request.getProviderId())
                 .orElseThrow(() -> newExceptionWithId(request.getProviderId()));
+        PartCategory category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> newExceptionWithId(request.getCategoryId()));
         VehiclePart result = partRepository.findById(partId)
                 .orElseThrow(() -> newExceptionWithId(partId));
 
@@ -73,6 +81,7 @@ public class PartServiceImpl implements PartService {
         result.setPrice(request.getPrice());
         result.setImageUrls(result.getImageUrls());
         result.setProvider(provider);
+        result.setCategory(category);
         result.setModels(new HashSet<>(modelRepository.findAllById(request.getModelIds())));
 
         return toPartResponse(partRepository.save(result));

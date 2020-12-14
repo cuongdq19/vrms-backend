@@ -22,12 +22,12 @@ public class VehicleModelController {
     private final VehicleModelService modelService;
 
     @GetMapping
-    public List<VehicleModelResponse> getAllVehicleTypes() {
+    public List<VehicleModelResponse> getAllVehicleModels() {
         return modelService.findAll();
     }
 
     @GetMapping("/manufacturers/{id}")
-    public List<VehicleModelResponse> getAllVehicleTypeByManufacturerId(@PathVariable Long id) {
+    public List<VehicleModelResponse> getAllVehicleModelsByManufacturerId(@PathVariable Long id) {
         return modelService.findAllByManufacturerId(id);
     }
 

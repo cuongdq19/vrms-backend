@@ -45,7 +45,7 @@ public class ServiceTypeDetail {
     }
 
     public String getPartCategoryName() {
-        return partCategory == null ? "" : partCategory.getName();
+        return partCategory == null ? "" : " - " + partCategory.getName();
     }
 
     @Override
