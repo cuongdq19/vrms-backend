@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,6 +17,12 @@ public class PartResponse {
 
     private Long id;
     private String name;
+    private String description;
     private Double price;
+    private Integer warrantyDuration;
+    private Integer monthsPerMaintenance;
     private String[] imageUrls;
+    private Long categoryId;
+    private String categoryName;
+    private List<VehicleModelResponse> models;
 }
