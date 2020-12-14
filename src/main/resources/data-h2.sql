@@ -2,8 +2,6 @@ INSERT INTO TBL_SERVICE_TYPE(id,name) VALUES (1,'Kiểm tra');
 INSERT INTO TBL_SERVICE_TYPE(id,name) VALUES (2,'Vệ sinh');
 INSERT INTO TBL_SERVICE_TYPE(id,name) VALUES (3,'Thay thế và lắp ráp');
 
-INSERT INTO TBL_PART_SECTION(id,name) VALUES (14,'Hệ thống phanh');
-INSERT INTO TBL_PART_SECTION(id,name) VALUES (15,'Bộ lọc');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (1,'Thân xe');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (2,'Động cơ');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (3,'Hệ thống lò xo');
@@ -17,6 +15,8 @@ INSERT INTO TBL_PART_SECTION(id,name) VALUES (10,'Thiết bị lái');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (11,'Bánh xe');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (12,'Nội thất');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (13,'Thiết bị khác');
+INSERT INTO TBL_PART_SECTION(id,name) VALUES (14,'Hệ thống phanh');
+INSERT INTO TBL_PART_SECTION(id,name) VALUES (15,'Bộ lọc');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (16,'Bánh xe');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (17,'Dầu xe hơi và nước làm mát');
 INSERT INTO TBL_PART_SECTION(id,name) VALUES (18,'Cửa, kính chắn gió, cần gạt nước');

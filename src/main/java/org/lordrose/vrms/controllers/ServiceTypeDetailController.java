@@ -18,4 +18,9 @@ public class ServiceTypeDetailController {
     public Object findAllTypeId(@PathVariable Long typeId) {
         return typeDetailService.findAll(typeId);
     }
+
+    @GetMapping
+    public Object findAllSectionsWithCategory() {
+        return typeDetailService.findAllSectionReplaced();
+    }
 }
