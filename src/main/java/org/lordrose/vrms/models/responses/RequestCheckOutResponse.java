@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,12 @@ import lombok.Setter;
 public class RequestCheckOutResponse {
 
     private Long id;
+    private Long bookingTime;
+    private String note;
+    private String status;
+    private String[] imageUrls;
+    private List<ServicePackageResponse> packages;
+    private List<ServiceCheckoutResponse> services;
+    private List<PartCheckoutResponse> parts;
+    private List<ExpenseResponse> expenses;
 }

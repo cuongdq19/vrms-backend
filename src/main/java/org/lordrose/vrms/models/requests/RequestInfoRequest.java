@@ -19,6 +19,6 @@ public class RequestInfoRequest {
     private Long vehicleId;
     private Long providerId;
     private Set<Long> packageIds;
-    private Set<Long> serviceIds;
+    private Map<Long, ServicePartRequest> serviceParts;
     private Map<Long, Integer> parts;
 }

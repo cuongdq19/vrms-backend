@@ -48,6 +48,10 @@ public class ServiceTypeDetail {
         return partCategory == null ? "" : " - " + partCategory.getName();
     }
 
+    public String getServiceTypeDetailName() {
+        return type.getName() + " - " + section.getName() + getPartCategoryName();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -36,10 +36,6 @@ public class ServiceRequestPart {
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Service service;
-
-    @ManyToOne
     @JoinColumn(name = "part_id")
     private VehiclePart vehiclePart;
 

@@ -22,7 +22,7 @@ public class RequestHistoryResponse {
     private String technicianName;
     private VehicleModelResponse model;
     private List<Object> services;
-    private List<PartResponse> parts;
+    private List<PartCheckoutResponse> parts;
     private List<ExpenseResponse> expenses;
     private ProviderResponse provider;
     private LevelDetailResponse levelDetail;

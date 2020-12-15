@@ -2,16 +2,18 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Feedback;
-import org.lordrose.vrms.domains.PackageRequest;
 import org.lordrose.vrms.domains.PartRequest;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.ServiceRequest;
+import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.Vehicle;
+import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.CheckinRequest;
 import org.lordrose.vrms.models.requests.FeedbackRequest;
 import org.lordrose.vrms.models.requests.RequestInfoRequest;
+import org.lordrose.vrms.models.requests.ServicePartRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
@@ -24,6 +26,7 @@ import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.repositories.ServicePackageRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
+import org.lordrose.vrms.repositories.ServiceRequestPartRepository;
 import org.lordrose.vrms.repositories.ServiceRequestRepository;
 import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
@@ -57,6 +60,7 @@ public class RequestServiceImpl implements RequestService {
     private final ServicePackageRepository servicePackageRepository;
     private final PackageRequestRepository packageRequestRepository;
     private final NotificationRepository notificationRepository;
+    private final ServiceRequestPartRepository requestPartRepository;
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
     
@@ -87,9 +91,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestCheckOutResponse create(RequestInfoRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Set<Long> serviceIds = request.getServiceIds();
+        Map<Long, ServicePartRequest> serviceParts = request.getServiceParts();
         Map<Long, Integer> partMap = request.getParts();
-        if (packageIds.isEmpty() && serviceIds.isEmpty() && partMap.keySet().isEmpty()) {
+        if (packageIds.isEmpty() && serviceParts.keySet().isEmpty() && partMap.keySet().isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -107,16 +111,16 @@ public class RequestServiceImpl implements RequestService {
                 .provider(provider)
                 .build());
 
-        notificationRepository.save(org.lordrose.vrms.domains.Notification.builder()
+        /*notificationRepository.save(org.lordrose.vrms.domains.Notification.builder()
                 .title("Your booking will start today at " +
                         saved.getBookingTime().getHour() + "h" + saved.getBookingTime().getMinute())
                 .content("Content")
                 .user(vehicle.getUser())
                 .notifyAt(saved.getBookingTime().minusHours(2))
                 .isActive(true)
-                .build());
+                .build());*/
 
-        Set<PackageRequest> packages = servicePackageRepository.findAllById(packageIds).stream()
+        /*Set<PackageRequest> packages = servicePackageRepository.findAllById(packageIds).stream()
                 .map(servicePackage -> PackageRequest.builder()
                         .servicePackage(servicePackage)
                         .services(servicePackage.getServices().stream()
@@ -129,16 +133,29 @@ public class RequestServiceImpl implements RequestService {
                         .request(saved)
                         .build())
                 .collect(Collectors.toSet());
-        saved.setPackages(new HashSet<>(packageRequestRepository.saveAll(packages)));
+        saved.setPackages(new HashSet<>(packageRequestRepository.saveAll(packages)));*/
 
-        Set<ServiceRequest> services = serviceRepository.findAllById(serviceIds).stream()
-                .map(serviceDetail -> ServiceRequest.builder()
-                        .price(serviceDetail.getPrice())
-                        .service(serviceDetail)
-                        .request(saved)
-                        .build())
+        Set<ServiceRequest> services = serviceRepository.findAllById(serviceParts.keySet()).stream()
+                .map(serviceDetail -> {
+                    ServicePartRequest partRequest = request.getServiceParts().get(serviceDetail.getId());
+                    Integer quantity = partRequest.getQuantity();
+                    VehiclePart part = partRepository.findById(partRequest.getId())
+                            .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
+                    ServiceRequest result = serviceRequestRepository.save(ServiceRequest.builder()
+                            .price(serviceDetail.getPrice())
+                            .service(serviceDetail)
+                            .request(saved)
+                            .requestPart(requestPartRepository.save(ServiceRequestPart.builder()
+                                    .quantity(quantity)
+                                    .price(part.getPrice())
+                                    .vehiclePart(part)
+                                    .build()))
+                            .build());
+
+                    return serviceRequestRepository.save(result);
+                })
                 .collect(Collectors.toSet());
-        saved.setServices(new HashSet<>(serviceRequestRepository.saveAll(services)));
+        saved.setServices(services);
 
         Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
                 .map(part -> PartRequest.builder()
@@ -161,7 +178,7 @@ public class RequestServiceImpl implements RequestService {
 
         return toRequestCheckoutResponse(
                 requestRepository.findById(saved.getId())
-                        .orElseThrow());
+                        .orElseThrow(() -> newExceptionWithId(saved.getId())));
     }
 
     @Override
