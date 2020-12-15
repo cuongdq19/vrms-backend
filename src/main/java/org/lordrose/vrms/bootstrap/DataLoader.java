@@ -32,7 +32,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        loadAll();
+        //loadAll();
     }
 
     private void loadAll() {
@@ -82,18 +82,18 @@ public class DataLoader implements CommandLineRunner {
                 .manufacturer(honda)
                 .build());
 
-        Provider hondaTC = providerRepository.save(Provider.builder()
-                .name("Honda")
-                .address("address")
-                .latitude(6D)
-                .longitude(9D)
-                .openTime(LocalTime.of(9,0))
-                .closeTime(LocalTime.of(17, 0))
-                .slotDuration(3)
-                .slotCapacity(1)
-                .isActive(true)
-                .imageUrls("")
-                .build());
+//        Provider hondaTC = providerRepository.save(Provider.builder()
+//                .name("Honda")
+//                .address("address")
+//                .latitude(6D)
+//                .longitude(9D)
+//                .openTime(LocalTime.of(9,0))
+//                .closeTime(LocalTime.of(17, 0))
+//                .slotDuration(3)
+//                .slotCapacity(1)
+//                .isActive(true)
+//                .imageUrls("")
+//                .build());
 
         User admin_1 = userRepository.save(User.builder()
                 .isActive(true)
@@ -116,16 +116,16 @@ public class DataLoader implements CommandLineRunner {
                 .role(user)
                 .build());
 
-        User mn1 = userRepository.save(User.builder()
-                .isActive(true)
-                .username("mn1")
-                .password("1")
-                .fullName("Manager 1")
-                .imageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS_yO9I79sxbYGB2sIGHayqoZ_uzi9mcDh65g&usqp=CAU")
-                .provider(hondaTC)
-                .gender(true)
-                .role(manager)
-                .build());
+//        User mn1 = userRepository.save(User.builder()
+//                .isActive(true)
+//                .username("mn1")
+//                .password("1")
+//                .fullName("Manager 1")
+//                .imageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS_yO9I79sxbYGB2sIGHayqoZ_uzi9mcDh65g&usqp=CAU")
+//                .provider(hondaTC)
+//                .gender(true)
+//                .role(manager)
+//                .build());
 
         Vehicle vehicle_1 = vehicleRepository.save(Vehicle.builder()
                 .plateNumber("plate num")
