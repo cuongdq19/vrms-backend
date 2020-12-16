@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.VehicleModel;
-import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
 import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
-import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.models.responses.ProviderSuggestedServiceResponse;
-import org.lordrose.vrms.models.responses.ServicePriceDetailResponse;
 import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
@@ -22,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.ServiceConverter.toServicePriceDetailResponse;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
@@ -64,7 +62,10 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .manufacturerName(provider.getManufacturerName())
                         .totalPrice(serviceList.stream().mapToDouble(Service::getPrice).sum())
                         .priceDetails(serviceList.stream()
-                                .map(service -> test(provider.getId(), service, model))
+                                .map(service -> toServicePriceDetailResponse(service,
+                                        partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
+                                                provider.getId(), service.getTypeDetail().getPartCategoryId(), model
+                                        )))
                                 .collect(Collectors.toList()))
                         .build()
         ));
@@ -100,31 +101,29 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .manufacturerName(provider.getManufacturerName())
                         .totalPrice(serviceList.stream().mapToDouble(Service::getPrice).sum())
                         .priceDetails(serviceList.stream()
-                                .map(service -> test(provider.getId(), service, model))
+                                .map(service -> toServicePriceDetailResponse(service,
+                                        partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
+                                                provider.getId(), service.getTypeDetail().getPartCategoryId(), model
+                                        )))
                                 .collect(Collectors.toList()))
                         .build()
         ));
         return responses;
     }
 
-    private ServicePriceDetailResponse test(Long providerId, Service service, VehicleModel model) {
-        Long categoryId = service.getTypeDetail().getPartCategoryId();
-        List<VehiclePart> parts = partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
-                providerId, categoryId, model);
-        return ServicePriceDetailResponse.builder()
-                .serviceId(service.getId())
-                .serviceName(service.getTypeDetail().getType().getName() + " - " +
-                        service.getTypeDetail().getSection().getName() +
-                        service.getTypeDetail().getPartCategoryName())
-                .servicePrice(service.getPrice())
-                .parts(parts.stream()
-                        .map(part -> PartResponse.builder()
-                                .id(part.getId())
-                                .name(part.getName())
-                                .price(part.getPrice())
-                                .imageUrls(getUrlsAsArray(part.getImageUrls()))
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
+    @Override
+    public Object findServiceInProvider(Long providerId, Long modelId) {
+        VehicleModel model = modelRepository.findById(modelId)
+                .orElseThrow(() -> newExceptionWithId(modelId));
+        List<Service> services = new ArrayList<>(
+                serviceRepository.findAllByProviderIdAndModelGroup_Models_Id(providerId, modelId)
+        );
+
+        return services.stream()
+                .map(service -> toServicePriceDetailResponse(service,
+                        partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
+                                providerId, service.getTypeDetail().getPartCategoryId(), model
+                        )))
+                .collect(Collectors.toList());
     }
 }

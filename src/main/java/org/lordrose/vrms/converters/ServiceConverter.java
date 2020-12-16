@@ -3,7 +3,10 @@ package org.lordrose.vrms.converters;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
+import org.lordrose.vrms.domains.VehiclePart;
+import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.models.responses.ServiceDetailResponse;
+import org.lordrose.vrms.models.responses.ServicePriceDetailResponse;
 import org.lordrose.vrms.models.responses.ServiceResponse;
 import org.lordrose.vrms.models.responses.ServiceTypeDetailResponse;
 
@@ -17,8 +20,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ModelGroupConverter.toGroupResponse;
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 public class ServiceConverter {
+
+    public static ServicePriceDetailResponse toServicePriceDetailResponse(Service service,
+                                                                    Collection<VehiclePart> parts) {
+        return ServicePriceDetailResponse.builder()
+                .serviceId(service.getId())
+                .serviceName(service.getTypeDetail().getType().getName() + " - " +
+                        service.getTypeDetail().getSection().getName() +
+                        service.getTypeDetail().getPartCategoryName())
+                .servicePrice(service.getPrice())
+                .parts(parts.stream()
+                        .map(part -> PartResponse.builder()
+                                .id(part.getId())
+                                .name(part.getName())
+                                .price(part.getPrice())
+                                .imageUrls(getUrlsAsArray(part.getImageUrls()))
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+    }
 
     public static ServiceTypeDetailResponse toServiceTypeDetailResponse(ServiceTypeDetail typeDetail) {
         return ServiceTypeDetailResponse.builder()

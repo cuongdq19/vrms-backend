@@ -11,10 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceCheckoutResponse {
+public class ServicePackageResponse {
 
-    private Long serviceId;
-    private String serviceName;
-    private Double servicePrice;
-    private PartCheckoutResponse part;
+    private Long id;
 }

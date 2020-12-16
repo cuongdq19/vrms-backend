@@ -73,4 +73,10 @@ public class ProviderController {
     public Object findProvidersByPartCategories(@RequestBody FindProviderWithCategoryRequest request) {
         return suggestingService.findProviders(request);
     }
+
+    @PostMapping("/{providerId}/models/{modelId}")
+    public Object findServicesInProvider(@PathVariable Long providerId,
+                                         @PathVariable Long modelId) {
+        return suggestingService.findServiceInProvider(providerId, modelId);
+    }
 }

@@ -1,7 +1,9 @@
 package org.lordrose.vrms.converters;
 
 import org.lordrose.vrms.domains.PartRequest;
+import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.VehiclePart;
+import org.lordrose.vrms.models.responses.PartCheckoutResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
 
 import java.util.Collection;
@@ -34,14 +36,39 @@ public class PartConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PartResponse toPartDetailResponse(PartRequest part) {
-        return PartResponse.builder()
+    public static PartCheckoutResponse toPartDetailResponse(PartRequest part) {
+        return PartCheckoutResponse.builder()
+                .partId(part.getVehiclePart().getId())
+                .partName(part.getVehiclePart().getName())
+                .quantity(part.getQuantity())
+                .price(part.getPrice())
+                .warrantyDuration(part.getVehiclePart().getWarrantyDuration())
+                .monthsPerMaintenance(part.getVehiclePart().getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(part.getVehiclePart().getImageUrls()))
+                .categoryId(part.getVehiclePart().getCategory().getId())
+                .categoryName(part.getVehiclePart().getCategory().getName())
                 .build();
     }
 
-    public static List<PartResponse> toPartDetailResponses(Collection<PartRequest> parts) {
+    public static List<PartCheckoutResponse> toPartDetailResponses(Collection<PartRequest> parts) {
         return parts.stream()
                 .map(PartConverter::toPartDetailResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static PartCheckoutResponse toPartCheckoutResponse(ServiceRequestPart servicePart) {
+        if (servicePart == null)
+            return null;
+        return PartCheckoutResponse.builder()
+                .partId(servicePart.getVehiclePart().getId())
+                .partName(servicePart.getVehiclePart().getName())
+                .quantity(servicePart.getQuantity())
+                .price(servicePart.getPrice())
+                .warrantyDuration(servicePart.getVehiclePart().getWarrantyDuration())
+                .monthsPerMaintenance(servicePart.getVehiclePart().getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(servicePart.getVehiclePart().getImageUrls()))
+                .categoryId(servicePart.getVehiclePart().getCategory().getId())
+                .categoryName(servicePart.getVehiclePart().getCategory().getName())
+                .build();
     }
 }
