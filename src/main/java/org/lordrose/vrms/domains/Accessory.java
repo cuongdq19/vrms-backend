@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_contract")
+@Table(name = "tbl_accessory")
 public class Accessory {
 
     @Id
