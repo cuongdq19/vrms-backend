@@ -13,7 +13,6 @@ public class ManufacturerConverter {
         return ManufacturerResponse.builder()
                 .id(manufacturer.getId())
                 .name(manufacturer.getName())
-                .isActive(manufacturer.getIsActive())
                 .imageUrl(manufacturer.getImageUrl())
                 .build();
     }

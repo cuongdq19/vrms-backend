@@ -15,6 +15,5 @@ public class ManufacturerResponse {
 
     private Long id;
     private String name;
-    private Boolean isActive;
     private String imageUrl;
 }
