@@ -8,4 +8,6 @@ public interface ProviderSuggestingService {
     Object findProviders(FindProviderWithServicesRequest request);
 
     Object findProviders(FindProviderWithCategoryRequest request);
+
+    Object findServiceInProvider(Long providerId, Long modelId);
 }
