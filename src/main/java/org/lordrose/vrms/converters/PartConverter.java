@@ -60,6 +60,7 @@ public class PartConverter {
 
     public static PartCheckoutResponse toPartDetailResponse(PartRequest part) {
         return PartCheckoutResponse.builder()
+                .id(part.getId())
                 .partId(part.getVehiclePart().getId())
                 .partName(part.getVehiclePart().getName())
                 .quantity(part.getQuantity())
@@ -82,6 +83,7 @@ public class PartConverter {
         if (servicePart == null)
             return null;
         return PartCheckoutResponse.builder()
+                .id(servicePart.getId())
                 .partId(servicePart.getVehiclePart().getId())
                 .partName(servicePart.getVehiclePart().getName())
                 .quantity(servicePart.getQuantity())

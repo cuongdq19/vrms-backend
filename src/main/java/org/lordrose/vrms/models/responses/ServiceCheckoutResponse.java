@@ -13,6 +13,7 @@ import lombok.Setter;
 @Builder
 public class ServiceCheckoutResponse {
 
+    private Long id;
     private Long serviceId;
     private String serviceName;
     private Double servicePrice;

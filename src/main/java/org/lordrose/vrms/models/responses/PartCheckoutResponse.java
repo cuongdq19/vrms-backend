@@ -13,6 +13,7 @@ import lombok.Setter;
 @Builder
 public class PartCheckoutResponse {
 
+    private Long id;
     private Long partId;
     private String partName;
     private Integer quantity;
