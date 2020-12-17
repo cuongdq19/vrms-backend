@@ -49,8 +49,7 @@ public class VehicleConverter {
         List<VehicleRequestInfoResponse> responses = new ArrayList<>();
         vehicles.forEach((vehicle, request) ->
                 responses.add(
-                        toVehicleRequestInfoResponse(vehicle,
-                                request.orElse(null))));
+                        toVehicleRequestInfoResponse(vehicle, request.orElse(null))));
         return responses;
     }
 }
