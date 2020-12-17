@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.models.responses.ServiceDetailResponse;
+import org.lordrose.vrms.models.responses.ServiceOptionResponse;
 import org.lordrose.vrms.models.responses.ServicePriceDetailResponse;
 import org.lordrose.vrms.models.responses.ServiceResponse;
 import org.lordrose.vrms.models.responses.ServiceTypeDetailResponse;
@@ -28,9 +29,7 @@ public class ServiceConverter {
                                                                     Collection<VehiclePart> parts) {
         return ServicePriceDetailResponse.builder()
                 .serviceId(service.getId())
-                .serviceName(service.getTypeDetail().getType().getName() + " - " +
-                        service.getTypeDetail().getSection().getName() +
-                        service.getTypeDetail().getPartCategoryName())
+                .serviceName(service.getTypeDetail().getServiceTypeDetailName())
                 .servicePrice(service.getPrice())
                 .parts(parts.stream()
                         .map(part -> PartResponse.builder()
@@ -111,5 +110,13 @@ public class ServiceConverter {
         return services.stream()
                 .map(ServiceConverter::toServiceRequestResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static ServiceOptionResponse toServiceOptionResponse(Service service) {
+        return ServiceOptionResponse.builder()
+                .serviceId(service.getId())
+                .serviceName(service.getTypeDetail().getServiceTypeDetailName())
+                .price(service.getPrice())
+                .build();
     }
 }

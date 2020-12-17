@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/services")
@@ -30,6 +32,13 @@ public class ServiceController {
     public Object findAllServicesByProviderIdAndTypeId(@PathVariable Long providerId,
                                                        @PathVariable Long typeId) {
         return processingService.findAllByProviderIdAndTypeId(providerId, typeId);
+    }
+
+    @PostMapping("/providers/{providerId}/models/{modelId}")
+    public Object findServicesByProviderIdAndModelIdAndCategoryIds(@PathVariable Long providerId,
+                                                         @PathVariable Long modelId,
+                                                         @RequestBody Set<Long> categoryIds) {
+        return processingService.findAllByProviderIdAndModelIdAndCategoryIds(providerId, modelId, categoryIds);
     }
 
     @PostMapping("/providers/{providerId}")
@@ -52,6 +61,11 @@ public class ServiceController {
     @GetMapping("/bases/providers/{providerId}")
     public Object getBases(@PathVariable Long providerId) {
         return packageService.getBases(providerId);
+    }
+
+    @GetMapping("/bases/{baseId}/providers/{providerId}")
+    public Object getBases(@PathVariable Long baseId, @PathVariable Long providerId) {
+        return packageService.getBases(baseId, providerId);
     }
 
     @PostMapping("/packages/providers/{providerId}")
