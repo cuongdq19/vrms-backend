@@ -1,7 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.converters.TechnicianConverter;
+import org.lordrose.vrms.converters.UserConverter;
 import org.lordrose.vrms.domains.Manufacturer;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
@@ -114,7 +114,7 @@ public class ProviderServiceImpl implements ProviderService {
                 .collect(Collectors.toList());
         return providerUsers.stream()
                 .filter(user -> !unavailableUserIds.contains(user.getId()))
-                .map(TechnicianConverter::toTechnicianResponse)
+                .map(UserConverter::toTechnicianResponse)
                 .collect(Collectors.toList());
     }
 }

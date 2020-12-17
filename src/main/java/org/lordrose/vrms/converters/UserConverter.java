@@ -3,6 +3,7 @@ package org.lordrose.vrms.converters;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.domains.Vehicle;
+import org.lordrose.vrms.models.responses.TechnicianResponse;
 import org.lordrose.vrms.models.responses.UserInfoResponse;
 import org.lordrose.vrms.models.responses.UserRequestInfoResponse;
 import org.lordrose.vrms.models.responses.UserVehicleInfoResponse;
@@ -54,6 +55,14 @@ public class UserConverter {
                 .fullName(user.getFullName())
                 .gender(user.getGender())
                 .imageUrl(user.getImageUrl())
+                .build();
+    }
+
+    public static TechnicianResponse toTechnicianResponse(User user) {
+        return TechnicianResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .gender(user.getGender())
                 .build();
     }
 }
