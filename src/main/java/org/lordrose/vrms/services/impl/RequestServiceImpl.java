@@ -141,7 +141,7 @@ public class RequestServiceImpl implements RequestService {
                     Integer quantity = partRequest.getQuantity();
                     VehiclePart part = partRepository.findById(partRequest.getId())
                             .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
-                    ServiceRequest result = serviceRequestRepository.save(ServiceRequest.builder()
+                    return serviceRequestRepository.save(ServiceRequest.builder()
                             .price(serviceDetail.getPrice())
                             .service(serviceDetail)
                             .request(saved)
@@ -151,7 +151,6 @@ public class RequestServiceImpl implements RequestService {
                                     .vehiclePart(part)
                                     .build()))
                             .build());
-                    return result;
                 })
                 .collect(Collectors.toSet());
         saved.setServices(services);

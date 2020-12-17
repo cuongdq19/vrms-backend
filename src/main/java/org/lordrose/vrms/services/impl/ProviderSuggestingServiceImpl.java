@@ -46,29 +46,10 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                 .collect(Collectors.groupingBy(Service::getProvider));
 
         List<ProviderSuggestedServiceResponse> responses = new ArrayList<>();
-        byProvider.forEach((provider, serviceList) -> responses.add(
-                ProviderSuggestedServiceResponse.builder()
-                        .id(provider.getId())
-                        .name(provider.getName())
-                        .address(provider.getAddress())
-                        .imageUrls(getUrlsAsArray(provider.getImageUrls()))
-                        .openTime(provider.getOpenTime().toString())
-                        .closeTime(provider.getCloseTime().toString())
-                        .ratings(feedbackService.getAverageRating(provider.getId()))
-                        .distance(calculate(request.getCurrentPos(), GeoPoint.builder()
-                                .latitude(provider.getLatitude())
-                                .longitude(provider.getLongitude())
-                                .build()))
-                        .manufacturerName(provider.getManufacturerName())
-                        .totalPrice(serviceList.stream().mapToDouble(Service::getPrice).sum())
-                        .priceDetails(serviceList.stream()
-                                .map(service -> toServicePriceDetailResponse(service,
-                                        partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
-                                                provider.getId(), service.getTypeDetail().getPartCategoryId(), model
-                                        )))
-                                .collect(Collectors.toList()))
-                        .build()
-        ));
+        byProvider.forEach(
+                (provider, serviceList) -> responses.add(
+                        test(provider, request.getCurrentPos(), serviceList, model))
+        );
         return responses;
     }
 
@@ -76,38 +57,23 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     public Object findProviders(FindProviderWithCategoryRequest request) {
         VehicleModel model = modelRepository.findById(request.getModelId())
                 .orElseThrow(() -> newExceptionWithId(request.getModelId()));
-        List<Service> services = new ArrayList<>();
-        request.getCategoryIds().forEach(id -> services.addAll(
+        List<Service> temps = new ArrayList<>();
+        request.getCategoryIds().forEach(id -> temps.addAll(
                 serviceRepository.findAllByTypeDetailPartCategory_IdAndModelGroup_Models_Id(id, request.getModelId())
         ));
+
+        List<Service> services = temps.stream()
+                .filter(service -> partRepository.existsByCategoryIdAndProviderId(
+                        service.getTypeDetail().getPartCategoryId(), service.getProvider().getId()))
+                .collect(Collectors.toList());
 
         Map<Provider, List<Service>> byProvider = services.stream()
                 .collect(Collectors.groupingBy(Service::getProvider));
 
         List<ProviderSuggestedServiceResponse> responses = new ArrayList<>();
-        byProvider.forEach((provider, serviceList) -> responses.add(
-                ProviderSuggestedServiceResponse.builder()
-                        .id(provider.getId())
-                        .name(provider.getName())
-                        .address(provider.getAddress())
-                        .imageUrls(getUrlsAsArray(provider.getImageUrls()))
-                        .openTime(provider.getOpenTime().toString())
-                        .closeTime(provider.getCloseTime().toString())
-                        .ratings(feedbackService.getAverageRating(provider.getId()))
-                        .distance(calculate(request.getCurrentPos(), GeoPoint.builder()
-                                .latitude(provider.getLatitude())
-                                .longitude(provider.getLongitude())
-                                .build()))
-                        .manufacturerName(provider.getManufacturerName())
-                        .totalPrice(serviceList.stream().mapToDouble(Service::getPrice).sum())
-                        .priceDetails(serviceList.stream()
-                                .map(service -> toServicePriceDetailResponse(service,
-                                        partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
-                                                provider.getId(), service.getTypeDetail().getPartCategoryId(), model
-                                        )))
-                                .collect(Collectors.toList()))
-                        .build()
-        ));
+        byProvider.forEach((provider, serviceList) -> {
+            if (!serviceList.isEmpty())
+                responses.add(test(provider, request.getCurrentPos(), serviceList, model));});
         return responses;
     }
 
@@ -125,5 +91,30 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                                 providerId, service.getTypeDetail().getPartCategoryId(), model
                         )))
                 .collect(Collectors.toList());
+    }
+
+    private ProviderSuggestedServiceResponse test(Provider provider, GeoPoint currentPos,
+                                                  List<Service> services, VehicleModel model) {
+        return ProviderSuggestedServiceResponse.builder()
+                .id(provider.getId())
+                .name(provider.getName())
+                .address(provider.getAddress())
+                .imageUrls(getUrlsAsArray(provider.getImageUrls()))
+                .openTime(provider.getOpenTime().toString())
+                .closeTime(provider.getCloseTime().toString())
+                .ratings(feedbackService.getAverageRating(provider.getId()))
+                .distance(calculate(currentPos, GeoPoint.builder()
+                        .latitude(provider.getLatitude())
+                        .longitude(provider.getLongitude())
+                        .build()))
+                .manufacturerName(provider.getManufacturerName())
+                .totalPrice(services.stream().mapToDouble(Service::getPrice).sum())
+                .priceDetails(services.stream()
+                        .map(service -> toServicePriceDetailResponse(service,
+                                partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
+                                        provider.getId(), service.getTypeDetail().getPartCategoryId(), model
+                                )))
+                        .collect(Collectors.toList()))
+                .build();
     }
 }

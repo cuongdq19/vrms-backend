@@ -17,4 +17,6 @@ public interface PartRepository extends JpaRepository<VehiclePart, Long> {
     List<VehiclePart> findAllByProviderIdAndCategoryIdAndModelsContains(Long providerId,
                                                                         Long categoryId,
                                                                         VehicleModel model);
+
+    boolean existsByCategoryIdAndProviderId(Long categoryId, Long providerId);
 }
