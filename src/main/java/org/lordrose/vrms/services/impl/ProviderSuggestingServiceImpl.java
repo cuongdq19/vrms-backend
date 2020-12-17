@@ -3,12 +3,14 @@ package org.lordrose.vrms.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
+import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
 import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
 import org.lordrose.vrms.models.responses.ProviderSuggestedServiceResponse;
 import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
+import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.ProviderSuggestingService;
@@ -32,6 +34,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     private final FeedbackService feedbackService;
     private final VehicleModelRepository modelRepository;
     private final PartRepository partRepository;
+    private final ServiceTypeRepository typeRepository;
 
     @Override
     public Object findProviders(FindProviderWithServicesRequest request) {
@@ -78,18 +81,26 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     }
 
     @Override
-    public Object findServiceInProvider(Long providerId, Long modelId) {
+    public Object findServicesInProvider(Long providerId, Long modelId, Long typeId) {
         VehicleModel model = modelRepository.findById(modelId)
                 .orElseThrow(() -> newExceptionWithId(modelId));
-        List<Service> services = new ArrayList<>(
-                serviceRepository.findAllByProviderIdAndModelGroup_Models_Id(providerId, modelId)
-        );
+        ServiceType type = typeRepository.findById(typeId)
+                .orElseThrow(() -> newExceptionWithId(typeId));
+
+        List<Service> services = serviceRepository.findAllByProviderIdAndTypeDetailTypeAndModelGroup_Models_Id(
+                providerId, type, modelId).stream()
+                .filter(service -> {
+                    Long categoryId = service.getTypeDetail().getPartCategoryId();
+                    if (categoryId == null) {
+                        return true;
+                    }
+                    return partRepository.existsByCategoryIdAndProviderId(categoryId, providerId);
+                }).collect(Collectors.toList());
 
         return services.stream()
                 .map(service -> toServicePriceDetailResponse(service,
                         partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
-                                providerId, service.getTypeDetail().getPartCategoryId(), model
-                        )))
+                                providerId, service.getTypeDetail().getPartCategoryId(), model)))
                 .collect(Collectors.toList());
     }
 

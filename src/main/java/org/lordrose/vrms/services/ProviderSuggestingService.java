@@ -9,5 +9,5 @@ public interface ProviderSuggestingService {
 
     Object findProviders(FindProviderWithCategoryRequest request);
 
-    Object findServiceInProvider(Long providerId, Long modelId);
+    Object findServicesInProvider(Long providerId, Long modelId, Long typeId);
 }

@@ -7,6 +7,7 @@ import org.lordrose.vrms.models.responses.PartCheckoutResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,27 @@ import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponse
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 public class PartConverter {
+
+    public static PartResponse toEmptyModelPartResponse(VehiclePart part) {
+        return PartResponse.builder()
+                .id(part.getId())
+                .name(part.getName())
+                .description(part.getDescription())
+                .price(part.getPrice())
+                .warrantyDuration(part.getWarrantyDuration())
+                .monthsPerMaintenance(part.getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(part.getImageUrls()))
+                .categoryId(part.getCategory().getId())
+                .categoryName(part.getCategory().getName())
+                .models(Collections.emptyList())
+                .build();
+    }
+
+    public static List<PartResponse> toEmptyModelPartResponses(Collection<VehiclePart> parts) {
+        return parts.stream()
+                .map(PartConverter::toEmptyModelPartResponse)
+                .collect(Collectors.toList());
+    }
 
     public static PartResponse toPartResponse(VehiclePart part) {
         return PartResponse.builder()

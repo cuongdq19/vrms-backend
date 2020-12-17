@@ -4,7 +4,6 @@ import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehiclePart;
-import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.models.responses.ServiceDetailResponse;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
 import org.lordrose.vrms.models.responses.ServicePriceDetailResponse;
@@ -21,7 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ModelGroupConverter.toGroupResponse;
-import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
+import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponses;
 
 public class ServiceConverter {
 
@@ -31,14 +30,7 @@ public class ServiceConverter {
                 .serviceId(service.getId())
                 .serviceName(service.getTypeDetail().getServiceTypeDetailName())
                 .servicePrice(service.getPrice())
-                .parts(parts.stream()
-                        .map(part -> PartResponse.builder()
-                                .id(part.getId())
-                                .name(part.getName())
-                                .price(part.getPrice())
-                                .imageUrls(getUrlsAsArray(part.getImageUrls()))
-                                .build())
-                        .collect(Collectors.toList()))
+                .parts(toEmptyModelPartResponses(parts))
                 .build();
     }
 

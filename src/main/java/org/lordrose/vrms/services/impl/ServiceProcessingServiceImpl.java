@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceOptionResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
-import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponses;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 
@@ -61,24 +60,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return toAllServicesResponses(
                 serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type),
                 typeDetailRepository.findAllByTypeId(typeId));
-    }
-
-    @Override
-    public Object findAllByProviderIdAndTypeIdModelId(Long providerId, Long typeId, Long modelId) {
-        ServiceType type = typeRepository.findById(typeId)
-                .orElseThrow(() -> newExceptionWithId(typeId));
-
-        List<Service> services = serviceRepository.findAllByProviderIdAndTypeDetailTypeAndModelGroup_Models_Id(
-                providerId, type, modelId).stream()
-                .filter(service -> {
-                    Long categoryId = service.getTypeDetail().getPartCategoryId();
-                    if (categoryId == null) {
-                        return true;
-                    }
-                    return partRepository.existsByCategoryIdAndProviderId(categoryId, providerId);
-                }).collect(Collectors.toList());
-
-        return toServiceResponses(services);
     }
 
     @Override

@@ -34,13 +34,6 @@ public class ServiceController {
         return processingService.findAllByProviderIdAndTypeId(providerId, typeId);
     }
 
-    @GetMapping("/providers/{providerId}/types/{typeId}/models/{modelId}")
-    public Object findAllServicesByProviderIdAndTypeIdAndModelId(@PathVariable Long providerId,
-                                                       @PathVariable Long typeId,
-                                                       @PathVariable Long modelId) {
-        return processingService.findAllByProviderIdAndTypeIdModelId(providerId, typeId, modelId);
-    }
-
     @PostMapping("/providers/{providerId}/models/{modelId}")
     public Object findServicesByProviderIdAndModelIdAndCategoryIds(@PathVariable Long providerId,
                                                          @PathVariable Long modelId,
