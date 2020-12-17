@@ -44,6 +44,7 @@ public class ServiceRequest {
     @JoinColumn(name = "package_id")
     private PackageRequest servicePackage;
 
-    @OneToOne(mappedBy = "serviceRequest")
+    @OneToOne
+    @JoinColumn(name = "request_part_id", referencedColumnName = "id")
     private ServiceRequestPart requestPart;
 }

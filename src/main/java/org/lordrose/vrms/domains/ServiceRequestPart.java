@@ -39,7 +39,6 @@ public class ServiceRequestPart {
     @JoinColumn(name = "part_id")
     private VehiclePart vehiclePart;
 
-    @OneToOne
-    @JoinColumn(name = "service_request_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "requestPart")
     private ServiceRequest serviceRequest;
 }

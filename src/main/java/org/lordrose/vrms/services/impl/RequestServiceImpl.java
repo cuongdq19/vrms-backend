@@ -151,8 +151,7 @@ public class RequestServiceImpl implements RequestService {
                                     .vehiclePart(part)
                                     .build()))
                             .build());
-
-                    return serviceRequestRepository.save(result);
+                    return result;
                 })
                 .collect(Collectors.toSet());
         saved.setServices(services);
