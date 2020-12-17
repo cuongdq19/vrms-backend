@@ -19,6 +19,7 @@ import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartDetailResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toRequestServiceResponses;
+import static org.lordrose.vrms.converters.UserConverter.toRequestUserInfoResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
@@ -65,6 +66,7 @@ public class RequestConverter {
                 .note(request.getNote())
                 .status(request.getStatus())
                 .imageUrls(getUrlsAsArray(request.getImageUrls()))
+                .user(toRequestUserInfoResponse(request.getVehicle().getUser()))
                 .packages(null)
                 .services(request.getServices().stream()
                         .map(service -> ServiceCheckoutResponse.builder()

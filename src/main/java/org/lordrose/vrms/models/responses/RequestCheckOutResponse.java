@@ -20,6 +20,7 @@ public class RequestCheckOutResponse {
     private String note;
     private String status;
     private String[] imageUrls;
+    private UserRequestInfoResponse user;
     private List<ServicePackageResponse> packages;
     private List<ServiceCheckoutResponse> services;
     private List<PartCheckoutResponse> parts;

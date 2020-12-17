@@ -40,7 +40,7 @@ public class RequestController {
     }
 
     @GetMapping("/providers/{providerId}")
-    public List<RequestCheckOutResponse> getAllBookingByProviderId(@PathVariable Long providerId) {
+    public Object getAllBookingByProviderId(@PathVariable Long providerId) {
         return requestService.findAllByProviderId(providerId);
     }
 

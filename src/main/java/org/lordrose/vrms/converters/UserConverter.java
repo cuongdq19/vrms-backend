@@ -4,6 +4,7 @@ import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.domains.Vehicle;
 import org.lordrose.vrms.models.responses.UserInfoResponse;
+import org.lordrose.vrms.models.responses.UserRequestInfoResponse;
 import org.lordrose.vrms.models.responses.UserVehicleInfoResponse;
 
 import java.util.Collection;
@@ -44,5 +45,15 @@ public class UserConverter {
         return users.stream()
                 .map(UserConverter::toUserInfoResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static UserRequestInfoResponse toRequestUserInfoResponse(User user) {
+        return UserRequestInfoResponse.builder()
+                .id(user.getId())
+                .phoneNumber(user.getPhoneNumber())
+                .fullName(user.getFullName())
+                .gender(user.getGender())
+                .imageUrl(user.getImageUrl())
+                .build();
     }
 }
