@@ -13,6 +13,7 @@ import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
+import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceOptionResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponses;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 
@@ -43,6 +45,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ProviderRepository providerRepository;
     private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
+    private final PartRepository partRepository;
 
     @Override
     public Object findAllByProviderId(Long providerId) {
@@ -58,6 +61,24 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return toAllServicesResponses(
                 serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type),
                 typeDetailRepository.findAllByTypeId(typeId));
+    }
+
+    @Override
+    public Object findAllByProviderIdAndTypeIdModelId(Long providerId, Long typeId, Long modelId) {
+        ServiceType type = typeRepository.findById(typeId)
+                .orElseThrow(() -> newExceptionWithId(typeId));
+
+        List<Service> services = serviceRepository.findAllByProviderIdAndTypeDetailTypeAndModelGroup_Models_Id(
+                providerId, type, modelId).stream()
+                .filter(service -> {
+                    Long categoryId = service.getTypeDetail().getPartCategoryId();
+                    if (categoryId == null) {
+                        return true;
+                    }
+                    return partRepository.existsByCategoryIdAndProviderId(categoryId, providerId);
+                }).collect(Collectors.toList());
+
+        return toServiceResponses(services);
     }
 
     @Override
