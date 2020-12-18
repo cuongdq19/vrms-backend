@@ -11,7 +11,12 @@ import java.util.stream.Collectors;
 public class ExpenseConverter {
 
     public static ExpenseResponse toExpenseResponse(IncurredExpense expense) {
-        return ExpenseResponse.builder().build();
+        return ExpenseResponse.builder()
+                .id(expense.getId())
+                .name(expense.getName())
+                .price(expense.getPrice())
+                .description(expense.getDescription())
+                .build();
     }
 
     public static List<ExpenseResponse> toExpenseResponses(Collection<IncurredExpense> expenses) {

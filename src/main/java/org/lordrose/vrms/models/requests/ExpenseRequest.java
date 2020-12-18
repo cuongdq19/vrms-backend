@@ -1,7 +1,6 @@
-package org.lordrose.vrms.models.responses;
+package org.lordrose.vrms.models.requests;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,10 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ExpenseResponse {
+public class ExpenseRequest {
 
-    private Long id;
     private String name;
     private Double price;
     private String description;

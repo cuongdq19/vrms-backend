@@ -2,6 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Feedback;
+import org.lordrose.vrms.domains.IncurredExpense;
 import org.lordrose.vrms.domains.PartRequest;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
@@ -18,6 +19,7 @@ import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
 import org.lordrose.vrms.repositories.FeedbackRepository;
+import org.lordrose.vrms.repositories.IncurredExpenseRepository;
 import org.lordrose.vrms.repositories.NotificationRepository;
 import org.lordrose.vrms.repositories.PackageRequestRepository;
 import org.lordrose.vrms.repositories.PartRepository;
@@ -63,6 +65,7 @@ public class RequestServiceImpl implements RequestService {
     private final ServiceRequestPartRepository requestPartRepository;
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
+    private final IncurredExpenseRepository expenseRepository;
     
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
@@ -194,7 +197,65 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestCheckOutResponse update(Long requestId, CheckinRequest request) {
-        return toRequestCheckoutResponse(null);
+        Set<Long> packageIds = request.getPackageIds();
+        Map<Long, ServicePartRequest> serviceParts = request.getServiceParts();
+        Map<Long, Integer> partMap = request.getParts();
+        if (packageIds.isEmpty() && serviceParts.keySet().isEmpty() && partMap.keySet().isEmpty()) {
+            throw new InvalidArgumentException("At least one field is required!");
+        }
+
+        Request result = requestRepository.findById(requestId)
+                .orElseThrow(() -> newExceptionWithId(requestId));
+
+        result.getServices().forEach(serviceRequestRepository::delete);
+
+        Set<ServiceRequest> services = serviceRepository.findAllById(serviceParts.keySet()).stream()
+                .map(serviceDetail -> {
+                    ServicePartRequest partRequest = request.getServiceParts().get(serviceDetail.getId());
+                    Integer quantity = partRequest.getQuantity();
+                    VehiclePart part = partRepository.findById(partRequest.getId())
+                            .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
+                    return serviceRequestRepository.save(ServiceRequest.builder()
+                            .price(serviceDetail.getPrice())
+                            .service(serviceDetail)
+                            .request(result)
+                            .requestPart(requestPartRepository.save(ServiceRequestPart.builder()
+                                    .quantity(quantity)
+                                    .price(part.getPrice())
+                                    .vehiclePart(part)
+                                    .build()))
+                            .build());
+                })
+                .collect(Collectors.toSet());
+        result.setServices(services);
+
+        result.getParts().forEach(partRequestRepository::delete);
+
+        Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
+                .map(part -> PartRequest.builder()
+                        .quantity(partMap.get(part.getId()))
+                        .price(part.getPrice())
+                        .request(result)
+                        .vehiclePart(part)
+                        .build())
+                .collect(Collectors.toSet());
+        result.setParts(new HashSet<>(partRequestRepository.saveAll(parts)));
+
+        result.getExpenses().forEach(expenseRepository::delete);
+
+        Set<IncurredExpense> expenses = new HashSet<>(expenseRepository.saveAll(request.getExpenses().stream()
+                .map(expenseRequest -> IncurredExpense.builder()
+                        .name(expenseRequest.getName())
+                        .price(expenseRequest.getPrice())
+                        .description(expenseRequest.getDescription())
+                        .request(result)
+                        .build())
+                .collect(Collectors.toList())));
+        result.setExpenses(expenses);
+
+        return toRequestCheckoutResponse(
+                requestRepository.findById(result.getId())
+                        .orElseThrow(() -> newExceptionWithId(result.getId())));
     }
 
     @Override
