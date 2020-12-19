@@ -11,9 +11,11 @@ import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.services.ServiceTypeDetailService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithValue;
@@ -27,22 +29,12 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
     private final PartCategoryRepository categoryRepository;
 
     @Override
-    public Object findAll(Long typeId) {
-        return typeDetailRepository.findAllByTypeId(typeId).stream()
-                .map(detail -> ServiceTypeDetailResponse.builder()
-                        .id(detail.getId())
-                        .typeName(detail.getType().getName())
-                        .sectionId(detail.getSection().getId())
-                        .sectionName(detail.getSection().getName())
-                        .categoryId(detail.getPartCategoryId())
-                        .categoryName(detail.getPartCategoryName())
-                        .build())
-                .collect(Collectors.toList());
-    }
+    public Object findAll(Set<Long> typeIds) {
+        List<ServiceTypeDetail> result = new ArrayList<>();
 
-    @Override
-    public Object findAll() {
-        return typeDetailRepository.findAll().stream()
+        typeIds.forEach(typeId -> result.addAll(typeDetailRepository.findAllByTypeId(typeId)));
+
+        return result.stream()
                 .map(detail -> ServiceTypeDetailResponse.builder()
                         .id(detail.getId())
                         .typeName(detail.getType().getName())

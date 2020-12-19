@@ -1,10 +1,10 @@
 package org.lordrose.vrms.services;
 
+import java.util.Set;
+
 public interface ServiceTypeDetailService {
 
-    Object findAll(Long typeId);
-
-    Object findAll();
+    Object findAll(Set<Long> typeIds);
 
     Object findAllSectionReplaced();
 
