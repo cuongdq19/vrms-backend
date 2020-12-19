@@ -14,6 +14,11 @@ public class ServiceTypeDetailController {
 
     private final ServiceTypeDetailService typeDetailService;
 
+    @GetMapping
+    public Object findAll() {
+        return typeDetailService.findAll();
+    }
+
     @GetMapping("/{typeId}")
     public Object findAllTypeId(@PathVariable Long typeId) {
         return typeDetailService.findAll(typeId);

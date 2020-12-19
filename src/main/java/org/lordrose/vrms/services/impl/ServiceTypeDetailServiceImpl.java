@@ -40,6 +40,20 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Object findAll() {
+        return typeDetailRepository.findAll().stream()
+                .map(detail -> ServiceTypeDetailResponse.builder()
+                        .id(detail.getId())
+                        .typeName(detail.getType().getName())
+                        .sectionId(detail.getSection().getId())
+                        .sectionName(detail.getSection().getName())
+                        .categoryId(detail.getPartCategoryId())
+                        .categoryName(detail.getPartCategoryName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     public Object findAllSectionReplaced() {
         ServiceType replace = typeRepository.findByName("Thay thế và lắp ráp")
                 .orElseThrow(() -> newExceptionWithValue("Thay thế và lắp ráp"));
