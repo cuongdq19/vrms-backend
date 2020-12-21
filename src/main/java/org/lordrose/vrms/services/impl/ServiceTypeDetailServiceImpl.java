@@ -44,7 +44,7 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
     }
 
     @Override
-    public Object findAllCategories() {
-        return categoryRepository.findAll();
+    public Object findAllCategories(Long sectionId) {
+        return categoryRepository.findAllBySectionId(sectionId);
     }
 }

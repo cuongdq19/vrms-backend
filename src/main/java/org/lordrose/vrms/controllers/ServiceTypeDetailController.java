@@ -3,6 +3,7 @@ package org.lordrose.vrms.controllers;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.services.ServiceTypeDetailService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +28,8 @@ public class ServiceTypeDetailController {
         return typeDetailService.findAllServiceTypeSections();
     }
 
-    @GetMapping("/categories")
-    public Object findAllCategories() {
-        return typeDetailService.findAllCategories();
+    @GetMapping("/categories/sections/{sectionId}")
+    public Object findAllCategoriesBySection(@PathVariable Long sectionId) {
+        return typeDetailService.findAllCategories(sectionId);
     }
 }

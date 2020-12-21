@@ -8,5 +8,5 @@ public interface ServiceTypeDetailService {
 
     Object findAllServiceTypeSections();
 
-    Object findAllCategories();
+    Object findAllCategories(Long sectionId);
 }
