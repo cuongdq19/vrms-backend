@@ -15,7 +15,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        testPackage();
     }
 
 //    private void testPackage() {
