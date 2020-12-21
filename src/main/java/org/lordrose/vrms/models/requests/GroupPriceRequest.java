@@ -14,5 +14,6 @@ import java.util.Set;
 public class GroupPriceRequest {
 
     private Set<Long> modelIds;
+    private String name;
     private Double price;
 }

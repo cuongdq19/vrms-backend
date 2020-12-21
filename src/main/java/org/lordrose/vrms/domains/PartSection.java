@@ -11,7 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,4 +31,7 @@ public class PartSection {
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "section")
+    private Set<PartCategory> categories = new HashSet<>();
 }

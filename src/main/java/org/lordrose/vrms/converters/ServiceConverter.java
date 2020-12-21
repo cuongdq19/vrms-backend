@@ -28,7 +28,7 @@ public class ServiceConverter {
                                                                     Collection<VehiclePart> parts) {
         return ServicePriceDetailResponse.builder()
                 .serviceId(service.getId())
-                .serviceName(service.getTypeDetail().getServiceTypeDetailName())
+                .serviceName(service.getName())
                 .servicePrice(service.getPrice())
                 .parts(toEmptyModelPartResponses(parts))
                 .build();
@@ -37,6 +37,7 @@ public class ServiceConverter {
     public static ServiceTypeDetailResponse toServiceTypeDetailResponse(ServiceTypeDetail typeDetail) {
         return ServiceTypeDetailResponse.builder()
                 .id(typeDetail.getId())
+                .typeId(typeDetail.getType().getId())
                 .typeName(typeDetail.getType().getName())
                 .sectionId(typeDetail.getSection().getId())
                 .sectionName(typeDetail.getSection().getName())
@@ -111,7 +112,7 @@ public class ServiceConverter {
     public static ServiceOptionResponse toServiceOptionResponse(Service service) {
         return ServiceOptionResponse.builder()
                 .serviceId(service.getId())
-                .serviceName(service.getTypeDetail().getServiceTypeDetailName())
+                .serviceName(service.getName())
                 .price(service.getPrice())
                 .build();
     }

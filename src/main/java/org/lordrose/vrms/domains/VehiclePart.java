@@ -71,6 +71,9 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
             inverseJoinColumns = @JoinColumn(name = "model_id"))
     private Set<VehicleModel> models = new HashSet<>();
 
+    @ManyToMany(mappedBy = "parts")
+    private Set<Service> services = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

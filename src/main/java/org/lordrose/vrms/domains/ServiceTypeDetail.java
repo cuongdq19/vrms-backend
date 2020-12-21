@@ -36,10 +36,6 @@ public class ServiceTypeDetail {
     @JoinColumn(name = "section_id", nullable = false)
     private PartSection section;
 
-    public String getServiceTypeDetailName() {
-        return type.getName() + " - " + section.getName();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

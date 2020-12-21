@@ -72,7 +72,7 @@ public class RequestConverter {
                         .map(service -> ServiceCheckoutResponse.builder()
                                 .id(service.getId())
                                 .serviceId(service.getService().getId())
-                                .serviceName(service.getService().getTypeDetail().getServiceTypeDetailName())
+                                .serviceName(service.getService().getName())
                                 .servicePrice(service.getPrice())
                                 .part(toPartCheckoutResponse(service.getRequestPart()))
                                 .build())

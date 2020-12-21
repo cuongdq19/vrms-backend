@@ -93,6 +93,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         validateCreate(request.getTypeDetailId(), providerId, request.getGroupPriceRequest().getModelIds());
 
         Service service = Service.builder()
+                .name(request.getGroupPriceRequest().getName())
                 .price(request.getGroupPriceRequest().getPrice())
                 .typeDetail(typeDetail)
                 .provider(provider)
@@ -128,6 +129,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         validateUpdate(result, request.getModelIds());
 
+        result.setName(request.getName());
         result.setPrice(request.getPrice());
         result.getModelGroup().getModels().clear();
         result.getModelGroup().setModels(
@@ -142,7 +144,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .ifPresentOrElse(
                         service -> serviceRepository.deleteById(service.getId()),
                         () -> {throw newExceptionWithId(serviceId);});
-
     }
 
     @Override

@@ -12,8 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Objects;
@@ -50,7 +51,10 @@ public class Service {
     @JoinColumn(name = "group_id", nullable = false)
     private ModelGroup modelGroup;
 
-    @OneToMany(mappedBy = "service")
+    @ManyToMany
+    @JoinTable(name = "tbl_vehicle_part_service",
+            joinColumns = @JoinColumn(name = "vehicle_part_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
     private Set<VehiclePart> parts = new HashSet<>();
 
     @Override
