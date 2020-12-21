@@ -61,6 +61,10 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
     @JoinColumn(name = "category_id")
     private PartCategory category;
 
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Service service;
+
     @ManyToMany
     @JoinTable(name = "tbl_vehicle_part_model",
             joinColumns = @JoinColumn(name = "vehicle_part_id"),

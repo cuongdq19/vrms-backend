@@ -13,8 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,6 +31,9 @@ public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "price")
     private Double price;
@@ -43,6 +49,9 @@ public class Service {
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
     private ModelGroup modelGroup;
+
+    @OneToMany(mappedBy = "service")
+    private Set<VehiclePart> parts = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

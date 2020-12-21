@@ -6,29 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long> {
-
-    List<Service> findAllByTypeDetailIdAndModelGroup_Models_Id(
-            Long typeDetailId, Long modelId);
-
-    List<Service> findAllByTypeDetailPartCategory_IdAndModelGroup_Models_Id(
-            Long categoryId, Long modelId);
-
-    List<Service> findAllByProviderIdAndModelGroup_Models_Id(
-            Long providerId, Long modelId);
 
     List<Service> findAllByTypeDetailIdAndProviderId(Long typeDetailId, Long providerId);
 
     List<Service> findAllByProviderId(Long providerId);
 
     List<Service> findAllByProviderIdAndTypeDetailType(Long providerId, ServiceType type);
-
-    List<Service> findAllByProviderIdAndTypeDetailTypeAndModelGroup_Models_Id(
-            Long providerId, ServiceType type, Long modelId);
-
-    Optional<Service> findAllByProviderIdAndTypeDetailPartCategory_IdAndModelGroup_Models_Id(
-            Long providerId, Long categoryId, Long modelId);
 }

@@ -36,24 +36,8 @@ public class ServiceTypeDetail {
     @JoinColumn(name = "section_id", nullable = false)
     private PartSection section;
 
-    @ManyToOne
-    @JoinColumn(name = "part_category_id")
-    private PartCategory partCategory;
-
-    public Long getPartCategoryId() {
-        return partCategory == null ? null : partCategory.getId();
-    }
-
-    public String getPartCategoryName() {
-        return partCategory == null ? "" : partCategory.getName();
-    }
-
-    private String getCategoryToString() {
-        return partCategory == null ? "" : " - " + getPartCategoryName();
-    }
-
     public String getServiceTypeDetailName() {
-        return type.getName() + " - " + section.getName() + getCategoryToString();
+        return type.getName() + " - " + section.getName();
     }
 
     @Override

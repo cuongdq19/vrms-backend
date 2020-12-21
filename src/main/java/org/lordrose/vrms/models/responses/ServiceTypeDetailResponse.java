@@ -17,6 +17,4 @@ public class ServiceTypeDetailResponse {
     private String typeName;
     private Long sectionId;
     private String sectionName;
-    private Long categoryId;
-    private String categoryName;
 }

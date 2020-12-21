@@ -40,8 +40,6 @@ public class ServiceConverter {
                 .typeName(typeDetail.getType().getName())
                 .sectionId(typeDetail.getSection().getId())
                 .sectionName(typeDetail.getSection().getName())
-                .categoryId(typeDetail.getPartCategoryId())
-                .categoryName(typeDetail.getPartCategoryName())
                 .build();
     }
 
