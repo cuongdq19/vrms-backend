@@ -795,8 +795,12 @@ INSERT INTO TBL_VEHICLE(COLOR,PLATE_NUMBER,VIN_NUMBER,VEHICLE_TYPE_ID,USER_ID) V
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,1);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (2,1);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (3,1);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,2);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (2,2);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (3,2);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,3);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (2,3);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (3,3);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (4,3);
 
 INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID) VALUES (80000,7,2,17);
