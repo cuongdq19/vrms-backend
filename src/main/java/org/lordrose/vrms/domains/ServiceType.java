@@ -34,4 +34,8 @@ public class ServiceType {
 
     @OneToMany(mappedBy = "type", fetch = FetchType.EAGER)
     private Set<ServiceTypeDetail> details;
+
+    public boolean isReplacingTyped() {
+        return "Thay thế và lắp ráp".equalsIgnoreCase(name);
+    }
 }

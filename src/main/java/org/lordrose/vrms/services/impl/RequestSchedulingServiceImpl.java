@@ -22,7 +22,7 @@ import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
 @Service
 public class RequestSchedulingServiceImpl implements RequestSchedulingService {
 
-    private static final long HOUR_LIMIT = 4;
+    private static final long HOUR_LIMIT = 2;
 
     private final ProviderRepository providerRepository;
     private final RequestRepository requestRepository;
@@ -70,7 +70,7 @@ public class RequestSchedulingServiceImpl implements RequestSchedulingService {
 
     private boolean isInThePass(LocalDate date, LocalTime time) {
         LocalDateTime dateTime = LocalDateTime.of(date, time);
-        return dateTime.isBefore(LocalDateTime.now().minusHours(HOUR_LIMIT));
+        return dateTime.isBefore(LocalDateTime.now().plusHours(HOUR_LIMIT));
     }
 
     private boolean isFull(LocalDate date, LocalTime slotBeginning, int capacity) {

@@ -30,6 +30,7 @@ public class ServiceConverter {
                 .serviceId(service.getId())
                 .serviceName(service.getName())
                 .servicePrice(service.getPrice())
+                .typeDetail(toServiceTypeDetailResponse(service.getTypeDetail()))
                 .parts(toEmptyModelPartResponses(parts))
                 .build();
     }

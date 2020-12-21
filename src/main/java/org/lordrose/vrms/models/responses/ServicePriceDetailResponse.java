@@ -18,5 +18,6 @@ public class ServicePriceDetailResponse {
     private Long serviceId;
     private String serviceName;
     private Double servicePrice;
+    private ServiceTypeDetailResponse typeDetail;
     private List<PartResponse> parts;
 }

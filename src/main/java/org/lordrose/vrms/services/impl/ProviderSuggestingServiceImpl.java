@@ -15,6 +15,7 @@ import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +36,30 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
 
     @Override
     public Object findProviders(FindProviderWithServicesRequest request) {
-        return null;
+        VehicleModel model = modelRepository.findById(request.getModelId())
+                .orElseThrow(() -> newExceptionWithId(request.getModelId()));
+
+        List<Service> services = new ArrayList<>();
+        request.getServiceDetailIds().forEach(detailId -> services.addAll(
+                serviceRepository.findDistinctByTypeDetailIdAndModelGroup_Models_Id(detailId, model.getId())
+        ));
+
+        Map<Provider, List<Service>> byProvider = services.stream()
+                .filter(service -> {
+                    if (!service.getTypeDetail().getType().isReplacingTyped()) {
+                        return true;
+                    }
+                    return partRepository.existsByServices_IdAndModels_Id(service.getId(), model.getId());
+                })
+                .collect(Collectors.groupingBy(Service::getProvider));
+
+        List<ProviderSuggestedServiceResponse> responses = new ArrayList<>();
+        byProvider.forEach(((provider, serviceList) -> responses.add(
+                returnResponse(provider, request.getCurrentPos(), serviceList, model)
+        )));
+        return responses.stream()
+                .sorted(Comparator.comparingDouble(ProviderSuggestedServiceResponse::getDistance))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -52,7 +76,9 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
         List<ProviderSuggestedServiceResponse> responses = new ArrayList<>();
         byProvider.forEach(((provider, serviceList) -> responses.add(
                 returnResponse(provider, request.getCurrentPos(), serviceList, model))));
-        return responses;
+        return responses.stream()
+                .sorted(Comparator.comparingDouble(ProviderSuggestedServiceResponse::getDistance))
+                .collect(Collectors.toList());
     }
 
     @Override
