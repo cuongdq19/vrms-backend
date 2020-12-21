@@ -43,6 +43,12 @@ public class ServiceConverter {
                 .build();
     }
 
+    public static List<ServiceTypeDetailResponse> toServiceTypeDetailResponses(Collection<ServiceTypeDetail> typeDetails) {
+        return typeDetails.stream()
+                .map(ServiceConverter::toServiceTypeDetailResponse)
+                .collect(Collectors.toList());
+    }
+
     public static ServiceResponse toServiceResponse(Service service) {
         return ServiceResponse.builder()
                 .typeDetail(toServiceTypeDetailResponse(service.getTypeDetail()))

@@ -5,7 +5,6 @@ import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.models.responses.ServiceTypeDetailResponse;
 import org.lordrose.vrms.repositories.PartCategoryRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
-import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.services.ServiceTypeDetailService;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +13,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceTypeDetailResponses;
+
 @RequiredArgsConstructor
 @Service
 public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
 
     private final ServiceTypeDetailRepository typeDetailRepository;
-    private final ServiceTypeRepository typeRepository;
     private final PartCategoryRepository categoryRepository;
 
     @Override
@@ -39,8 +39,8 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
     }
 
     @Override
-    public Object findAllSectionReplaced() {
-        return null;
+    public Object findAllServiceTypeSections() {
+        return toServiceTypeDetailResponses(typeDetailRepository.findAll());
     }
 
     @Override

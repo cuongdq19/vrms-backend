@@ -6,7 +6,7 @@ public interface ServiceTypeDetailService {
 
     Object findAll(Set<Long> typeIds);
 
-    Object findAllSectionReplaced();
+    Object findAllServiceTypeSections();
 
     Object findAllCategories();
 }

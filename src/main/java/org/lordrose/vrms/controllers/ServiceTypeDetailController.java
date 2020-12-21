@@ -23,8 +23,8 @@ public class ServiceTypeDetailController {
     }
 
     @GetMapping("/sections")
-    public Object findAllSectionsWithCategory() {
-        return typeDetailService.findAllSectionReplaced();
+    public Object findAllServiceTypeSections() {
+        return typeDetailService.findAllServiceTypeSections();
     }
 
     @GetMapping("/categories")
