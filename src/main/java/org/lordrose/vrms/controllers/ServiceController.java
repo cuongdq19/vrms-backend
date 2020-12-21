@@ -35,10 +35,10 @@ public class ServiceController {
     }
 
     @PostMapping("/providers/{providerId}/models/{modelId}")
-    public Object findServicesByProviderIdAndModelIdAndCategoryIds(@PathVariable Long providerId,
+    public Object findServicesByProviderIdAndModelIdAndPartIds(@PathVariable Long providerId,
                                                          @PathVariable Long modelId,
-                                                         @RequestBody Set<Long> categoryIds) {
-        return processingService.findAllByProviderIdAndModelIdAndCategoryIds(providerId, modelId, categoryIds);
+                                                         @RequestBody Set<Long> partIds) {
+        return processingService.findAllByProviderIdAndModelIdAnPartIds(providerId, modelId, partIds);
     }
 
     @PostMapping("/providers/{providerId}")

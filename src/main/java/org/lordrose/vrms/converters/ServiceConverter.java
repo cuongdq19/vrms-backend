@@ -117,4 +117,10 @@ public class ServiceConverter {
                 .price(service.getPrice())
                 .build();
     }
+
+    public static List<ServiceOptionResponse> toServiceOptionResponses(Collection<Service> services) {
+        return services.stream()
+                .map(ServiceConverter::toServiceOptionResponse)
+                .collect(Collectors.toList());
+    }
 }

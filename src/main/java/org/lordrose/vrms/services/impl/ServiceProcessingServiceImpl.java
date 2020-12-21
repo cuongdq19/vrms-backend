@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceOptionResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
@@ -62,11 +63,18 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     }
 
     @Override
-    public Object findAllByProviderIdAndModelIdAndCategoryIds(Long providerId, Long modelId,
-                                                              Set<Long> categoryIds) {
-        Map<Long, ServiceOptionResponse> services = new LinkedHashMap<>();
+    public Object findAllByProviderIdAndModelIdAnPartIds(Long providerId, Long modelId,
+                                                         Set<Long> partIds) {
+        Map<Long, List<ServiceOptionResponse>> servicePartIds = new LinkedHashMap<>();
 
-        return services;
+        partIds.forEach(partId -> {
+            List<Service> services = serviceRepository.findAllByProviderIdAndModelGroup_Models_IdAndParts_Id(
+                    providerId, modelId, partId);
+            if (!services.isEmpty())
+                servicePartIds.put(partId, toServiceOptionResponses(services));
+        });
+
+        return servicePartIds;
     }
 
     private void validateCreate(Long detailId, Long providerId, Set<Long> modelIds) {
