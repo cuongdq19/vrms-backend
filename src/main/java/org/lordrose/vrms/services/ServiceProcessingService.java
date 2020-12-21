@@ -11,8 +11,8 @@ public interface ServiceProcessingService {
 
     Object findAllByProviderIdAndTypeId(Long providerId, Long typeId);
 
-    Object findAllByProviderIdAndModelIdAnPartIds(Long providerId, Long modelId,
-                                                  Set<Long> categoryIds);
+    Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
+                                                   Set<Long> categoryIds);
 
     Object create(Long providerId, ServiceInfoRequest request);
 

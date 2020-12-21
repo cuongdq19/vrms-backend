@@ -12,9 +12,6 @@ import org.lordrose.vrms.models.responses.ServiceTypeDetailResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,29 +66,17 @@ public class ServiceConverter {
         return services.stream()
                 .map(service -> ServiceDetailResponse.builder()
                         .id(service.getId())
+                        .name(service.getName())
                         .price(service.getPrice())
                         .group(toGroupResponse(service.getModelGroup()))
+                        .parts(toEmptyModelPartResponses(service.getParts()))
                         .build())
                 .collect(Collectors.toList());
     }
 
-    public static List<ServiceResponse> toServiceResponses(Collection<Service> services) {
-        Map<ServiceTypeDetail, List<Service>> byGroup = new HashMap<>(services.stream()
-                .collect(Collectors.groupingBy(Service::getTypeDetail)));
-        List<ServiceResponse> responses = new ArrayList<>();
-        byGroup.forEach(
-                (typeDetail, serviceList) ->
-                        responses.add(toServiceResponse(typeDetail, serviceList))
-        );
-        return responses;
-    }
-
-    public static List<ServiceResponse> toAllServicesResponses(Collection<Service> services,
-                                                               List<ServiceTypeDetail> allTypes) {
-        Map<ServiceTypeDetail, List<Service>> byType = new LinkedHashMap<>();
-        allTypes.forEach(type -> byType.put(type, Collections.emptyList()));
-        byType.putAll(services.stream()
-                .collect(Collectors.groupingBy(Service::getTypeDetail)));
+    public static List<ServiceResponse> toAllServicesResponses(Collection<Service> services) {
+        Map<ServiceTypeDetail, List<Service>> byType = services.stream()
+                .collect(Collectors.groupingBy(Service::getTypeDetail));
         List<ServiceResponse> responses = new ArrayList<>();
         byType.forEach(
                 (typeDetail, serviceList) ->

@@ -18,8 +18,8 @@ import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
-import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -44,27 +44,26 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ProviderRepository providerRepository;
     private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
-    private final VehiclePartRepository partRepository;
 
+    @Transactional
     @Override
     public Object findAllByProviderId(Long providerId) {
         return toAllServicesResponses(
-                serviceRepository.findAllByProviderId(providerId),
-                typeDetailRepository.findAll());
+                serviceRepository.findAllByProviderId(providerId));
     }
 
+    @Transactional
     @Override
     public Object findAllByProviderIdAndTypeId(Long providerId, Long typeId) {
         ServiceType type = typeRepository.findById(typeId)
                 .orElseThrow(() -> newExceptionWithId(typeId));
         return toAllServicesResponses(
-                serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type),
-                typeDetailRepository.findAllByTypeId(typeId));
+                serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type));
     }
 
     @Override
-    public Object findAllByProviderIdAndModelIdAnPartIds(Long providerId, Long modelId,
-                                                         Set<Long> partIds) {
+    public Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
+                                                          Set<Long> partIds) {
         Map<Long, List<ServiceOptionResponse>> servicePartIds = new LinkedHashMap<>();
 
         partIds.forEach(partId -> {
@@ -91,6 +90,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         }
     }
 
+    @Transactional
     @Override
     public Object create(Long providerId, ServiceInfoRequest request) {
         ServiceTypeDetail typeDetail = typeDetailRepository.findById(request.getTypeDetailId())
@@ -130,6 +130,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         }
     }
 
+    @Transactional
     @Override
     public Object update(Long serviceId, GroupPriceRequest request) {
         Service result = serviceRepository.findById(serviceId)
@@ -165,7 +166,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .collect(Collectors.toSet());
 
         if (!modelIds.isEmpty())
-            return toModelResponses(modelRepository.findALlByIdNotIn(modelIds));
+            return toModelResponses(modelRepository.findAllByIdNotIn(modelIds));
         else
             return toModelResponses(modelRepository.findAll());
     }

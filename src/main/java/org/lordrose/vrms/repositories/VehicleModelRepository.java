@@ -16,5 +16,5 @@ public interface VehicleModelRepository extends JpaRepository<VehicleModel, Long
 
     List<VehicleModel> findAllByManufacturerIdAndNameIgnoreCase(Long manufacturerId, String name);
 
-    List<VehicleModel> findALlByIdNotIn(Set<Long> modelIds);
+    List<VehicleModel> findAllByIdNotIn(Set<Long> modelIds);
 }
