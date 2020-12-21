@@ -13,12 +13,12 @@ import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
-import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
+import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 
 import java.util.HashSet;
@@ -43,7 +43,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ProviderRepository providerRepository;
     private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
-    private final PartRepository partRepository;
+    private final VehiclePartRepository partRepository;
 
     @Override
     public Object findAllByProviderId(Long providerId) {

@@ -8,9 +8,9 @@ import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.PartRequest;
 import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.repositories.PartCategoryRepository;
-import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
+import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.PartService;
 import org.lordrose.vrms.services.StorageService;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptio
 @Service
 public class PartServiceImpl implements PartService {
 
-    private final PartRepository partRepository;
+    private final VehiclePartRepository partRepository;
     private final VehicleModelRepository modelRepository;
     private final ProviderRepository providerRepository;
     private final PartCategoryRepository categoryRepository;

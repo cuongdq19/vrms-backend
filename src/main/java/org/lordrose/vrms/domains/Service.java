@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,10 +52,10 @@ public class Service {
     @JoinColumn(name = "group_id", nullable = false)
     private ModelGroup modelGroup;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tbl_vehicle_part_service",
-            joinColumns = @JoinColumn(name = "vehicle_part_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id"))
+            joinColumns = @JoinColumn(name = "service_id"),
+            inverseJoinColumns = @JoinColumn(name = "vehicle_part_id"))
     private Set<VehiclePart> parts = new HashSet<>();
 
     @Override

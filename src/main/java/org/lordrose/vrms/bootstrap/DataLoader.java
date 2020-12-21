@@ -1,10 +1,6 @@
 package org.lordrose.vrms.bootstrap;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.repositories.BasePackageRepository;
-import org.lordrose.vrms.repositories.ProviderRepository;
-import org.lordrose.vrms.repositories.ServicePackageRepository;
-import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final ProviderRepository providerRepository;
-    private final ServicePackageRepository servicePackageRepository;
-    private final BasePackageRepository basePackageRepository;
-    private final ServiceTypeDetailRepository typeDetailRepository;
+//    private final ProviderRepository providerRepository;
+//    private final ServicePackageRepository servicePackageRepository;
+//    private final BasePackageRepository basePackageRepository;
+//    private final ServiceTypeDetailRepository typeDetailRepository;
 
     @Override
     public void run(String... args) {
+//        testPackage();
+    }
+
+//    private void testPackage() {
 //        BasePackage five_km = basePackageRepository.save(BasePackage.builder()
 //                .name("5000 km")
 //                .description("Bao duong 5000 km")
@@ -76,5 +76,5 @@ public class DataLoader implements CommandLineRunner {
 //            });
 //            System.out.println("------");
 //        });
-    }
+//    }
 }

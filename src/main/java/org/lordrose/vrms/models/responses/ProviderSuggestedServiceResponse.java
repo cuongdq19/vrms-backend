@@ -24,6 +24,5 @@ public class ProviderSuggestedServiceResponse {
     private Double ratings;
     private Double distance;
     private String manufacturerName;
-    private Double totalPrice;
     private List<ServicePriceDetailResponse> priceDetails;
 }

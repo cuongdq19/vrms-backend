@@ -32,6 +32,9 @@ public class PartCategory {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "image_url", length = 2000)
+    private String imageUrl;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "section_id")

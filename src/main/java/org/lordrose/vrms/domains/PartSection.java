@@ -32,6 +32,9 @@ public class PartSection {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "image_url", length = 2000)
+    private String imageUrl;
+
     @OneToMany(mappedBy = "section")
     private Set<PartCategory> categories = new HashSet<>();
 }

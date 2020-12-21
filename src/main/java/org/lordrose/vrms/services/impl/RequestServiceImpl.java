@@ -22,7 +22,6 @@ import org.lordrose.vrms.repositories.FeedbackRepository;
 import org.lordrose.vrms.repositories.IncurredExpenseRepository;
 import org.lordrose.vrms.repositories.NotificationRepository;
 import org.lordrose.vrms.repositories.PackageRequestRepository;
-import org.lordrose.vrms.repositories.PartRepository;
 import org.lordrose.vrms.repositories.PartRequestRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
@@ -31,6 +30,7 @@ import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceRequestPartRepository;
 import org.lordrose.vrms.repositories.ServiceRequestRepository;
 import org.lordrose.vrms.repositories.UserRepository;
+import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
 import org.lordrose.vrms.services.RequestService;
 
@@ -57,7 +57,7 @@ public class RequestServiceImpl implements RequestService {
     private final VehicleRepository vehicleRepository;
     private final ServiceRepository serviceRepository;
     private final ServiceRequestRepository serviceRequestRepository;
-    private final PartRepository partRepository;
+    private final VehiclePartRepository partRepository;
     private final PartRequestRepository partRequestRepository;
     private final ServicePackageRepository servicePackageRepository;
     private final PackageRequestRepository packageRequestRepository;

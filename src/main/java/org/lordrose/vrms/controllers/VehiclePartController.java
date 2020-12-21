@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.models.requests.PartRequest;
 import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.services.PartService;
+import org.lordrose.vrms.services.PartSuggestingService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,9 +21,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/parts")
-public class PartController {
+public class VehiclePartController {
 
     private final PartService partService;
+    private final PartSuggestingService suggestingService;
+
+    @GetMapping("/categories/{categoryId}")
+    public Object getAllByCategory(@PathVariable Long categoryId) {
+        return suggestingService.findAllByCategory(categoryId);
+    }
 
     @GetMapping("/{providerId}")
     public List<PartResponse> getAllByProviderId(@PathVariable Long providerId) {
