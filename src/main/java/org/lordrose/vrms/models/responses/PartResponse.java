@@ -22,6 +22,7 @@ public class PartResponse {
     private Integer warrantyDuration;
     private Integer monthsPerMaintenance;
     private String[] imageUrls;
+    private Long sectionId;
     private Long categoryId;
     private String categoryName;
     private List<VehicleModelResponse> models;
