@@ -58,6 +58,9 @@ public class Service {
             inverseJoinColumns = @JoinColumn(name = "vehicle_part_id"))
     private Set<VehiclePart> parts = new HashSet<>();
 
+    @ManyToMany(mappedBy = "packagedServices")
+    private Set<ServicePackage> packages = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

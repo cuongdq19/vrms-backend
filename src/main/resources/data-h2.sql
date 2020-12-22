@@ -5,8 +5,6 @@ INSERT INTO TBL_SERVICE_TYPE(id,name) VALUES (2,'Vệ sinh');
 INSERT INTO TBL_SERVICE_TYPE(id,name) VALUES (3,'Thay thế và lắp ráp');
 
 
-INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (14,'Hệ thống phanh','https://scdn.autoteiledirekt.de/catalog/categories/300x300/2.png?rev=94077798');
-INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (15,'Bộ lọc','https://scdn.autoteiledirekt.de/catalog/categories/300x300/9.png?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (1,'Thân xe','https://scdn.autoteiledirekt.de/catalog/categories/300x300/3.png?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (2,'Động cơ','https://scdn.autoteiledirekt.de/catalog/categories/300x300/1.png?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (3,'Hệ thống lò xo','https://scdn.autoteiledirekt.de/catalog/categories/300x300/74.png?rev=94077798');
@@ -19,6 +17,8 @@ INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (10,'Thiết bị lái','
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (11,'Bánh xe','https://cdn.autoteiledirekt.de/uploads/tyres/full/PKW/4019238791648_0355085.jpg?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (12,'Nội thất','https://image.thanhnien.vn/660/uploaded/bahung/z-ba-hung-2020/thang-7-2020/10-noi-that-oto/10-noi-that-oto_thanhnien-8_moih.jpg');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (13,'Thiết bị khác',NULL);
+INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (14,'Hệ thống phanh','https://scdn.autoteiledirekt.de/catalog/categories/300x300/2.png?rev=94077798');
+INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (15,'Bộ lọc','https://scdn.autoteiledirekt.de/catalog/categories/300x300/9.png?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (16,'Bánh xe','https://cdn.autoteiledirekt.de/uploads/tyres/full/PKW/4019238791648_0355085.jpg?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (17,'Dầu xe hơi và nước làm mát','https://camerahanhtrinhgiare.vn/wp-content/uploads/2019/06/camera-hanh-trinh-m06.png');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (18,'Cửa, kính chắn gió, cần gạt nước','https://scdn.autoteiledirekt.de/catalog/categories/300x300/126.png?rev=94077798');
@@ -26,8 +26,6 @@ INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (19,'Ắc quy, hệ thố
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (20,'Hệ thống đèn','https://scdn.autoteiledirekt.de/catalog/categories/300x300/27.png?rev=94077798');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (21,'Nội thất','https://image.thanhnien.vn/660/uploaded/bahung/z-ba-hung-2020/thang-7-2020/10-noi-that-oto/10-noi-that-oto_thanhnien-8_moih.jpg');
 INSERT INTO TBL_PART_SECTION(id,name,image_url) VALUES (22,'Ngoại thất','https://tapchicongthuong.vn/images/20/10/3/honda_civic_the_he_moi.jpg');
-
-
 
 
 INSERT INTO TBL_PART_CATEGORY(id,name,section_id,image_url) VALUES (1,'Kính chiếu hậu',1,'https://scdn.autoteiledirekt.de/catalog/categories/300x300/29.png?rev=94077798');
@@ -151,8 +149,6 @@ INSERT INTO TBL_PART_CATEGORY(id,name,section_id,image_url) VALUES (119,'Bơm ab
 INSERT INTO TBL_PART_CATEGORY(id,name,section_id,image_url) VALUES (120,'Bộ điều chỉnh lực phanh',14,'https://scdn.autoteiledirekt.de/catalog/categories/300x300/101.png?rev=94077798');
 INSERT INTO TBL_PART_CATEGORY(id,name,section_id,image_url) VALUES (121,'Bộ lọc gió',15,'https://scdn.autoteiledirekt.de/catalog/categories/300x300/52.png?rev=94077798');
 INSERT INTO TBL_PART_CATEGORY(id,name,section_id,image_url) VALUES (122,'Bộ lọc nhiên liệu',15,'https://scdn.autoteiledirekt.de/catalog/categories/300x300/53.png?rev=94077798');
-
-
 
 
 INSERT INTO TBL_MANUFACTURER(id,name,active,image_url) VALUES (1,'HONDA',1,'img');
