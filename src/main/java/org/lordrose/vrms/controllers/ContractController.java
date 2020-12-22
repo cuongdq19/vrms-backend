@@ -47,7 +47,7 @@ public class ContractController {
         return contractService.registerProvider(request, providerRequest, images);
     }
 
-    @PostMapping
+    @PostMapping("/dev")
     public Object upHinhDeLuuDatabase(@RequestParam("images") MultipartFile[] images) {
         return storageService.uploadFiles(images);
     }
