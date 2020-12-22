@@ -20,12 +20,9 @@ import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
 import org.lordrose.vrms.repositories.FeedbackRepository;
 import org.lordrose.vrms.repositories.IncurredExpenseRepository;
-import org.lordrose.vrms.repositories.NotificationRepository;
-import org.lordrose.vrms.repositories.PackageRequestRepository;
 import org.lordrose.vrms.repositories.PartRequestRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
-import org.lordrose.vrms.repositories.ServicePackageRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceRequestPartRepository;
 import org.lordrose.vrms.repositories.ServiceRequestRepository;
@@ -59,9 +56,6 @@ public class RequestServiceImpl implements RequestService {
     private final ServiceRequestRepository serviceRequestRepository;
     private final VehiclePartRepository partRepository;
     private final PartRequestRepository partRequestRepository;
-    private final ServicePackageRepository servicePackageRepository;
-    private final PackageRequestRepository packageRequestRepository;
-    private final NotificationRepository notificationRepository;
     private final ServiceRequestPartRepository requestPartRepository;
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
@@ -140,19 +134,22 @@ public class RequestServiceImpl implements RequestService {
 
         Set<ServiceRequest> services = serviceRepository.findAllById(serviceParts.keySet()).stream()
                 .map(serviceDetail -> {
-                    ServicePartRequest partRequest = request.getServiceParts().get(serviceDetail.getId());
-                    Integer quantity = partRequest.getQuantity();
-                    VehiclePart part = partRepository.findById(partRequest.getId())
-                            .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
+                    ServicePartRequest partRequest = serviceParts.get(serviceDetail.getId());
+                    ServiceRequestPart servicePart = null;
+                    if (partRequest != null) {
+                        VehiclePart part = partRepository.findById(partRequest.getId())
+                                .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
+                        servicePart = requestPartRepository.save(ServiceRequestPart.builder()
+                                .quantity(partRequest.getQuantity())
+                                .price(part.getPrice())
+                                .vehiclePart(part)
+                                .build());
+                    }
                     return serviceRequestRepository.save(ServiceRequest.builder()
                             .price(serviceDetail.getPrice())
                             .service(serviceDetail)
                             .request(saved)
-                            .requestPart(requestPartRepository.save(ServiceRequestPart.builder()
-                                    .quantity(quantity)
-                                    .price(part.getPrice())
-                                    .vehiclePart(part)
-                                    .build()))
+                            .requestPart(servicePart)
                             .build());
                 })
                 .collect(Collectors.toSet());
