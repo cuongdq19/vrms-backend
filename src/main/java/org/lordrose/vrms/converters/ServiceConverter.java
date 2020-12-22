@@ -41,6 +41,7 @@ public class ServiceConverter {
                 .typeName(typeDetail.getType().getName())
                 .sectionId(typeDetail.getSection().getId())
                 .sectionName(typeDetail.getSection().getName())
+                .sectionImageUrl(typeDetail.getSection().getImageUrl())
                 .build();
     }
 
