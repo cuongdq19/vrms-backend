@@ -208,19 +208,22 @@ public class RequestServiceImpl implements RequestService {
 
         Set<ServiceRequest> services = serviceRepository.findAllById(serviceParts.keySet()).stream()
                 .map(serviceDetail -> {
-                    ServicePartRequest partRequest = request.getServiceParts().get(serviceDetail.getId());
-                    Integer quantity = partRequest.getQuantity();
-                    VehiclePart part = partRepository.findById(partRequest.getId())
-                            .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
+                    ServicePartRequest partRequest = serviceParts.get(serviceDetail.getId());
+                    ServiceRequestPart servicePart = null;
+                    if (partRequest != null) {
+                        VehiclePart part = partRepository.findById(partRequest.getId())
+                                .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
+                        servicePart = requestPartRepository.save(ServiceRequestPart.builder()
+                                .quantity(partRequest.getQuantity())
+                                .price(part.getPrice())
+                                .vehiclePart(part)
+                                .build());
+                    }
                     return serviceRequestRepository.save(ServiceRequest.builder()
                             .price(serviceDetail.getPrice())
                             .service(serviceDetail)
                             .request(result)
-                            .requestPart(requestPartRepository.save(ServiceRequestPart.builder()
-                                    .quantity(quantity)
-                                    .price(part.getPrice())
-                                    .vehiclePart(part)
-                                    .build()))
+                            .requestPart(servicePart)
                             .build());
                 })
                 .collect(Collectors.toSet());
