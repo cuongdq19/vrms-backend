@@ -1,14 +1,12 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.lordrose.vrms.domains.ModelGroup;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehicleModel;
-import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
@@ -77,7 +75,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     }
 
     private void validateCreate(Long detailId, Long providerId, Set<Long> modelIds) {
-        List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
+        /*List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
                 detailId, providerId);
 
         Set<Long> createdModelIds = services.stream()
@@ -87,7 +85,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         if (CollectionUtils.intersection(modelIds, createdModelIds).size() != 0) {
             throw new InvalidArgumentException("Only one VehicleModel can existed in one ServiceTypeDetail");
-        }
+        }*/
     }
 
     @Transactional
@@ -117,7 +115,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     }
 
     private void validateUpdate(Service updatingService, Set<Long> modelIds) {
-        List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
+        /*List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
                 updatingService.getTypeDetail().getId(), updatingService.getProvider().getId());
         services.remove(updatingService);
 
@@ -128,7 +126,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         if (CollectionUtils.intersection(modelIds, createdModelIds).size() != 0) {
             throw new InvalidArgumentException("Only one VehicleModel can existed in one ServiceTypeDetail");
-        }
+        }*/
     }
 
     @Transactional

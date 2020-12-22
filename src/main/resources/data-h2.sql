@@ -779,6 +779,10 @@ INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (100000,
 INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (40000,5,4,1,'Service Name');
 INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (40000,6,4,1,'Service Name');
 INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (80000,7,4,7,'Service Name');
+INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (80000,7,2,17,'Service Name');
+INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (90000,7,1,17,'Service Name');
+INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (100000,7,1,14,'Service Name');
+INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (110000,7,2,14,'Service Name');
 
 
 INSERT INTO TBL_VEHICLE(COLOR,PLATE_NUMBER,VIN_NUMBER,VEHICLE_TYPE_ID,USER_ID) VALUES ('Red','69B4200',6942069420,1,21);
@@ -799,7 +803,32 @@ INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (2,3);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (3,3);
 INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (4,3);
 
-INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (80000,7,2,17,'Service Name');
-INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (90000,7,1,17,'Service Name');
-INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (100000,7,1,14,'Service Name');
-INSERT INTO TBL_SERVICE(PRICE,GROUP_ID,PROVIDER_ID,TYPE_ID,NAME) VALUES (110000,7,2,14,'Service Name');
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,4);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,5);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,6);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,7);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,8);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,9);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,10);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,11);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,12);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,13);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,14);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,15);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,16);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,17);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,18);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,19);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,20);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,21);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,22);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,23);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,24);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,25);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,26);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,27);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,28);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,29);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,30);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,31);
+INSERT INTO tbl_vehicle_part_service(vehicle_part_id,service_id) VALUES (1,32);
