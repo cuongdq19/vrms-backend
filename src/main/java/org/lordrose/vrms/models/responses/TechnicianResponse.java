@@ -16,4 +16,5 @@ public class TechnicianResponse {
     private Long id;
     private String fullName;
     private Boolean gender;
+    private String imageUrl;
 }

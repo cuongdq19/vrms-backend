@@ -8,7 +8,6 @@ import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.ProviderDetailResponse;
 import org.lordrose.vrms.models.responses.ProviderDistanceResponse;
 import org.lordrose.vrms.models.responses.SlotResponse;
-import org.lordrose.vrms.models.responses.TechnicianResponse;
 import org.lordrose.vrms.services.ProviderService;
 import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.services.RequestSchedulingService;
@@ -59,7 +58,7 @@ public class ProviderController {
     }
 
     @GetMapping("/{providerId}/timestamp/{time}")
-    public List<TechnicianResponse> getAvailableTechnician(@PathVariable Long providerId,
+    public Object getAvailableTechnician(@PathVariable Long providerId,
                                                            @PathVariable Long time) {
         return providerService.findAvailableTechnician(providerId, time);
     }

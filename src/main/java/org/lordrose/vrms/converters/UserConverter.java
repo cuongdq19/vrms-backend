@@ -63,6 +63,7 @@ public class UserConverter {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .gender(user.getGender())
+                .imageUrl(user.getImageUrl())
                 .build();
     }
 }

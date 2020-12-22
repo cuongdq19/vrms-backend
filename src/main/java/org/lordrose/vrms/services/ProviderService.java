@@ -4,7 +4,6 @@ import org.lordrose.vrms.models.requests.ProviderRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.ProviderDetailResponse;
 import org.lordrose.vrms.models.responses.ProviderDistanceResponse;
-import org.lordrose.vrms.models.responses.TechnicianResponse;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 
 import java.util.List;
@@ -19,5 +18,5 @@ public interface ProviderService {
 
     List<FeedbackResponse> findAllFeedbackByProviderId(Long providerId);
 
-    List<TechnicianResponse> findAvailableTechnician(Long providerId, Long time);
+    Object findAvailableTechnician(Long providerId, Long time);
 }
