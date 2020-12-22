@@ -1,18 +1,12 @@
 package org.lordrose.vrms.bootstrap;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.domains.Service;
-import org.lordrose.vrms.domains.ServicePackage;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServicePackageRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -25,10 +19,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        testPackage();
+        //testPackage();
     }
 
-    private void testPackage() {
+    /*private void testPackage() {
         Set<Service> temps = new HashSet<>(serviceRepository.findAllByProviderIdAndTypeDetailType_Id(1L, 1L));
         ServicePackage servicePackage_1 = servicePackageRepository.save(ServicePackage.builder()
                 .name("Cap 1")
@@ -88,5 +82,5 @@ public class DataLoader implements CommandLineRunner {
                         service.getTypeDetail().getSection().getName()));
             System.out.println("------");
         });
-    }
+    }*/
 }
