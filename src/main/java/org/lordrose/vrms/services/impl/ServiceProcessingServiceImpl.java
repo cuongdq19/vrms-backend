@@ -105,6 +105,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .price(request.getGroupPriceRequest().getPrice())
                 .typeDetail(typeDetail)
                 .provider(provider)
+                .parts(new HashSet<>())
                 .modelGroup(groupRepository.save(ModelGroup.builder()
                         .models(new HashSet<>(modelRepository.findAllById(
                                 request.getGroupPriceRequest().getModelIds())
