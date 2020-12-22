@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProviderSuggestedServiceResponse {
+public class ProviderSuggestedPartResponse {
 
     private Long id;
     private String name;
@@ -24,5 +24,5 @@ public class ProviderSuggestedServiceResponse {
     private Double ratings;
     private Double distance;
     private String manufacturerName;
-    private List<ServicePriceDetailResponse> priceDetails;
+    private List<PartSuggestingResponse> suggestedParts;
 }

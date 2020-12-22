@@ -5,10 +5,11 @@ import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehicleModel;
+import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
 import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
+import org.lordrose.vrms.models.responses.ProviderSuggestedPartResponse;
 import org.lordrose.vrms.models.responses.ProviderSuggestedServiceGroupedResponse;
-import org.lordrose.vrms.models.responses.ProviderSuggestedServiceResponse;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
@@ -24,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.PartConverter.toPartSuggestingResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toAllServicesResponses;
-import static org.lordrose.vrms.converters.ServiceConverter.toServicePriceDetailResponse;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
@@ -73,18 +74,18 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     public Object findProviders(FindProviderWithCategoryRequest request) {
         VehicleModel model = modelRepository.findById(request.getModelId())
                 .orElseThrow(() -> newExceptionWithId(request.getModelId()));
-        List<Service> services = new ArrayList<>();
-        request.getCategoryIds().forEach(categoryId -> services.addAll(
-                serviceRepository.findDistinctByParts_Category_Id(categoryId)));
+        List<VehiclePart> parts = new ArrayList<>();
+        request.getCategoryIds().forEach(categoryId -> parts.addAll(
+                partRepository.findAllByCategoryIdAndModelsContains(categoryId, model)));
 
-        Map<Provider, List<Service>> byProvider = services.stream()
-                .collect(Collectors.groupingBy(Service::getProvider));
+        Map<Provider, List<VehiclePart>> byProvider = parts.stream()
+                .collect(Collectors.groupingBy(VehiclePart::getProvider));
 
-        List<ProviderSuggestedServiceResponse> responses = new ArrayList<>();
-        byProvider.forEach(((provider, serviceList) -> responses.add(
-                returnResponse(provider, request.getCurrentPos(), serviceList, model))));
+        List<ProviderSuggestedPartResponse> responses = new ArrayList<>();
+        byProvider.forEach(((provider, partList) -> responses.add(
+                returnResponse(provider, request.getCurrentPos(), partList))));
         return responses.stream()
-                .sorted(Comparator.comparingDouble(ProviderSuggestedServiceResponse::getDistance))
+                .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getDistance))
                 .collect(Collectors.toList());
     }
 
@@ -93,9 +94,9 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
         return null; //TODO
     }
 
-    private ProviderSuggestedServiceResponse returnResponse(Provider provider, GeoPoint currentPos,
-                                                            List<Service> services, VehicleModel model) {
-        return ProviderSuggestedServiceResponse.builder()
+    private ProviderSuggestedPartResponse returnResponse(Provider provider, GeoPoint currentPos,
+                                                         List<VehiclePart> partList) {
+        return ProviderSuggestedPartResponse.builder()
                 .id(provider.getId())
                 .name(provider.getName())
                 .address(provider.getAddress())
@@ -108,9 +109,9 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .longitude(provider.getLongitude())
                         .build()))
                 .manufacturerName(provider.getManufacturerName())
-                .priceDetails(services.stream()
-                        .map(service -> toServicePriceDetailResponse(service,
-                                partRepository.findAllByServices_IdAndModelsContains(service.getId(), model)))
+                .suggestedParts(partList.stream()
+                        .map(part -> toPartSuggestingResponse(
+                                part, serviceRepository.existsByParts_Id(part.getId())))
                         .collect(Collectors.toList()))
                 .build();
     }

@@ -5,6 +5,7 @@ import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.responses.PartCheckoutResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
+import org.lordrose.vrms.models.responses.PartSuggestingResponse;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -94,6 +95,23 @@ public class PartConverter {
                 .imageUrls(getUrlsAsArray(servicePart.getVehiclePart().getImageUrls()))
                 .categoryId(servicePart.getVehiclePart().getCategory().getId())
                 .categoryName(servicePart.getVehiclePart().getCategory().getName())
+                .build();
+    }
+
+    public static PartSuggestingResponse toPartSuggestingResponse(VehiclePart part, boolean isSupported) {
+        return PartSuggestingResponse.builder()
+                .id(part.getId())
+                .name(part.getName())
+                .description(part.getDescription())
+                .price(part.getPrice())
+                .warrantyDuration(part.getWarrantyDuration())
+                .monthsPerMaintenance(part.getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(part.getImageUrls()))
+                .sectionId(part.getCategory().getSection().getId())
+                .categoryId(part.getCategory().getId())
+                .categoryName(part.getCategory().getName())
+                .isSupportedByService(isSupported)
+                .models(Collections.emptyList())
                 .build();
     }
 }
