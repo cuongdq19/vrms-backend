@@ -7,11 +7,13 @@ import org.lordrose.vrms.models.requests.ProviderRequest;
 import org.lordrose.vrms.models.responses.ContractResponse;
 import org.lordrose.vrms.models.responses.ProviderDetailResponse;
 import org.lordrose.vrms.services.ContractService;
+import org.lordrose.vrms.services.StorageService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +26,7 @@ import java.util.List;
 public class ContractController {
 
     private final ContractService contractService;
+    private final StorageService storageService;
 
     @GetMapping
     public List<ContractResponse> getAllContract() {
@@ -42,5 +45,10 @@ public class ContractController {
                                                    @ModelAttribute ProviderRequest providerRequest,
                                                    @RequestPart MultipartFile[] images) {
         return contractService.registerProvider(request, providerRequest, images);
+    }
+
+    @PostMapping
+    public Object upHinhDeLuuDatabase(@RequestParam("images") MultipartFile[] images) {
+        return storageService.uploadFiles(images);
     }
 }
