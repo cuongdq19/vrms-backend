@@ -260,7 +260,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestCheckOutResponse confirm(Long requestId) {
-        return toRequestCheckoutResponse(null);
+        Request result = requestRepository.findById(requestId)
+                .orElseThrow(() -> newExceptionWithId(requestId));
+
+        result.setStatus("CONFIRMED");
+
+        return toRequestCheckoutResponse(requestRepository.save(result));
     }
 
     @Override
@@ -269,8 +274,6 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> newExceptionWithId(requestId));
 
         result.setStatus("WORK COMPLETED");
-
-        Request saved = requestRepository.save(result);
 
         /*final String body = "Your car's repair/maintenance is completed." +
                 "Please retrieve your car at " + saved.getProvider().getName() +
@@ -285,7 +288,7 @@ public class RequestServiceImpl implements RequestService {
                 .build();
         messageService.pushNotification(content);*/
 
-        return toRequestCheckoutResponse(saved);
+        return toRequestCheckoutResponse(requestRepository.save(result));
     }
 
     @Override
@@ -295,8 +298,6 @@ public class RequestServiceImpl implements RequestService {
 
         result.setStatus("FINISHED");
         result.setCheckoutTime(LocalDateTime.now());
-
-        Request saved = requestRepository.save(result);
 
         /*final String body = "Your booking is completed. " +
                 "Please give us your feedback and ratings about provider: " +
@@ -310,7 +311,7 @@ public class RequestServiceImpl implements RequestService {
                 .build();
         messageService.pushNotification(content);*/
 
-        return toRequestCheckoutResponse(saved);
+        return toRequestCheckoutResponse(requestRepository.save(result));
     }
 
     @Override
