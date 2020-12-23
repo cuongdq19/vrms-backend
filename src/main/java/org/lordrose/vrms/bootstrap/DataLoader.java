@@ -1,10 +1,6 @@
 package org.lordrose.vrms.bootstrap;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.repositories.PartSectionRepository;
-import org.lordrose.vrms.repositories.ProviderRepository;
-import org.lordrose.vrms.repositories.ServicePackageRepository;
-import org.lordrose.vrms.repositories.ServiceRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final ProviderRepository providerRepository;
+    /*private final ProviderRepository providerRepository;
     private final ServicePackageRepository servicePackageRepository;
-    private final PartSectionRepository sectionRepository;
-    private final ServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;*/
 
     @Override
     public void run(String... args) {
@@ -69,7 +64,6 @@ public class DataLoader implements CommandLineRunner {
                 .provider(providerRepository.findById(1L)
                         .orElseThrow())
                 .build());
-
         List<ServicePackage> packages = List.of(servicePackage_1, servicePackage_2,
                 servicePackage_3, servicePackage_4);
         packages.forEach(servicePackage -> {
