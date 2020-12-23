@@ -38,7 +38,7 @@ public class UserConverter {
                 .roleId(user.getRole().getId())
                 .roleName(user.getRole().getName())
                 .isActive(user.getIsActive())
-                .providerId(user.getProvider().getId())
+                .providerId(user.returnProviderId())
                 .build();
     }
 

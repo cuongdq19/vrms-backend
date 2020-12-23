@@ -81,4 +81,8 @@ public class User extends TimeAuditable<LocalDateTime> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
+
+    public Long returnProviderId() {
+        return provider == null ? null : provider.getId();
+    }
 }
