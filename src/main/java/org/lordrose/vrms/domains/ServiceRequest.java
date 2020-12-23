@@ -14,8 +14,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -45,7 +47,6 @@ public class ServiceRequest {
     @JoinColumn(name = "package_id")
     private PackageRequest servicePackage;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "request_part_id", referencedColumnName = "id")
-    private ServiceRequestPart requestPart;
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "serviceRequest")
+    private Set<ServiceRequestPart> requestParts = new LinkedHashSet<>();
 }

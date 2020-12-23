@@ -13,7 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -39,6 +38,7 @@ public class ServiceRequestPart {
     @JoinColumn(name = "part_id")
     private VehiclePart vehiclePart;
 
-    @OneToOne(mappedBy = "requestPart")
+    @ManyToOne
+    @JoinColumn(name = "service_request_id")
     private ServiceRequest serviceRequest;
 }

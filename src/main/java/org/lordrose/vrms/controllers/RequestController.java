@@ -45,7 +45,7 @@ public class RequestController {
     }
 
     @PostMapping
-    public RequestCheckOutResponse createBookingRequest(@RequestBody RequestInfoRequest request) {
+    public Object create(@RequestBody RequestInfoRequest request) {
         return requestService.create(request);
     }
 

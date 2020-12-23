@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseResponses;
 import static org.lordrose.vrms.converters.MaintenanceLevelDetailConverter.toLevelDetailResponse;
-import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponse;
+import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponses;
 import static org.lordrose.vrms.converters.PartConverter.toPartDetailResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toRequestServiceResponses;
@@ -74,7 +74,7 @@ public class RequestConverter {
                                 .serviceId(service.getService().getId())
                                 .serviceName(service.getService().getName())
                                 .servicePrice(service.getPrice())
-                                .part(toPartCheckoutResponse(service.getRequestPart()))
+                                .parts(toPartCheckoutResponses(service.getRequestParts()))
                                 .build())
                         .collect(Collectors.toList()))
                 .parts(toPartDetailResponses(request.getParts()))

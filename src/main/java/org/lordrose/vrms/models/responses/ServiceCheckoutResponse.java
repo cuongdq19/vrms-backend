@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,5 +19,5 @@ public class ServiceCheckoutResponse {
     private Long serviceId;
     private String serviceName;
     private Double servicePrice;
-    private PartCheckoutResponse part;
+    private List<PartCheckoutResponse> parts;
 }

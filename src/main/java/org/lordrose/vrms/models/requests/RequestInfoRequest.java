@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +20,6 @@ public class RequestInfoRequest {
     private Long vehicleId;
     private Long providerId;
     private Set<Long> packageIds;
-    private Map<Long, ServicePartRequest> serviceParts;
+    private List<ServiceAndPartsRequest> serviceParts;
     private Map<Long, Integer> parts;
 }

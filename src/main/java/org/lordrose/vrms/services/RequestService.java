@@ -18,7 +18,7 @@ public interface RequestService {
 
     RequestCheckOutResponse findRequestById(Long requestId);
 
-    RequestCheckOutResponse create(RequestInfoRequest request);
+    Object create(RequestInfoRequest request);
 
     RequestCheckOutResponse checkinWithTechnicianId(Long bookingId, Long userId);
 

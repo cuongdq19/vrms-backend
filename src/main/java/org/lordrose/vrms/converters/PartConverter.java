@@ -98,6 +98,12 @@ public class PartConverter {
                 .build();
     }
 
+    public static List<PartCheckoutResponse> toPartCheckoutResponses(Collection<ServiceRequestPart> serviceParts) {
+        return serviceParts.stream()
+                .map(PartConverter::toPartCheckoutResponse)
+                .collect(Collectors.toList());
+    }
+
     public static PartSuggestingResponse toPartSuggestingResponse(VehiclePart part, boolean isSupported) {
         return PartSuggestingResponse.builder()
                 .id(part.getId())

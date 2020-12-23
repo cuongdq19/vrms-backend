@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.IncurredExpense;
 import org.lordrose.vrms.domains.PartRequest;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
+import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.Vehicle;
@@ -14,6 +15,7 @@ import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.CheckinRequest;
 import org.lordrose.vrms.models.requests.FeedbackRequest;
 import org.lordrose.vrms.models.requests.RequestInfoRequest;
+import org.lordrose.vrms.models.requests.ServiceAndPartsRequest;
 import org.lordrose.vrms.models.requests.ServicePartRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
@@ -30,9 +32,12 @@ import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
 import org.lordrose.vrms.services.RequestService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,6 +83,7 @@ public class RequestServiceImpl implements RequestService {
         return toRequestCheckoutResponses(requestRepository.findAllByProviderOrderByBookingTimeDesc(provider));
     }
 
+    @Transactional
     @Override
     public RequestCheckOutResponse findRequestById(Long requestId) {
         Request result = requestRepository.findById(requestId)
@@ -86,11 +92,12 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestCheckOutResponse create(RequestInfoRequest request) {
+    public Object create(RequestInfoRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Map<Long, ServicePartRequest> serviceParts = request.getServiceParts();
         Map<Long, Integer> partMap = request.getParts();
-        if (packageIds.isEmpty() && serviceParts.keySet().isEmpty() && partMap.keySet().isEmpty()) {
+        List<ServiceAndPartsRequest> serviceAndParts = request.getServiceParts();
+
+        if (packageIds.isEmpty() && serviceAndParts.isEmpty() && partMap.keySet().isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -98,7 +105,6 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> newExceptionWithId(request.getVehicleId()));
         Provider provider = providerRepository.findById(request.getProviderId())
                 .orElseThrow(() -> newExceptionWithId(request.getProviderId()));
-
         Request saved = requestRepository.save(Request.builder()
                 .bookingTime(toLocalDateTime(request.getBookingTime()))
                 .note(request.getNote())
@@ -108,52 +114,31 @@ public class RequestServiceImpl implements RequestService {
                 .provider(provider)
                 .build());
 
-        /*notificationRepository.save(org.lordrose.vrms.domains.Notification.builder()
-                .title("Your booking will start today at " +
-                        saved.getBookingTime().getHour() + "h" + saved.getBookingTime().getMinute())
-                .content("Content")
-                .user(vehicle.getUser())
-                .notifyAt(saved.getBookingTime().minusHours(2))
-                .isActive(true)
-                .build());*/
-
-        /*Set<PackageRequest> packages = servicePackageRepository.findAllById(packageIds).stream()
-                .map(servicePackage -> PackageRequest.builder()
-                        .servicePackage(servicePackage)
-                        .services(servicePackage.getServices().stream()
-                                .map(serviceDetail -> ServiceRequest.builder()
-                                        .price(serviceDetail.getPrice())
-                                        .service(serviceDetail)
-                                        .request(saved)
-                                        .build())
-                                .collect(Collectors.toSet()))
-                        .request(saved)
-                        .build())
-                .collect(Collectors.toSet());
-        saved.setPackages(new HashSet<>(packageRequestRepository.saveAll(packages)));*/
-
-        Set<ServiceRequest> services = serviceRepository.findAllById(serviceParts.keySet()).stream()
-                .map(serviceDetail -> {
-                    ServicePartRequest partRequest = serviceParts.get(serviceDetail.getId());
-                    ServiceRequestPart servicePart = null;
-                    if (partRequest != null) {
-                        VehiclePart part = partRepository.findById(partRequest.getId())
-                                .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
-                        servicePart = requestPartRepository.save(ServiceRequestPart.builder()
-                                .quantity(partRequest.getQuantity())
-                                .price(part.getPrice())
-                                .vehiclePart(part)
-                                .build());
-                    }
-                    return serviceRequestRepository.save(ServiceRequest.builder()
-                            .price(serviceDetail.getPrice())
-                            .service(serviceDetail)
-                            .request(saved)
-                            .requestPart(servicePart)
-                            .build());
-                })
-                .collect(Collectors.toSet());
-        saved.setServices(services);
+        List<ServiceRequest> services = new ArrayList<>();
+        serviceAndParts.forEach(serviceParts -> {
+            Service service = serviceRepository.findById(serviceParts.getServiceId())
+                    .orElseThrow();
+            Set<ServiceRequestPart> list = new LinkedHashSet<>();
+            if (!serviceParts.getParts().isEmpty()) {
+                Set<ServicePartRequest> partRequests = serviceParts.getParts();
+                partRequests.forEach(partRequest -> {
+                    VehiclePart part = partRepository.findById(partRequest.getId())
+                            .orElseThrow();
+                    list.add(requestPartRepository.save(ServiceRequestPart.builder()
+                            .quantity(partRequest.getQuantity())
+                            .price(part.getPrice())
+                            .vehiclePart(part)
+                            .build()));
+                });
+            }
+            services.add(ServiceRequest.builder()
+                    .price(service.getPrice())
+                    .service(service)
+                    .request(saved)
+                    .requestParts(list)
+                    .build());
+        });
+        saved.setServices(new LinkedHashSet<>(serviceRequestRepository.saveAll(services)));
 
         Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
                 .map(part -> PartRequest.builder()
@@ -165,20 +150,12 @@ public class RequestServiceImpl implements RequestService {
                 .collect(Collectors.toSet());
         saved.setParts(new HashSet<>(partRequestRepository.saveAll(parts)));
 
-        /*Message content = Message.builder()
-                .setTopic("ProviderId_" + saved.getProvider().getId())
-                .setNotification(Notification.builder()
-                        .setTitle("Incoming booking request")
-                        .setBody("A new booking request is received with id: " + saved.getId())
-                        .build())
-                .build();
-        messageService.pushNotification(content);*/
-
         return toRequestCheckoutResponse(
                 requestRepository.findById(saved.getId())
                         .orElseThrow(() -> newExceptionWithId(saved.getId())));
     }
 
+    @Transactional
     @Override
     public RequestCheckOutResponse checkinWithTechnicianId(Long requestId, Long userId) {
         Request request = requestRepository.findById(requestId)
@@ -195,9 +172,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestCheckOutResponse update(Long requestId, CheckinRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Map<Long, ServicePartRequest> serviceParts = request.getServiceParts();
         Map<Long, Integer> partMap = request.getParts();
-        if (packageIds.isEmpty() && serviceParts.keySet().isEmpty() && partMap.keySet().isEmpty()) {
+        List<ServiceAndPartsRequest> serviceAndParts = request.getServiceParts();
+        if (packageIds.isEmpty() && serviceAndParts.isEmpty() && partMap.keySet().isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -205,32 +182,33 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> newExceptionWithId(requestId));
 
         result.getServices().forEach(serviceRequestRepository::delete);
-
-        Set<ServiceRequest> services = serviceRepository.findAllById(serviceParts.keySet()).stream()
-                .map(serviceDetail -> {
-                    ServicePartRequest partRequest = serviceParts.get(serviceDetail.getId());
-                    ServiceRequestPart servicePart = null;
-                    if (partRequest != null) {
-                        VehiclePart part = partRepository.findById(partRequest.getId())
-                                .orElseThrow(() -> newExceptionWithId(partRequest.getId()));
-                        servicePart = requestPartRepository.save(ServiceRequestPart.builder()
-                                .quantity(partRequest.getQuantity())
-                                .price(part.getPrice())
-                                .vehiclePart(part)
-                                .build());
-                    }
-                    return serviceRequestRepository.save(ServiceRequest.builder()
-                            .price(serviceDetail.getPrice())
-                            .service(serviceDetail)
-                            .request(result)
-                            .requestPart(servicePart)
-                            .build());
-                })
-                .collect(Collectors.toSet());
-        result.setServices(services);
+        List<ServiceRequest> services = new ArrayList<>();
+        serviceAndParts.forEach(serviceParts -> {
+            Service service = serviceRepository.findById(serviceParts.getServiceId())
+                    .orElseThrow();
+            Set<ServiceRequestPart> list = new LinkedHashSet<>();
+            if (!serviceParts.getParts().isEmpty()) {
+                Set<ServicePartRequest> partRequests = serviceParts.getParts();
+                partRequests.forEach(partRequest -> {
+                    VehiclePart part = partRepository.findById(partRequest.getId())
+                            .orElseThrow();
+                    list.add(requestPartRepository.save(ServiceRequestPart.builder()
+                            .quantity(partRequest.getQuantity())
+                            .price(part.getPrice())
+                            .vehiclePart(part)
+                            .build()));
+                });
+            }
+            services.add(ServiceRequest.builder()
+                    .price(service.getPrice())
+                    .service(service)
+                    .request(result)
+                    .requestParts(list)
+                    .build());
+        });
+        result.setServices(new LinkedHashSet<>(serviceRequestRepository.saveAll(services)));
 
         result.getParts().forEach(partRequestRepository::delete);
-
         Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
                 .map(part -> PartRequest.builder()
                         .quantity(partMap.get(part.getId()))
@@ -242,7 +220,6 @@ public class RequestServiceImpl implements RequestService {
         result.setParts(new HashSet<>(partRequestRepository.saveAll(parts)));
 
         result.getExpenses().forEach(expenseRepository::delete);
-
         Set<IncurredExpense> expenses = new HashSet<>(expenseRepository.saveAll(request.getExpenses().stream()
                 .map(expenseRequest -> IncurredExpense.builder()
                         .name(expenseRequest.getName())
@@ -256,8 +233,10 @@ public class RequestServiceImpl implements RequestService {
         return toRequestCheckoutResponse(
                 requestRepository.findById(result.getId())
                         .orElseThrow(() -> newExceptionWithId(result.getId())));
+
     }
 
+    @Transactional
     @Override
     public RequestCheckOutResponse confirm(Long requestId) {
         Request result = requestRepository.findById(requestId)
@@ -268,6 +247,7 @@ public class RequestServiceImpl implements RequestService {
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
 
+    @Transactional
     @Override
     public RequestCheckOutResponse finishRepairAndMaintenance(Long requestId) {
         Request result = requestRepository.findById(requestId)
@@ -291,6 +271,7 @@ public class RequestServiceImpl implements RequestService {
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
 
+    @Transactional
     @Override
     public RequestCheckOutResponse checkout(Long requestId) {
         Request result = requestRepository.findById(requestId)
