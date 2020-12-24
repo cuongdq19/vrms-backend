@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,7 +43,7 @@ public class ServicePackage {
     @JoinColumn(name = "section_id")
     private PartSection section;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JoinTable(name = "tbl_package_service",
             joinColumns = @JoinColumn(name = "service_package_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))

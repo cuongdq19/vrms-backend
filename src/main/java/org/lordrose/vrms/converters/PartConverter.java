@@ -26,6 +26,7 @@ public class PartConverter {
                 .warrantyDuration(part.getWarrantyDuration())
                 .monthsPerMaintenance(part.getMonthsPerMaintenance())
                 .imageUrls(getUrlsAsArray(part.getImageUrls()))
+                .sectionId(part.getCategory().getSection().getId())
                 .categoryId(part.getCategory().getId())
                 .categoryName(part.getCategory().getName())
                 .models(Collections.emptyList())

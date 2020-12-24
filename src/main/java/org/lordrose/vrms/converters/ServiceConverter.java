@@ -65,7 +65,7 @@ public class ServiceConverter {
                 .build();
     }
 
-    public static List<ServiceDetailResponse> toServiceDetailResponses(List<Service> services) {
+    public static List<ServiceDetailResponse> toServiceDetailResponses(Collection<Service> services) {
         return services.stream()
                 .map(service -> ServiceDetailResponse.builder()
                         .id(service.getId())

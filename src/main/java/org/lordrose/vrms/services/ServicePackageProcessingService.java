@@ -1,14 +1,12 @@
 package org.lordrose.vrms.services;
 
+import org.lordrose.vrms.models.requests.ServicePackageRequest;
+
 public interface ServicePackageProcessingService {
 
-    Object getBases(Long providerId);
+    Object create(Long providerId, ServicePackageRequest request);
 
-    Object getBases(Long baseId, Long providerId);
-
-    Object create(Long providerId);
-
-    Object update(Long packageId);
+    Object update(Long packageId, ServicePackageRequest request);
 
     void delete(Long packageId);
 }
