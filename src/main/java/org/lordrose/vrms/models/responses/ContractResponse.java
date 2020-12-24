@@ -14,4 +14,12 @@ import lombok.Setter;
 public class ContractResponse {
 
     private Long id;
+    private String fullName;
+    private String address;
+    private String phoneNumber;
+    private String email;
+    private String[] contractFileUrls;
+    private String[] proofImageUrls;
+    private String status;
+    private Long providerId;
 }

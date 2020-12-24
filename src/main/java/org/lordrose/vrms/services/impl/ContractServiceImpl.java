@@ -1,9 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.converters.ContractConverter;
 import org.lordrose.vrms.domains.Contract;
-import org.lordrose.vrms.domains.Manufacturer;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
@@ -11,7 +9,6 @@ import org.lordrose.vrms.models.requests.ContactRequest;
 import org.lordrose.vrms.models.requests.ManagerCreateRequest;
 import org.lordrose.vrms.models.requests.ProviderRequest;
 import org.lordrose.vrms.models.responses.ContractResponse;
-import org.lordrose.vrms.models.responses.ProviderDetailResponse;
 import org.lordrose.vrms.repositories.ContractRepository;
 import org.lordrose.vrms.repositories.ManufacturerRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
@@ -25,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.lordrose.vrms.converters.ContractConverter.toContractResponse;
 import static org.lordrose.vrms.converters.ContractConverter.toContractResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderDetailResponse;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
@@ -50,39 +48,35 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ProviderDetailResponse registerProvider(ContactRequest contactRequest,
-                                                   ProviderRequest providerRequest,
-                                                   MultipartFile[] images) {
-        Contract contract = contractRepository.save(Contract.builder()
+    public ContractResponse registerProvider(ContactRequest contactRequest,
+                                             MultipartFile[] images) {
+        Contract saved = contractRepository.save(Contract.builder()
                 .fullName(contactRequest.getFullName())
                 .address(contactRequest.getAddress())
                 .phoneNumber(contactRequest.getPhoneNumber())
                 .email(contactRequest.getEmail())
                 .status("PENDING")
+                .proofImageUrls(storageService.uploadFiles(images))
                 .build());
-        Manufacturer manufacturer = manufacturerRepository.findById(providerRequest.getManufacturerId())
-                .orElse(null);
-        Provider saved = providerRepository.save(Provider.builder()
-                .name(providerRequest.getProviderName())
-                .address(providerRequest.getAddress())
-                .latitude(providerRequest.getLatitude())
-                .longitude(providerRequest.getLongitude())
-                .openTime(toLocalTime(providerRequest.getOpenTime()))
-                .closeTime(toLocalTime(providerRequest.getCloseTime()))
-                .slotDuration(providerRequest.getSlotDuration())
-                .slotCapacity(providerRequest.getSlotCapacity())
-                .isActive(false)
-                .imageUrls(storageService.uploadFiles(images))
-                .manufacturer(manufacturer)
-                .contract(contract)
-                .build());
-        return toProviderDetailResponse(saved);
+
+        return toContractResponse(saved);
     }
 
     @Override
-    public ContractResponse confirmContract(Long contractId, ManagerCreateRequest request,
-                                            MultipartFile[] images) {
-        userRepository.findUserByUsername(request.getUsername())
+    public Object confirmContract(Long contractId, MultipartFile[] contractImages) {
+        Contract result = contractRepository.findById(contractId)
+                .orElseThrow(() -> newExceptionWithId(contractId));
+
+        result.setContractFileUrls(storageService.uploadFiles(contractImages));
+        result.setStatus("CONFIRMED");
+
+        return toContractResponse(contractRepository.save(result));
+    }
+
+    @Override
+    public Object resolvedContract(Long contractId, ProviderRequest providerRequest,
+                                   ManagerCreateRequest managerRequest, MultipartFile[] images) {
+        userRepository.findUserByUsername(managerRequest.getUsername())
                 .ifPresent(user -> {
                     throw new InvalidArgumentException("User " + user.getUsername() +
                             " is already existed!");
@@ -90,26 +84,39 @@ public class ContractServiceImpl implements ContractService {
 
         Contract result = contractRepository.findById(contractId)
                 .orElseThrow(() -> newExceptionWithId(contractId));
-
-        result.setImageUrls(storageService.uploadFiles(images));
-        result.setStatus("CONFIRMED");
-        result.getProvider().setIsActive(true);
+        result.setStatus("RESOLVED");
 
         Contract saved = contractRepository.save(result);
-        Provider provider = providerRepository.save(saved.getProvider());
+
+        Provider created = providerRepository.save(Provider.builder()
+                .name(providerRequest.getProviderName())
+                .address(providerRequest.getAddress())
+                .latitude(providerRequest.getLatitude())
+                .longitude(providerRequest.getLongitude())
+                .openTime(toLocalTime(providerRequest.getOpenTime()))
+                .closeTime(toLocalTime(providerRequest.getCloseTime()))
+                .slotCapacity(providerRequest.getSlotCapacity())
+                .slotDuration(providerRequest.getSlotDuration())
+                .imageUrls(storageService.uploadFiles(images))
+                .manufacturer(manufacturerRepository.findById(providerRequest.getManufacturerId())
+                        .orElse(null))
+                .isActive(false)
+                .imageUrls(storageService.uploadFiles(images))
+                .contract(saved)
+                .build());
 
         final String password = getRandomAlphabeticWithLength(8);
 
         User manager = userRepository.save(User.builder()
-                .username(request.getUsername())
+                .username(managerRequest.getUsername())
                 .password(password)
-                .fullName(request.getFullName())
-                .gender(request.getGender())
+                .fullName(managerRequest.getFullName())
+                .gender(managerRequest.getGender())
                 .imageUrl("default")
                 .isActive(true)
                 .role(roleRepository.findByNameIgnoreCase("MANAGER")
                         .orElseThrow(() -> newExceptionWithValue("MANAGER")))
-                .provider(provider)
+                .provider(created)
                 .build());
 
         final String subject = "Your Service Provider registration is approved.";
@@ -124,6 +131,6 @@ public class ContractServiceImpl implements ContractService {
 
         emailService.sendMail(result.getEmail(), subject, text);
 
-        return ContractConverter.toContractResponse(saved);
+        return toProviderDetailResponse(created);
     }
 }

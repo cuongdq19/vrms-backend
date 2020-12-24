@@ -14,4 +14,15 @@ import lombok.Setter;
 public class ProviderDetailResponse {
 
     private Long id;
+    private String name;
+    private String address;
+    private Double latitude;
+    private Double longitude;
+    private String openTime;
+    private String closeTime;
+    private Integer slotDuration;
+    private Integer slotCapacity;
+    private String[] imageUrls;
+    private Long manufacturerId;
+    private String manufacturerName;
 }

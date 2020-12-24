@@ -41,8 +41,11 @@ public class Contract extends TimeAuditable<LocalDateTime> {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "image_urls", length = 6000)
-    private String imageUrls;
+    @Column(name = "contract_file_urls", length = 10000)
+    private String contractFileUrls;
+
+    @Column(name = "proof_image_urls", length = 10000)
+    private String proofImageUrls;
 
     @Column(name = "status")
     private String status;

@@ -8,14 +8,30 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
+
 public class ProviderConverter {
 
     public static ProviderResponse toProviderResponse(Provider provider) {
-        return ProviderResponse.builder().build();
+        return ProviderResponse.builder()
+                .id(provider.getId())
+                .build();
     }
 
     public static ProviderDetailResponse toProviderDetailResponse(Provider provider) {
         return ProviderDetailResponse.builder()
+                .id(provider.getId())
+                .name(provider.getName())
+                .address(provider.getAddress())
+                .latitude(provider.getLatitude())
+                .longitude(provider.getLongitude())
+                .openTime(provider.getOpenTime().toString())
+                .closeTime(provider.getCloseTime().toString())
+                .slotDuration(provider.getSlotDuration())
+                .slotCapacity(provider.getSlotCapacity())
+                .imageUrls(getUrlsAsArray(provider.getImageUrls()))
+                .manufacturerId(provider.getManufacturerId())
+                .manufacturerName(provider.getManufacturerName())
                 .build();
     }
 

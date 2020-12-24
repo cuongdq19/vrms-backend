@@ -4,21 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.models.requests.ContactRequest;
 import org.lordrose.vrms.models.requests.ManagerCreateRequest;
 import org.lordrose.vrms.models.requests.ProviderRequest;
-import org.lordrose.vrms.models.responses.ContractResponse;
-import org.lordrose.vrms.models.responses.ProviderDetailResponse;
 import org.lordrose.vrms.services.ContractService;
-import org.lordrose.vrms.services.StorageService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,29 +20,30 @@ import java.util.List;
 public class ContractController {
 
     private final ContractService contractService;
-    private final StorageService storageService;
 
     @GetMapping
-    public List<ContractResponse> getAllContract() {
+    public Object getAllContract() {
         return contractService.findAll();
     }
 
-    @PostMapping("upload/{contractId}")
-    public ContractResponse confirmContract(@PathVariable Long contractId,
-                                            @ModelAttribute ManagerCreateRequest request,
-                                            @RequestPart MultipartFile[] images) {
-        return contractService.confirmContract(contractId, request, images);
-    }
-
     @PostMapping
-    public ProviderDetailResponse registerProvider(@ModelAttribute ContactRequest request,
-                                                   @ModelAttribute ProviderRequest providerRequest,
-                                                   @RequestPart MultipartFile[] images) {
-        return contractService.registerProvider(request, providerRequest, images);
+    public Object registerProvider(@ModelAttribute ContactRequest request,
+                                   @RequestPart MultipartFile[] images) {
+        return contractService.registerProvider(request, images);
     }
 
-    @PostMapping("/dev")
-    public Object upHinhDeLuuDatabase(@RequestParam("images") MultipartFile[] images) {
-        return storageService.uploadFiles(images);
+    @PostMapping("confirm/{contractId}")
+    public Object confirmContract(@PathVariable Long contractId,
+                                  @RequestPart MultipartFile[] images) {
+        return contractService.confirmContract(contractId, images);
+    }
+
+    @PostMapping("resolve/{contractId}")
+    public Object resolvedContract(@PathVariable Long contractId,
+                                   @ModelAttribute ProviderRequest providerRequest,
+                                   @ModelAttribute ManagerCreateRequest managerRequest,
+                                   @RequestPart MultipartFile[] images) {
+        return contractService.resolvedContract(contractId, providerRequest,
+                managerRequest, images);
     }
 }
