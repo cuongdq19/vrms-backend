@@ -16,4 +16,5 @@ public class GroupPriceRequest {
     private Set<Long> modelIds;
     private String name;
     private Double price;
+    private Set<Long> partIds;
 }

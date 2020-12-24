@@ -7,6 +7,7 @@ import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehicleModel;
+import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
@@ -16,11 +17,13 @@ import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceTypeRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
+import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +34,7 @@ import static org.lordrose.vrms.converters.ServiceConverter.toServiceOptionRespo
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
+import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -42,6 +46,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ProviderRepository providerRepository;
     private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
+    private final VehiclePartRepository partRepository;
 
     @Transactional
     @Override
@@ -95,15 +100,27 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .orElseThrow(() -> newExceptionWithId(request.getTypeDetailId()));
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> newExceptionWithId(providerId));
+        Set<Long> partIds = request.getGroupPriceRequest().getPartIds();
 
         validateCreate(request.getTypeDetailId(), providerId, request.getGroupPriceRequest().getModelIds());
+
+        List<VehiclePart> parts = partRepository.findAllById(partIds);
+        if (parts.size() != partIds.size()) {
+            List<Long> retrievedIds = parts.stream()
+                    .map(VehiclePart::getId)
+                    .collect(Collectors.toList());
+            List<Long> notFounds = partIds.stream()
+                    .filter(partId -> !retrievedIds.contains(partId))
+                    .collect(Collectors.toList());
+            throw newExceptionWithIds(notFounds);
+        }
 
         Service service = Service.builder()
                 .name(request.getGroupPriceRequest().getName())
                 .price(request.getGroupPriceRequest().getPrice())
                 .typeDetail(typeDetail)
                 .provider(provider)
-                .parts(new HashSet<>())
+                .parts(new HashSet<>(parts))
                 .modelGroup(groupRepository.save(ModelGroup.builder()
                         .models(new HashSet<>(modelRepository.findAllById(
                                 request.getGroupPriceRequest().getModelIds())
@@ -137,11 +154,25 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         validateUpdate(result, request.getModelIds());
 
+        Set<Long> partIds = request.getPartIds();
+        List<VehiclePart> parts = partRepository.findAllById(partIds);
+        if (parts.size() != partIds.size()) {
+            List<Long> retrievedIds = parts.stream()
+                    .map(VehiclePart::getId)
+                    .collect(Collectors.toList());
+            List<Long> notFounds = partIds.stream()
+                    .filter(partId -> !retrievedIds.contains(partId))
+                    .collect(Collectors.toList());
+            throw newExceptionWithIds(notFounds);
+        }
+
         result.setName(request.getName());
         result.setPrice(request.getPrice());
         result.getModelGroup().getModels().clear();
         result.getModelGroup().setModels(
                 new HashSet<>(modelRepository.findAllById(request.getModelIds())));
+        result.getParts().clear();
+        result.setParts(new LinkedHashSet<>(parts));
 
         return toServiceResponse(serviceRepository.save(result));
     }
