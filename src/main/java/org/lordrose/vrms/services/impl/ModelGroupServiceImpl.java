@@ -2,7 +2,6 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.ModelGroup;
-import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.models.requests.GroupRequest;
 import org.lordrose.vrms.models.responses.GroupResponse;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
@@ -28,17 +27,14 @@ public class ModelGroupServiceImpl implements ModelGroupService {
 
     @Override
     public List<GroupResponse> findAllByProvider(Long id) {
-        return toGroupResponses(groupRepository.findAllByProviderId(id));
+        return toGroupResponses(groupRepository.findAll());
     }
 
     @Override
     public GroupResponse create(Long providerId, GroupRequest request) {
-        Provider provider = providerRepository.findById(providerId)
-                .orElseThrow(() -> newExceptionWithId(providerId));
         ModelGroup result = ModelGroup.builder()
                 .name(request.getName())
                 .description(request.getDescription())
-                .provider(provider)
                 .models(new HashSet<>())
                 .build();
 

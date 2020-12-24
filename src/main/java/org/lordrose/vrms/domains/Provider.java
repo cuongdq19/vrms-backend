@@ -77,9 +77,6 @@ public class Provider {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "provider")
     private Set<Request> requests = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "provider")
-    private Set<ModelGroup> groups = new HashSet<>();
-
     @OneToOne
     @JoinColumn(name = "contract_id", referencedColumnName = "id")
     private Contract contract;

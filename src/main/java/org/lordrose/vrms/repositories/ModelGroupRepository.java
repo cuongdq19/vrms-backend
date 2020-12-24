@@ -9,7 +9,5 @@ import java.util.List;
 @Repository
 public interface ModelGroupRepository extends JpaRepository<ModelGroup, Long> {
 
-    List<ModelGroup> findAllByProviderId(Long providerId);
-
     List<ModelGroup> findByModels_Id(Long modelId);
 }
