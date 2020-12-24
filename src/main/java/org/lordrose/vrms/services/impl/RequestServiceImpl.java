@@ -124,21 +124,27 @@ public class RequestServiceImpl implements RequestService {
                 partRequests.forEach(partRequest -> {
                     VehiclePart part = partRepository.findById(partRequest.getId())
                             .orElseThrow();
-                    list.add(requestPartRepository.save(ServiceRequestPart.builder()
+                    list.add(ServiceRequestPart.builder()
                             .quantity(partRequest.getQuantity())
                             .price(part.getPrice())
                             .vehiclePart(part)
-                            .build()));
+                            .build());
                 });
             }
-            services.add(ServiceRequest.builder()
+
+            ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
                     .price(service.getPrice())
                     .service(service)
                     .request(saved)
-                    .requestParts(list)
                     .build());
+
+            list.forEach(item -> item.setServiceRequest(serviceRequest));
+
+            serviceRequest.setRequestParts(new LinkedHashSet<>(requestPartRepository.saveAll(list)));
+
+            services.add(serviceRequest);
         });
-        saved.setServices(new LinkedHashSet<>(serviceRequestRepository.saveAll(services)));
+        saved.setServices(new LinkedHashSet<>(services));
 
         Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
                 .map(part -> PartRequest.builder()
