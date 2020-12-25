@@ -170,7 +170,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         result.setPrice(request.getPrice());
         result.getModelGroup().getModels().clear();
         result.getModelGroup().setModels(
-                new HashSet<>(modelRepository.findAllById(request.getModelIds())));
+                new LinkedHashSet<>(modelRepository.findAllById(request.getModelIds())));
         result.getParts().clear();
         result.setParts(new LinkedHashSet<>(parts));
 
