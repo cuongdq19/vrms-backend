@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/services")
@@ -32,11 +30,11 @@ public class ServiceController {
         return processingService.findAllByProviderIdAndTypeId(providerId, typeId);
     }
 
-    @PostMapping("/providers/{providerId}/models/{modelId}")
+    @GetMapping("/providers/{providerId}/models/{modelId}/parts/{partId}")
     public Object findServicesByProviderIdAndModelIdAndPartIds(@PathVariable Long providerId,
                                                          @PathVariable Long modelId,
-                                                         @RequestBody Set<Long> partIds) {
-        return processingService.findAllByProviderIdAndModelIdAndPartIds(providerId, modelId, partIds);
+                                                         @PathVariable Long partId) {
+        return processingService.findAllByProviderIdAndModelIdAndPartIds(providerId, modelId, partId);
     }
 
     @PostMapping("/providers/{providerId}")

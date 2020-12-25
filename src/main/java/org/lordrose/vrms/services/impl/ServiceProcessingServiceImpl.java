@@ -9,7 +9,6 @@ import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
-import org.lordrose.vrms.models.responses.ServiceOptionResponse;
 import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -21,7 +20,6 @@ import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,16 +64,12 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
     @Override
     public Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
-                                                          Set<Long> partIds) {
-        Map<Long, List<ServiceOptionResponse>> servicePartIds = new LinkedHashMap<>();
+                                                          Long partId) {
 
-        partIds.forEach(partId -> {
-            Set<Service> services = new LinkedHashSet<>();
-            if (!services.isEmpty())
-                servicePartIds.put(partId, toServiceOptionResponses(services));
-        });
+        List<Service> services = serviceRepository.findAllByProviderIdAndPartSet_Part_Models_IdAndPartSet_Part_Id(
+                providerId, modelId, partId);
 
-        return servicePartIds;
+        return toServiceOptionResponses(services);
     }
 
     private void validateCreate(Long detailId, Long providerId) {

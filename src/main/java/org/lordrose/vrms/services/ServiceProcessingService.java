@@ -3,8 +3,6 @@ package org.lordrose.vrms.services;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 
-import java.util.Set;
-
 public interface ServiceProcessingService {
 
     Object findAllByProviderId(Long providerId);
@@ -12,7 +10,7 @@ public interface ServiceProcessingService {
     Object findAllByProviderIdAndTypeId(Long providerId, Long typeId);
 
     Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
-                                                   Set<Long> categoryIds);
+                                                   Long partId);
 
     Object create(Long providerId, ServiceInfoRequest request);
 

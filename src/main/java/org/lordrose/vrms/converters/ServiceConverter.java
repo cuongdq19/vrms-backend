@@ -66,7 +66,7 @@ public class ServiceConverter {
     }
 
     public static List<ServiceDetailResponse> toServiceDetailResponses(Collection<Service> services) {
-        List<ServiceDetailResponse> responses = services.stream()
+        return services.stream()
                 .map(service -> ServiceDetailResponse.builder()
                         .id(service.getId())
                         .name(service.getName())
@@ -74,7 +74,6 @@ public class ServiceConverter {
                         .parts(toEmptyModelServicePartResponses(service.getPartSet()))
                         .build())
                 .collect(Collectors.toList());
-        return responses;
     }
 
     public static List<ServiceResponse> toAllServicesResponses(Collection<Service> services) {
@@ -117,6 +116,11 @@ public class ServiceConverter {
                 .serviceId(service.getId())
                 .serviceName(service.getName())
                 .price(service.getPrice())
+                .parts(toEmptyModelServicePartResponses(service.getPartSet()))
+                .total(service.getPrice() + service.getPartSet().stream()
+                        .mapToDouble(servicePart -> servicePart.getQuantity() *
+                                servicePart.getPart().getPrice())
+                        .sum())
                 .build();
     }
 
