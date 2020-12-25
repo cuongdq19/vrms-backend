@@ -66,7 +66,7 @@ public class ServiceConverter {
     }
 
     public static List<ServiceDetailResponse> toServiceDetailResponses(Collection<Service> services) {
-        return services.stream()
+        List<ServiceDetailResponse> responses = services.stream()
                 .map(service -> ServiceDetailResponse.builder()
                         .id(service.getId())
                         .name(service.getName())
@@ -74,6 +74,7 @@ public class ServiceConverter {
                         .parts(toEmptyModelServicePartResponses(service.getPartSet()))
                         .build())
                 .collect(Collectors.toList());
+        return responses;
     }
 
     public static List<ServiceResponse> toAllServicesResponses(Collection<Service> services) {

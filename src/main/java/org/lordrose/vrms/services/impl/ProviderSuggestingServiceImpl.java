@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
+import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
-import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
 import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
 import org.lordrose.vrms.models.responses.PartSuggestingResponse;
@@ -19,6 +19,7 @@ import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -45,6 +46,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     private final ServiceTypeDetailRepository typeDetailRepository;
     private final ServiceVehiclePartRepository servicePartRepository;
 
+    @Transactional
     @Override
     public Object findProviders(FindProviderWithServicesRequest request) {
         VehicleModel model = modelRepository.findById(request.getModelId())
@@ -78,12 +80,12 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     public Object findProviders(FindProviderWithCategoryRequest request) {
         VehicleModel model = modelRepository.findById(request.getModelId())
                 .orElseThrow(() -> newExceptionWithId(request.getModelId()));
-        List<VehiclePart> parts = new ArrayList<>();
+        List<ServiceVehiclePart> parts = new ArrayList<>();
         request.getCategoryIds().forEach(categoryId -> parts.addAll(
-                partRepository.findAllByCategoryIdAndModelsContains(categoryId, model)));
+                servicePartRepository.findAllByPartCategoryIdAndPartModelsContains(categoryId, model)));
 
-        Map<Provider, List<VehiclePart>> byProvider = parts.stream()
-                .collect(Collectors.groupingBy(VehiclePart::getProvider));
+        Map<Provider, List<ServiceVehiclePart>> byProvider = parts.stream()
+                .collect(Collectors.groupingBy(part -> part.getPart().getProvider()));
 
         List<ProviderSuggestedPartResponse> responses = new ArrayList<>();
         byProvider.forEach(((provider, partList) -> responses.add(
@@ -99,7 +101,11 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     }
 
     private ProviderSuggestedPartResponse returnResponse(Provider provider, GeoPoint currentPos,
-                                                         List<VehiclePart> partList) {
+                                                         List<ServiceVehiclePart> partList) {
+        List<PartSuggestingResponse> responseList = partList.stream()
+                .map(part -> toPartSuggestingResponse(part.getPart()))
+                .collect(Collectors.toList());
+
         return ProviderSuggestedPartResponse.builder()
                 .id(provider.getId())
                 .name(provider.getName())
@@ -113,11 +119,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .longitude(provider.getLongitude())
                         .build()))
                 .manufacturerName(provider.getManufacturerName())
-                .suggestedParts(partList.stream()
-                        .map(part -> toPartSuggestingResponse(
-                                part, serviceRepository.existsByPartSet_Part_Id(part.getId())))
-                        .filter(PartSuggestingResponse::getIsSupportedByService)
-                        .collect(Collectors.toList()))
+                .suggestedParts(responseList)
                 .build();
     }
 

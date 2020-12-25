@@ -129,7 +129,7 @@ public class PartConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PartSuggestingResponse toPartSuggestingResponse(VehiclePart part, boolean isSupported) {
+    public static PartSuggestingResponse toPartSuggestingResponse(VehiclePart part) {
         return PartSuggestingResponse.builder()
                 .id(part.getId())
                 .name(part.getName())
@@ -141,7 +141,7 @@ public class PartConverter {
                 .sectionId(part.getCategory().getSection().getId())
                 .categoryId(part.getCategory().getId())
                 .categoryName(part.getCategory().getName())
-                .isSupportedByService(isSupported)
+                .isSupportedByService(true)
                 .models(Collections.emptyList())
                 .build();
     }

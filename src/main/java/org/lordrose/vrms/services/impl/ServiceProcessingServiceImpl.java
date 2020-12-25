@@ -78,7 +78,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return servicePartIds;
     }
 
-    private void validateCreate(Long detailId, Long providerId, Set<Long> modelIds) {
+    private void validateCreate(Long detailId, Long providerId) {
         /*List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
                 detailId, providerId);
 
@@ -92,7 +92,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         }*/
     }
 
-    @Transactional
     @Override
     public Object create(Long providerId, ServiceInfoRequest request) {
         ServiceTypeDetail typeDetail = typeDetailRepository.findById(request.getTypeDetailId())
@@ -101,7 +100,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .orElseThrow(() -> newExceptionWithId(providerId));
         Set<Long> partIds = request.getGroupPriceRequest().getPartIds();
 
-        validateCreate(request.getTypeDetailId(), providerId, request.getGroupPriceRequest().getModelIds());
+        validateCreate(request.getTypeDetailId(), providerId);
 
         List<VehiclePart> parts = partRepository.findAllById(partIds);
         if (parts.size() != partIds.size()) {
@@ -128,12 +127,12 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                         .service(service)
                         .build())
                 .collect(Collectors.toSet());
-        service.setPartSet(list);
+        service.setPartSet(new LinkedHashSet<>(servicePartRepository.saveAll(list)));
 
         return toServiceResponse(service);
     }
 
-    private void validateUpdate(Service updatingService, Set<Long> modelIds) {
+    private void validateUpdate(Service updatingService) {
         /*List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
                 updatingService.getTypeDetail().getId(), updatingService.getProvider().getId());
         services.remove(updatingService);
@@ -154,7 +153,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Service result = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> newExceptionWithId(serviceId));
 
-        validateUpdate(result, request.getModelIds());
+        validateUpdate(result);
 
         Set<Long> partIds = request.getPartIds();
         List<VehiclePart> parts = partRepository.findAllById(partIds);
