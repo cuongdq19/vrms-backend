@@ -1,12 +1,11 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.domains.ModelGroup;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
-import org.lordrose.vrms.domains.VehicleModel;
+import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
@@ -16,12 +15,12 @@ import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceTypeRepository;
+import org.lordrose.vrms.repositories.ServiceVehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.ServiceProcessingService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,6 +46,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
     private final VehiclePartRepository partRepository;
+    private final ServiceVehiclePartRepository servicePartRepository;
 
     @Transactional
     @Override
@@ -70,8 +70,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Map<Long, List<ServiceOptionResponse>> servicePartIds = new LinkedHashMap<>();
 
         partIds.forEach(partId -> {
-            List<Service> services = serviceRepository.findAllByProviderIdAndModelGroup_Models_IdAndParts_Id(
-                    providerId, modelId, partId);
+            Set<Service> services = new LinkedHashSet<>();
             if (!services.isEmpty())
                 servicePartIds.put(partId, toServiceOptionResponses(services));
         });
@@ -115,20 +114,23 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
             throw newExceptionWithIds(notFounds);
         }
 
-        Service service = Service.builder()
+        Service service = serviceRepository.save(Service.builder()
                 .name(request.getGroupPriceRequest().getName())
                 .price(request.getGroupPriceRequest().getPrice())
                 .typeDetail(typeDetail)
                 .provider(provider)
-                .parts(new HashSet<>(parts))
-                .modelGroup(groupRepository.save(ModelGroup.builder()
-                        .models(new HashSet<>(modelRepository.findAllById(
-                                request.getGroupPriceRequest().getModelIds())
-                        ))
-                        .build()))
-                .build();
+                .build());
 
-        return toServiceResponse(serviceRepository.save(service));
+        Set<ServiceVehiclePart> list = parts.stream()
+                .map(part -> ServiceVehiclePart.builder()
+                        .part(part)
+                        .quantity(2.5)
+                        .service(service)
+                        .build())
+                .collect(Collectors.toSet());
+        service.setPartSet(list);
+
+        return toServiceResponse(service);
     }
 
     private void validateUpdate(Service updatingService, Set<Long> modelIds) {
@@ -166,13 +168,18 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
             throw newExceptionWithIds(notFounds);
         }
 
+        Set<ServiceVehiclePart> set = parts.stream()
+                .map(part -> ServiceVehiclePart.builder()
+                        .part(part)
+                        .quantity(2.5)
+                        .service(result)
+                        .build())
+                .collect(Collectors.toSet());
+
         result.setName(request.getName());
         result.setPrice(request.getPrice());
-        result.getModelGroup().getModels().clear();
-        result.getModelGroup().setModels(
-                new LinkedHashSet<>(modelRepository.findAllById(request.getModelIds())));
-        result.getParts().clear();
-        result.setParts(new LinkedHashSet<>(parts));
+        result.getPartSet().clear();
+        result.setPartSet(set);
 
         return toServiceResponse(serviceRepository.save(result));
     }
@@ -190,10 +197,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
                 detailId, providerId);
 
-        Set<Long> modelIds = services.stream()
-                .flatMap(service -> service.getModelGroup().getModels().stream())
-                .map(VehicleModel::getId)
-                .collect(Collectors.toSet());
+        Set<Long> modelIds = new LinkedHashSet<>();
 
         if (!modelIds.isEmpty())
             return toModelResponses(modelRepository.findAllByIdNotIn(modelIds));

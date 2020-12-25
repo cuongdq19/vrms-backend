@@ -8,16 +8,16 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,18 +48,11 @@ public class Service {
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", nullable = false)
-    private ModelGroup modelGroup;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tbl_vehicle_part_service",
-            joinColumns = @JoinColumn(name = "service_id"),
-            inverseJoinColumns = @JoinColumn(name = "vehicle_part_id"))
-    private Set<VehiclePart> parts = new HashSet<>();
-
     @ManyToMany(mappedBy = "packagedServices")
     private Set<ServicePackage> packages = new HashSet<>();
+
+    @OneToMany(mappedBy = "service")
+    private Set<ServiceVehiclePart> partSet = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {

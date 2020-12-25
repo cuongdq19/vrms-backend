@@ -2,8 +2,10 @@ package org.lordrose.vrms.converters;
 
 import org.lordrose.vrms.domains.PartRequest;
 import org.lordrose.vrms.domains.ServiceRequestPart;
+import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.responses.PartCheckoutResponse;
+import org.lordrose.vrms.models.responses.PartQuantityResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.models.responses.PartSuggestingResponse;
 
@@ -16,6 +18,28 @@ import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponse
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 public class PartConverter {
+
+    public static PartQuantityResponse toEmptyModelServicePartResponse(ServiceVehiclePart part) {
+        return PartQuantityResponse.builder()
+                .id(part.getPart().getId())
+                .name(part.getPart().getName())
+                .description(part.getPart().getDescription())
+                .quantity(part.getQuantity())
+                .price(part.getPart().getPrice())
+                .warrantyDuration(part.getPart().getWarrantyDuration())
+                .monthsPerMaintenance(part.getPart().getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(part.getPart().getImageUrls()))
+                .sectionId(part.getPart().getCategory().getSection().getId())
+                .categoryId(part.getPart().getCategory().getId())
+                .categoryName(part.getPart().getCategory().getName())
+                .build();
+    }
+
+    public static List<PartQuantityResponse> toEmptyModelServicePartResponses(Collection<ServiceVehiclePart> parts) {
+        return parts.stream()
+                .map(PartConverter::toEmptyModelServicePartResponse)
+                .collect(Collectors.toList());
+    }
 
     public static PartResponse toEmptyModelPartResponse(VehiclePart part) {
         return PartResponse.builder()

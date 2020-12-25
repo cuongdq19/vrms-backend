@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.lordrose.vrms.converters.ModelGroupConverter.toGroupResponse;
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponses;
+import static org.lordrose.vrms.converters.PartConverter.toEmptyModelServicePartResponses;
 
 public class ServiceConverter {
 
@@ -71,8 +71,7 @@ public class ServiceConverter {
                         .id(service.getId())
                         .name(service.getName())
                         .price(service.getPrice())
-                        .group(toGroupResponse(service.getModelGroup()))
-                        .parts(toEmptyModelPartResponses(service.getParts()))
+                        .parts(toEmptyModelServicePartResponses(service.getPartSet()))
                         .build())
                 .collect(Collectors.toList());
     }

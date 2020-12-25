@@ -16,9 +16,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -61,14 +63,14 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
     @JoinColumn(name = "category_id")
     private PartCategory category;
 
+    @OneToMany(mappedBy = "service")
+    private Set<ServiceVehiclePart> serviceParts = new LinkedHashSet<>();
+
     @ManyToMany
     @JoinTable(name = "tbl_vehicle_part_model",
             joinColumns = @JoinColumn(name = "vehicle_part_id"),
             inverseJoinColumns = @JoinColumn(name = "model_id"))
     private Set<VehicleModel> models = new HashSet<>();
-
-    @ManyToMany(mappedBy = "parts")
-    private Set<Service> services = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

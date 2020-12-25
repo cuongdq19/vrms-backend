@@ -117,7 +117,7 @@ public class RequestServiceImpl implements RequestService {
         List<ServiceRequest> services = new ArrayList<>();
         serviceAndParts.forEach(serviceParts -> {
             Service service = serviceRepository.findById(serviceParts.getServiceId())
-                    .orElseThrow();
+                    .orElseThrow(() -> newExceptionWithId(serviceParts.getServiceId()));
             Set<ServiceRequestPart> list = new LinkedHashSet<>();
             if (!serviceParts.getParts().isEmpty()) {
                 Set<ServicePartRequest> partRequests = serviceParts.getParts();
