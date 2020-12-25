@@ -10,11 +10,11 @@ import java.util.List;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long> {
 
-    List<Service> findAllByTypeDetailIdAndProviderId(Long typeDetailId, Long providerId);
-
     List<Service> findAllByProviderId(Long providerId);
 
     List<Service> findAllByProviderIdAndTypeDetailType(Long providerId, ServiceType type);
+
+    List<Service> findAllByProviderIdAndPartSet_Part_Models_Id(Long providerId, Long modelId);
 
     List<Service> findAllByProviderIdAndPartSet_Part_Models_IdAndPartSet_Part_Id(
             Long providerId, Long modelId, Long partId);

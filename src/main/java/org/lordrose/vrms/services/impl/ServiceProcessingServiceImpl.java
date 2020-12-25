@@ -53,6 +53,13 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
     @Transactional
     @Override
+    public Object findAllByProviderIdAndModelId(Long providerId, Long modelId) {
+        return toAllServicesResponses(
+                serviceRepository.findAllByProviderIdAndPartSet_Part_Models_Id(providerId, modelId));
+    }
+
+    @Transactional
+    @Override
     public Object findAllByProviderIdAndTypeId(Long providerId, Long typeId) {
         ServiceType type = typeRepository.findById(typeId)
                 .orElseThrow(() -> newExceptionWithId(typeId));
@@ -63,7 +70,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     @Override
     public Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
                                                           Long partId) {
-
         List<Service> services = serviceRepository.findAllByProviderIdAndPartSet_Part_Models_IdAndPartSet_Part_Id(
                 providerId, modelId, partId);
 

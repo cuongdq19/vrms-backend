@@ -7,6 +7,8 @@ public interface ServiceProcessingService {
 
     Object findAllByProviderId(Long providerId);
 
+    Object findAllByProviderIdAndModelId(Long providerId, Long modelId);
+
     Object findAllByProviderIdAndTypeId(Long providerId, Long typeId);
 
     Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
