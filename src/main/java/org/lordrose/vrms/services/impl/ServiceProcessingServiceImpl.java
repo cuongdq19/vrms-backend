@@ -6,9 +6,11 @@ import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceType;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.ServiceVehiclePart;
+import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
+import org.lordrose.vrms.models.requests.ServiceNonReplacingInfoRequest;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
@@ -115,6 +117,35 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return toServiceResponse(service);
     }
 
+    @Override
+    public Object create(Long providerId, ServiceNonReplacingInfoRequest request) {
+        ServiceTypeDetail typeDetail = typeDetailRepository.findById(request.getTypeDetailId())
+                .orElseThrow(() -> newExceptionWithId(request.getTypeDetailId()));
+        Provider provider = providerRepository.findById(providerId)
+                .orElseThrow(() -> newExceptionWithId(providerId));
+        Set<Long> modelIds = request.getModelIds();
+        Set<VehicleModel> models = new LinkedHashSet<>(modelRepository.findAllById(modelIds));
+        if (models.size() != modelIds.size()) {
+            Set<Long> retrievedModelIds = models.stream()
+                    .map(VehicleModel::getId)
+                    .collect(Collectors.toSet());
+            List<Long> missingIds = modelIds.stream()
+                    .filter(id -> !retrievedModelIds.contains(id))
+                    .collect(Collectors.toList());
+            throw newExceptionWithIds(missingIds);
+        }
+
+        Service service = serviceRepository.save(Service.builder()
+                .name(request.getServiceName())
+                .price(request.getPrice())
+                .typeDetail(typeDetail)
+                .provider(provider)
+                .models(models)
+                .build());
+
+        return toServiceResponse(service);
+    }
+
     @Transactional
     @Override
     public Object update(Long serviceId, GroupPriceRequest request) {
@@ -148,6 +179,11 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         result.setPartSet(set);
 
         return toServiceResponse(serviceRepository.save(result));
+    }
+
+    @Override
+    public Object update(Long serviceId, ServiceNonReplacingInfoRequest request) {
+        return null;
     }
 
     @Override

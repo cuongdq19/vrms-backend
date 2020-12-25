@@ -2,6 +2,7 @@ package org.lordrose.vrms.services;
 
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
+import org.lordrose.vrms.models.requests.ServiceNonReplacingInfoRequest;
 
 public interface ServiceProcessingService {
 
@@ -16,7 +17,11 @@ public interface ServiceProcessingService {
 
     Object create(Long providerId, ServiceInfoRequest request);
 
+    Object create(Long providerId, ServiceNonReplacingInfoRequest request);
+
     Object update(Long serviceId, GroupPriceRequest request);
+
+    Object update(Long serviceId, ServiceNonReplacingInfoRequest request);
 
     void delete(Long serviceId);
 

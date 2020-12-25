@@ -3,6 +3,7 @@ package org.lordrose.vrms.converters;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
+import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.responses.ServiceDetailResponse;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
@@ -72,6 +73,10 @@ public class ServiceConverter {
                         .name(service.getName())
                         .price(service.getPrice())
                         .parts(toEmptyModelServicePartResponses(service.getPartSet()))
+                        .modelIds(service.getModels() == null ? Collections.emptyList() :
+                                service.getModels().stream()
+                                        .map(VehicleModel::getId)
+                                        .collect(Collectors.toList()))
                         .build())
                 .collect(Collectors.toList());
     }

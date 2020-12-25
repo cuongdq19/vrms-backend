@@ -19,4 +19,5 @@ public class ServiceDetailResponse {
     private String name;
     private Double price;
     private List<PartQuantityResponse> parts;
+    private List<Long> modelIds;
 }

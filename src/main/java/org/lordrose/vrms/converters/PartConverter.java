@@ -36,6 +36,8 @@ public class PartConverter {
     }
 
     public static List<PartQuantityResponse> toEmptyModelServicePartResponses(Collection<ServiceVehiclePart> parts) {
+        if (parts == null)
+            return Collections.emptyList();
         return parts.stream()
                 .map(PartConverter::toEmptyModelServicePartResponse)
                 .collect(Collectors.toList());

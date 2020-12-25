@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -54,6 +55,12 @@ public class Service {
 
     @OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
     private Set<ServiceVehiclePart> partSet = new LinkedHashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "tbl_service_model",
+            joinColumns = @JoinColumn(name = "service_id"),
+            inverseJoinColumns = @JoinColumn(name = "model_id"))
+    private Set<VehicleModel> models = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -3,6 +3,7 @@ package org.lordrose.vrms.controllers;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
+import org.lordrose.vrms.models.requests.ServiceNonReplacingInfoRequest;
 import org.lordrose.vrms.services.ServiceProcessingService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,15 +44,27 @@ public class ServiceController {
         return processingService.findAllByProviderIdAndModelId(providerId, modelId);
     }
 
-    @PostMapping("/providers/{providerId}")
-    public Object createService(@PathVariable Long providerId,
-                                @RequestBody ServiceInfoRequest request) {
+    @PostMapping("/providers/{providerId}/replacing")
+    public Object createReplacingService(@PathVariable Long providerId,
+                                         @RequestBody ServiceInfoRequest request) {
         return processingService.create(providerId, request);
     }
 
-    @PostMapping("/{serviceId}")
-    public Object updateService(@PathVariable Long serviceId,
+    @PostMapping("/providers/{providerId}/non-replacing")
+    public Object createNonReplacingService(@PathVariable Long providerId,
+                                            @RequestBody ServiceNonReplacingInfoRequest request) {
+        return processingService.create(providerId, request);
+    }
+
+    @PostMapping("/{serviceId}/replacing")
+    public Object updateReplacingService(@PathVariable Long serviceId,
                                 @RequestBody GroupPriceRequest request) {
+        return processingService.update(serviceId, request);
+    }
+
+    @PostMapping("/{serviceId}/non-replacing")
+    public Object updateNonReplacingService(@PathVariable Long serviceId,
+                                         @RequestBody ServiceNonReplacingInfoRequest request) {
         return processingService.update(serviceId, request);
     }
 
