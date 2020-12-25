@@ -96,4 +96,10 @@ public class PartServiceImpl implements PartService {
 
         return toPartResponse(result);
     }
+
+    @Override
+    public Object findAllByCategoryIdAndProviderId(Long categoryId, Long providerId) {
+        List<VehiclePart> parts = partRepository.findAllByCategoryIdAndProviderId(categoryId, providerId);
+        return toPartResponses(parts);
+    }
 }

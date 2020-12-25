@@ -8,7 +8,6 @@ import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
 import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
-import org.lordrose.vrms.models.responses.PartSuggestingResponse;
 import org.lordrose.vrms.models.responses.ProviderSuggestedPartResponse;
 import org.lordrose.vrms.models.responses.ProviderSuggestedServiceGroupedResponse;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -102,10 +101,6 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
 
     private ProviderSuggestedPartResponse returnResponse(Provider provider, GeoPoint currentPos,
                                                          List<ServiceVehiclePart> partList) {
-        List<PartSuggestingResponse> responseList = partList.stream()
-                .map(part -> toPartSuggestingResponse(part.getPart()))
-                .collect(Collectors.toList());
-
         return ProviderSuggestedPartResponse.builder()
                 .id(provider.getId())
                 .name(provider.getName())
@@ -119,7 +114,9 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .longitude(provider.getLongitude())
                         .build()))
                 .manufacturerName(provider.getManufacturerName())
-                .suggestedParts(responseList)
+                .suggestedParts(partList.stream()
+                        .map(part -> toPartSuggestingResponse(part.getPart()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

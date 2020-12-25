@@ -17,4 +17,6 @@ public interface PartService {
     PartResponse delete(Long partId);
 
     PartResponse update(Long partId, PartRequest request);
+
+    Object findAllByCategoryIdAndProviderId(Long categoryId, Long providerId);
 }
