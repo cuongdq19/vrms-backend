@@ -98,7 +98,8 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .orElseThrow(() -> newExceptionWithId(request.getTypeDetailId()));
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> newExceptionWithId(providerId));
-        Set<Long> partIds = request.getGroupPriceRequest().getPartIds();
+        Map<Long, Double> partMap = request.getGroupPriceRequest().getPartQuantity();
+        Set<Long> partIds = partMap.keySet();
 
         validateCreate(request.getTypeDetailId(), providerId);
 
@@ -123,7 +124,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Set<ServiceVehiclePart> list = parts.stream()
                 .map(part -> ServiceVehiclePart.builder()
                         .part(part)
-                        .quantity(2.5)
+                        .quantity(partMap.get(part.getId()))
                         .service(service)
                         .build())
                 .collect(Collectors.toSet());
@@ -155,7 +156,8 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         validateUpdate(result);
 
-        Set<Long> partIds = request.getPartIds();
+        Map<Long, Double> partMap = request.getPartQuantity();
+        Set<Long> partIds = partMap.keySet();
         List<VehiclePart> parts = partRepository.findAllById(partIds);
         if (parts.size() != partIds.size()) {
             List<Long> retrievedIds = parts.stream()
@@ -170,7 +172,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Set<ServiceVehiclePart> set = parts.stream()
                 .map(part -> ServiceVehiclePart.builder()
                         .part(part)
-                        .quantity(2.5)
+                        .quantity(partMap.get(part.getId()))
                         .service(result)
                         .build())
                 .collect(Collectors.toSet());

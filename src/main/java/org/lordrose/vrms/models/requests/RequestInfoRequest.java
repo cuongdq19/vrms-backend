@@ -20,6 +20,6 @@ public class RequestInfoRequest {
     private Long vehicleId;
     private Long providerId;
     private Set<Long> packageIds;
-    private List<ServiceAndPartsRequest> serviceParts;
-    private Map<Long, Integer> parts;
+    private List<Long> serviceIds;
+    private Map<Long, Double> parts;
 }

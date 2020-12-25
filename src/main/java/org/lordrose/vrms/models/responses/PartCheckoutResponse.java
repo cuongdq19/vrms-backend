@@ -16,7 +16,7 @@ public class PartCheckoutResponse {
     private Long id;
     private Long partId;
     private String partName;
-    private Integer quantity;
+    private Double quantity;
     private Double price;
     private Integer warrantyDuration;
     private Integer monthsPerMaintenance;

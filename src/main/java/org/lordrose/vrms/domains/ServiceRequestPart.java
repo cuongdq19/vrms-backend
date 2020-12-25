@@ -29,7 +29,7 @@ public class ServiceRequestPart {
     private Long id;
 
     @Column(name = "quantity")
-    private Integer quantity;
+    private Double quantity;
 
     @Column(name = "price")
     private Double price;

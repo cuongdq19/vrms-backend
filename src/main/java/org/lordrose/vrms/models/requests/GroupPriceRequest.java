@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -15,5 +15,5 @@ public class GroupPriceRequest {
 
     private String name;
     private Double price;
-    private Set<Long> partIds;
+    private Map<Long, Double> partQuantity;
 }

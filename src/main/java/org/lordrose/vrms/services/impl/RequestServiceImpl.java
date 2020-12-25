@@ -10,13 +10,10 @@ import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.Vehicle;
-import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.CheckinRequest;
 import org.lordrose.vrms.models.requests.FeedbackRequest;
 import org.lordrose.vrms.models.requests.RequestInfoRequest;
-import org.lordrose.vrms.models.requests.ServiceAndPartsRequest;
-import org.lordrose.vrms.models.requests.ServicePartRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
@@ -94,10 +91,10 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Object create(RequestInfoRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Map<Long, Integer> partMap = request.getParts();
-        List<ServiceAndPartsRequest> serviceAndParts = request.getServiceParts();
+        Map<Long, Double> partMap = request.getParts();
+        List<Long> serviceIds = request.getServiceIds();
 
-        if (packageIds.isEmpty() && serviceAndParts.isEmpty() && partMap.keySet().isEmpty()) {
+        if (packageIds.isEmpty() && serviceIds.isEmpty() && partMap.keySet().isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -115,22 +112,18 @@ public class RequestServiceImpl implements RequestService {
                 .build());
 
         List<ServiceRequest> services = new ArrayList<>();
-        serviceAndParts.forEach(serviceParts -> {
-            Service service = serviceRepository.findById(serviceParts.getServiceId())
-                    .orElseThrow(() -> newExceptionWithId(serviceParts.getServiceId()));
+        serviceIds.forEach(serviceId -> {
+            Service service = serviceRepository.findById(serviceId)
+                    .orElseThrow(() -> newExceptionWithId(serviceId));
             Set<ServiceRequestPart> list = new LinkedHashSet<>();
-            if (!serviceParts.getParts().isEmpty()) {
-                Set<ServicePartRequest> partRequests = serviceParts.getParts();
-                partRequests.forEach(partRequest -> {
-                    VehiclePart part = partRepository.findById(partRequest.getId())
-                            .orElseThrow();
-                    list.add(ServiceRequestPart.builder()
-                            .quantity(partRequest.getQuantity())
-                            .price(part.getPrice())
-                            .vehiclePart(part)
-                            .build());
-                });
-            }
+
+            service.getPartSet().forEach(servicePart -> {
+                list.add(ServiceRequestPart.builder()
+                        .quantity(servicePart.getQuantity())
+                        .price(servicePart.getPart().getPrice())
+                        .vehiclePart(servicePart.getPart())
+                        .build());
+            });
 
             ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
                     .price(service.getPrice())
@@ -178,9 +171,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestCheckOutResponse update(Long requestId, CheckinRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Map<Long, Integer> partMap = request.getParts();
-        List<ServiceAndPartsRequest> serviceAndParts = request.getServiceParts();
-        if (packageIds.isEmpty() && serviceAndParts.isEmpty() && partMap.keySet().isEmpty()) {
+        Map<Long, Double> partMap = request.getParts();
+        List<Long> serviceIds = request.getServiceIds();
+        if (packageIds.isEmpty() && serviceIds.isEmpty() && partMap.keySet().isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -189,22 +182,18 @@ public class RequestServiceImpl implements RequestService {
 
         result.getServices().forEach(serviceRequestRepository::delete);
         List<ServiceRequest> services = new ArrayList<>();
-        serviceAndParts.forEach(serviceParts -> {
-            Service service = serviceRepository.findById(serviceParts.getServiceId())
-                    .orElseThrow();
+        serviceIds.forEach(serviceId -> {
+            Service service = serviceRepository.findById(serviceId)
+                    .orElseThrow(() -> newExceptionWithId(serviceId));
             Set<ServiceRequestPart> list = new LinkedHashSet<>();
-            if (!serviceParts.getParts().isEmpty()) {
-                Set<ServicePartRequest> partRequests = serviceParts.getParts();
-                partRequests.forEach(partRequest -> {
-                    VehiclePart part = partRepository.findById(partRequest.getId())
-                            .orElseThrow();
-                    list.add(requestPartRepository.save(ServiceRequestPart.builder()
-                            .quantity(partRequest.getQuantity())
-                            .price(part.getPrice())
-                            .vehiclePart(part)
-                            .build()));
-                });
-            }
+
+            service.getPartSet().forEach(servicePart -> {
+                list.add(ServiceRequestPart.builder()
+                        .quantity(servicePart.getQuantity())
+                        .price(servicePart.getPart().getPrice())
+                        .vehiclePart(servicePart.getPart())
+                        .build());
+            });
             services.add(ServiceRequest.builder()
                     .price(service.getPrice())
                     .service(service)
