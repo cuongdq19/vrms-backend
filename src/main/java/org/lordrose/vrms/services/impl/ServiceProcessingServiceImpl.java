@@ -9,7 +9,6 @@ import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
-import org.lordrose.vrms.repositories.ModelGroupRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
@@ -41,7 +40,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     private final ServiceTypeDetailRepository typeDetailRepository;
     private final ServiceTypeRepository typeRepository;
     private final ProviderRepository providerRepository;
-    private final ModelGroupRepository groupRepository;
     private final VehicleModelRepository modelRepository;
     private final VehiclePartRepository partRepository;
     private final ServiceVehiclePartRepository servicePartRepository;
@@ -72,20 +70,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return toServiceOptionResponses(services);
     }
 
-    private void validateCreate(Long detailId, Long providerId) {
-        /*List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
-                detailId, providerId);
-
-        Set<Long> createdModelIds = services.stream()
-                .flatMap(service -> service.getModelGroup().getModels().stream())
-                .map(VehicleModel::getId)
-                .collect(Collectors.toSet());
-
-        if (CollectionUtils.intersection(modelIds, createdModelIds).size() != 0) {
-            throw new InvalidArgumentException("Only one VehicleModel can existed in one ServiceTypeDetail");
-        }*/
-    }
-
     @Override
     public Object create(Long providerId, ServiceInfoRequest request) {
         ServiceTypeDetail typeDetail = typeDetailRepository.findById(request.getTypeDetailId())
@@ -94,8 +78,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .orElseThrow(() -> newExceptionWithId(providerId));
         Map<Long, Double> partMap = request.getGroupPriceRequest().getPartQuantity();
         Set<Long> partIds = partMap.keySet();
-
-        validateCreate(request.getTypeDetailId(), providerId);
 
         List<VehiclePart> parts = partRepository.findAllById(partIds);
         if (parts.size() != partIds.size()) {
@@ -127,28 +109,11 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return toServiceResponse(service);
     }
 
-    private void validateUpdate(Service updatingService) {
-        /*List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
-                updatingService.getTypeDetail().getId(), updatingService.getProvider().getId());
-        services.remove(updatingService);
-
-        Set<Long> createdModelIds = services.stream()
-                .flatMap(service -> service.getModelGroup().getModels().stream())
-                .map(VehicleModel::getId)
-                .collect(Collectors.toSet());
-
-        if (CollectionUtils.intersection(modelIds, createdModelIds).size() != 0) {
-            throw new InvalidArgumentException("Only one VehicleModel can existed in one ServiceTypeDetail");
-        }*/
-    }
-
     @Transactional
     @Override
     public Object update(Long serviceId, GroupPriceRequest request) {
         Service result = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> newExceptionWithId(serviceId));
-
-        validateUpdate(result);
 
         Map<Long, Double> partMap = request.getPartQuantity();
         Set<Long> partIds = partMap.keySet();
@@ -189,14 +154,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
     @Override
     public Object findAllModels(Long detailId, Long providerId) {
-        List<Service> services = serviceRepository.findAllByTypeDetailIdAndProviderId(
-                detailId, providerId);
-
-        Set<Long> modelIds = new LinkedHashSet<>();
-
-        if (!modelIds.isEmpty())
-            return toModelResponses(modelRepository.findAllByIdNotIn(modelIds));
-        else
-            return toModelResponses(modelRepository.findAll());
+        return toModelResponses(modelRepository.findAll());
     }
 }
