@@ -1,9 +1,11 @@
 package org.lordrose.vrms.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.constants.MaintenanceConstants;
 import org.lordrose.vrms.models.requests.ServicePackageRequest;
 import org.lordrose.vrms.services.ServicePackageProcessingService;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServicePackageController {
 
     private final ServicePackageProcessingService packageService;
+    private final MaintenanceConstants.MaintenanceMilestone milestone;
+
+    @GetMapping("/milestones")
+    public Object getMilestones() {
+        return milestone.getMilesAsMap();
+    }
 
     @PostMapping("/packages/providers/{providerId}")
     public Object createPackage(@PathVariable Long providerId,
