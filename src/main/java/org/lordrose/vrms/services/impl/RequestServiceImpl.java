@@ -62,6 +62,8 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
     private final IncurredExpenseRepository expenseRepository;
+
+    private final AccessoryServiceImpl accessoryService;
     
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
@@ -286,6 +288,14 @@ public class RequestServiceImpl implements RequestService {
                         .build())
                 .build();
         messageService.pushNotification(content);*/
+
+        int count_1 = accessoryService.registerAccessoryFromPartRequests(
+                result.getVehicle().getUser(), result.getParts());
+
+        int count_2 = accessoryService.registerAccessoryFromServiceRequestParts(
+                result.getVehicle().getUser(), result.getServices().stream()
+                        .flatMap(serviceRequest -> serviceRequest.getRequestParts().stream())
+                        .collect(Collectors.toSet()));
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }

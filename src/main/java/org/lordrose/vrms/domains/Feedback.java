@@ -45,7 +45,7 @@ public class Feedback extends TimeAuditable<LocalDateTime> {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "request_id", referencedColumnName = "id")
     private Request request;
 }
