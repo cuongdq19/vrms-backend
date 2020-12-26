@@ -15,8 +15,8 @@ import java.util.List;
 @Builder
 public class ServiceOptionResponse {
 
-    private Long serviceId;
-    private String serviceName;
+    private Long id;
+    private String name;
     private Double price;
     private List<PartQuantityResponse> parts;
     private Double total;

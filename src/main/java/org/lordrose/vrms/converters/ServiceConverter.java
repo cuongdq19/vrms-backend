@@ -118,8 +118,8 @@ public class ServiceConverter {
 
     public static ServiceOptionResponse toServiceOptionResponse(Service service) {
         return ServiceOptionResponse.builder()
-                .serviceId(service.getId())
-                .serviceName(service.getName())
+                .id(service.getId())
+                .name(service.getName())
                 .price(service.getPrice())
                 .parts(toEmptyModelServicePartResponses(service.getPartSet()))
                 .total(service.getPrice() + service.getPartSet().stream()
