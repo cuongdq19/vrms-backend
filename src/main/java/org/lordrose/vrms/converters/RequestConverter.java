@@ -1,6 +1,5 @@
 package org.lordrose.vrms.converters;
 
-import org.lordrose.vrms.domains.MaintenanceLevelDetail;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
@@ -10,11 +9,9 @@ import org.lordrose.vrms.models.responses.ServiceCheckoutResponse;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseResponses;
-import static org.lordrose.vrms.converters.MaintenanceLevelDetailConverter.toLevelDetailResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponses;
 import static org.lordrose.vrms.converters.PartConverter.toPartDetailResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderResponse;
@@ -31,8 +28,7 @@ public class RequestConverter {
             return null;
         if (request.getExpenses() == null)
             request.setExpenses(Collections.emptySet());
-        Optional<MaintenanceLevelDetail> detail = Optional.ofNullable(request.getLevelDetail());
-        RequestHistoryResponse response = RequestHistoryResponse.builder()
+        return RequestHistoryResponse.builder()
                 .id(request.getId())
                 .bookingTime(toSeconds(request.getBookingTime()))
                 .note(request.getNote())
@@ -44,8 +40,6 @@ public class RequestConverter {
                 .expenses(toExpenseResponses(request.getExpenses()))
                 .provider(toProviderResponse(request.getProvider()))
                 .build();
-        detail.ifPresent(value -> response.setLevelDetail(toLevelDetailResponse(value)));
-        return response;
     }
 
     public static RequestHistoryDetailResponse toRequestHistoryDetailResponse(Request request) {

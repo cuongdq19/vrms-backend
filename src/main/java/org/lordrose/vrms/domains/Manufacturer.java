@@ -44,7 +44,4 @@ public class Manufacturer {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "manufacturer")
     private Set<VehicleModel> models = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "manufacturer")
-    private Set<MaintenanceLevel> levels = new HashSet<>();
 }

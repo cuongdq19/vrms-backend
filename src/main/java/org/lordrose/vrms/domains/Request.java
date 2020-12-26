@@ -63,10 +63,6 @@ public class Request extends TimeAuditable<LocalDateTime> {
     private Set<PartRequest> parts = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "level_detail_id")
-    private MaintenanceLevelDetail levelDetail;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "technician_id")
     private User technician;
 

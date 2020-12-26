@@ -25,5 +25,4 @@ public class RequestHistoryResponse {
     private List<PartCheckoutResponse> parts;
     private List<ExpenseResponse> expenses;
     private ProviderResponse provider;
-    private LevelDetailResponse levelDetail;
 }

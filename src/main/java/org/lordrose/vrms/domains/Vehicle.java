@@ -51,9 +51,6 @@ public class Vehicle extends TimeAuditable<LocalDateTime> {
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "vehicle")
-    private Set<Reminder> reminders;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vehicle")
     private Set<Request> requests;
 
     @ManyToOne(fetch = FetchType.EAGER)
