@@ -8,6 +8,7 @@ import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
+import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.GroupPriceRequest;
 import org.lordrose.vrms.models.requests.ServiceInfoRequest;
 import org.lordrose.vrms.models.requests.ServiceNonReplacingInfoRequest;
@@ -152,6 +153,12 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Service result = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> newExceptionWithId(serviceId));
 
+        if (result.getModels() != null) {
+            if (!result.getModels().isEmpty()) {
+                throw new InvalidArgumentException("Conflict r bro oi! K lam v duoc dau!");
+            }
+        }
+
         Map<Long, Double> partMap = request.getPartQuantity();
         Set<Long> partIds = partMap.keySet();
         List<VehiclePart> parts = partRepository.findAllById(partIds);
@@ -181,9 +188,46 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         return toServiceResponse(serviceRepository.save(result));
     }
 
+    @Transactional
     @Override
     public Object update(Long serviceId, ServiceNonReplacingInfoRequest request) {
-        return null;
+        ServiceTypeDetail typeDetail = typeDetailRepository.findById(request.getTypeDetailId())
+                .orElseThrow(() -> newExceptionWithId(request.getTypeDetailId()));
+        Service result = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> newExceptionWithId(serviceId));
+        Set<Long> modelIds = request.getModelIds();
+
+        if (modelIds.isEmpty()) {
+            throw new InvalidArgumentException("Conflict r bro oi! K lam v duoc dau!");
+        }
+
+        if (result.getModels() == null) {
+            throw new InvalidArgumentException("Conflict r bro oi! K lam v duoc dau!");
+        } else {
+            if (result.getModels().isEmpty()) {
+                throw new InvalidArgumentException("Conflict r bro oi! K lam v duoc dau!");
+            }
+        }
+
+        Set<VehicleModel> models = new LinkedHashSet<>(modelRepository.findAllById(modelIds));
+        if (models.size() != modelIds.size()) {
+            Set<Long> retrievedModelIds = models.stream()
+                    .map(VehicleModel::getId)
+                    .collect(Collectors.toSet());
+            List<Long> missingIds = modelIds.stream()
+                    .filter(id -> !retrievedModelIds.contains(id))
+                    .collect(Collectors.toList());
+            throw newExceptionWithIds(missingIds);
+        }
+
+        result.setName(request.getServiceName());
+        result.setPrice(request.getPrice());
+        result.setTypeDetail(typeDetail);
+        result.setModels(models);
+
+        Service service = serviceRepository.save(result);
+
+        return toServiceResponse(service);
     }
 
     @Override
