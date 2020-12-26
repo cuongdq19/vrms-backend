@@ -39,4 +39,10 @@ public class PartCategory {
     @ManyToOne
     @JoinColumn(name = "section_id")
     private PartSection section;
+
+    @Column(name = "is_separable")
+    private Boolean isSeparable;
+
+    @Column(name = "is_accessory")
+    private Boolean isAccessory;
 }
