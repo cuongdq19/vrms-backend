@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +24,14 @@ import java.util.List;
 public class VehiclePartController {
 
     private final PartService partService;
+
+    @PostMapping("/categories/{categoryId}/providers/{providerId}")
+    public Object getAllByCategoryAndModelIds(@PathVariable Long categoryId,
+                                              @PathVariable Long providerId,
+                                              @RequestBody Set<Long> modelIds) {
+        return partService.findAllByCategoryIdAndProviderIdAndModelIds(
+                categoryId, providerId, modelIds);
+    }
 
     @GetMapping("/categories/{categoryId}/providers/{providerId}")
     public Object getAllByCategory(@PathVariable Long categoryId,
@@ -36,7 +45,7 @@ public class VehiclePartController {
     }
     @GetMapping("/provider/{providerId}/vehicle-model/{modelId}")
     public List<PartResponse> getAllByProviderIdAndModelId(@PathVariable Long providerId,
-                                                        @PathVariable Long modelId) {
+                                                           @PathVariable Long modelId) {
         return partService.findAllByProviderIdAndModelId(providerId, modelId);
     }
 

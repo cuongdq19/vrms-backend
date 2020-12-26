@@ -14,14 +14,18 @@ import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.PartService;
 import org.lordrose.vrms.services.StorageService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.PartConverter.toPartResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
+import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
 
 @RequiredArgsConstructor
 @Service
@@ -101,5 +105,30 @@ public class PartServiceImpl implements PartService {
     public Object findAllByCategoryIdAndProviderId(Long categoryId, Long providerId) {
         List<VehiclePart> parts = partRepository.findAllByCategoryIdAndProviderId(categoryId, providerId);
         return toPartResponses(parts);
+    }
+
+    @Transactional
+    @Override
+    public Object findAllByCategoryIdAndProviderIdAndModelIds(Long categoryId, Long providerId,
+                                                              Set<Long> modelIds) {
+        Set<VehicleModel> models = new HashSet<>(modelRepository.findAllById(modelIds));
+        if (models.size() != modelIds.size()) {
+            List<Long> retrievedIds = models.stream()
+                    .map(VehicleModel::getId)
+                    .collect(Collectors.toList());
+            List<Long> notFounds = modelIds.stream()
+                    .filter(id -> !retrievedIds.contains(id))
+                    .collect(Collectors.toList());
+            throw newExceptionWithIds(notFounds);
+        }
+
+        List<VehiclePart> parts = partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
+                providerId, categoryId, models.stream().findFirst().orElseThrow());
+
+        List<VehiclePart> results = parts.stream()
+                .filter(part -> part.getModels().containsAll(models))
+                .collect(Collectors.toList());
+
+        return toPartResponses(results);
     }
 }

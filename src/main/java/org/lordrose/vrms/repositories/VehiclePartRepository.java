@@ -17,5 +17,8 @@ public interface VehiclePartRepository extends JpaRepository<VehiclePart, Long> 
     List<VehiclePart> findAllByCategoryIdAndModelsContains(Long categoryId,
                                                            VehicleModel model);
 
+    List<VehiclePart> findAllByProviderIdAndCategoryIdAndModelsContains(
+            Long providerId, Long categoryId, VehicleModel model);
+
     List<VehiclePart> findAllByCategoryIdAndProviderId(Long categoryId, Long providerId);
 }
