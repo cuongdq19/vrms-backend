@@ -31,6 +31,8 @@ public class FeedbackConverter {
     }
 
     public static FeedbackHistoryResponse toFeedbackHistoryResponse(Feedback feedback) {
+        if (feedback == null)
+            return null;
         return FeedbackHistoryResponse.builder()
                 .id(feedback.getId())
                 .ratings(feedback.getRatings())

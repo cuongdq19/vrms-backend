@@ -51,8 +51,8 @@ public class ProviderConverter {
                 .openTime(provider.getOpenTime().toString())
                 .closeTime(provider.getCloseTime().toString())
                 .imageUrls(getUrlsAsArray(provider.getImageUrls()))
-                .contractPhoneNumber(provider.getContract().getPhoneNumber())
-                .contractEmail(provider.getContract().getEmail())
+                .contractPhoneNumber(null) //provider.getContract().getPhoneNumber()
+                .contractEmail(null) //provider.getContract().getEmail()
                 .build();
     }
 }

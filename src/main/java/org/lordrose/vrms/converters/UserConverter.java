@@ -70,6 +70,8 @@ public class UserConverter {
     }
 
     public static TechnicianResponse toTechnicianHistoryResponse(User technician) {
+        if (technician == null)
+            return null;
         return TechnicianResponse.builder()
                 .id(technician.getId())
                 .fullName(technician.getFullName())

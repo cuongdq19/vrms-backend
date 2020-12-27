@@ -172,18 +172,18 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
             throw newExceptionWithIds(notFounds);
         }
 
-        Set<ServiceVehiclePart> set = parts.stream()
+        List<ServiceVehiclePart> list = parts.stream()
                 .map(part -> ServiceVehiclePart.builder()
                         .part(part)
                         .quantity(partMap.get(part.getId()))
                         .service(result)
                         .build())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         result.setName(request.getName());
         result.setPrice(request.getPrice());
         result.getPartSet().clear();
-        result.setPartSet(set);
+        result.setPartSet(new LinkedHashSet<>(servicePartRepository.saveAll(list)));
 
         return toServiceResponse(serviceRepository.save(result));
     }
