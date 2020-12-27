@@ -11,12 +11,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseHistoryResponses;
 import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseResponses;
+import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackHistoryResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponses;
 import static org.lordrose.vrms.converters.PartConverter.toPartDetailResponses;
+import static org.lordrose.vrms.converters.PartConverter.toPartHistoryResponses;
+import static org.lordrose.vrms.converters.ProviderConverter.toProviderHistoryResponse;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toRequestServiceResponses;
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceHistoryResponses;
+import static org.lordrose.vrms.converters.ServicePackageConverter.toPackageHistoryResponses;
 import static org.lordrose.vrms.converters.UserConverter.toRequestUserInfoResponse;
+import static org.lordrose.vrms.converters.UserConverter.toTechnicianHistoryResponse;
+import static org.lordrose.vrms.converters.UserConverter.toUserVehicleHistoryResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
@@ -44,6 +52,20 @@ public class RequestConverter {
 
     public static RequestHistoryDetailResponse toRequestHistoryDetailResponse(Request request) {
         return RequestHistoryDetailResponse.builder()
+                .id(request.getId())
+                .bookingTime(toSeconds(request.getBookingTime()))
+                .arriveTime(toSeconds(request.getArriveTime()))
+                .checkoutTime(toSeconds(request.getCheckoutTime()))
+                .note(request.getNote())
+                .status(request.getStatus())
+                .packages(toPackageHistoryResponses(request.getPackages()))
+                .services(toServiceHistoryResponses(request.getServices()))
+                .parts(toPartHistoryResponses(request.getParts()))
+                .expenses(toExpenseHistoryResponses(request.getExpenses()))
+                .technician(toTechnicianHistoryResponse(request.getTechnician()))
+                .userVehicle(toUserVehicleHistoryResponse(request.getVehicle()))
+                .provider(toProviderHistoryResponse(request.getProvider()))
+                .feedback(toFeedbackHistoryResponse(request.getFeedback()))
                 .build();
     }
 

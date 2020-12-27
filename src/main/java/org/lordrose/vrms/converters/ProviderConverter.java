@@ -40,4 +40,19 @@ public class ProviderConverter {
                 .map(ProviderConverter::toProviderDetailResponse)
                 .collect(Collectors.toList());
     }
+
+    public static ProviderResponse toProviderHistoryResponse(Provider provider) {
+        return ProviderResponse.builder()
+                .id(provider.getId())
+                .providerName(provider.getName())
+                .address(provider.getAddress())
+                .latitude(provider.getLatitude())
+                .longitude(provider.getLongitude())
+                .openTime(provider.getOpenTime().toString())
+                .closeTime(provider.getCloseTime().toString())
+                .imageUrls(getUrlsAsArray(provider.getImageUrls()))
+                .contractPhoneNumber(provider.getContract().getPhoneNumber())
+                .contractEmail(provider.getContract().getEmail())
+                .build();
+    }
 }

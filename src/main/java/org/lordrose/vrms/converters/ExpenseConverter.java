@@ -1,6 +1,7 @@
 package org.lordrose.vrms.converters;
 
 import org.lordrose.vrms.domains.IncurredExpense;
+import org.lordrose.vrms.models.responses.ExpenseHistoryResponse;
 import org.lordrose.vrms.models.responses.ExpenseResponse;
 
 import java.util.Collection;
@@ -25,6 +26,21 @@ public class ExpenseConverter {
         }
         return expenses.stream()
                 .map(ExpenseConverter::toExpenseResponse)
+                .collect(Collectors.toList());
+    }
+
+    public static ExpenseHistoryResponse toExpenseHistoryResponse(IncurredExpense expense) {
+        return ExpenseHistoryResponse.builder()
+                .id(expense.getId())
+                .name(expense.getName())
+                .price(expense.getPrice())
+                .description(expense.getDescription())
+                .build();
+    }
+
+    public static List<ExpenseHistoryResponse> toExpenseHistoryResponses(Collection<IncurredExpense> expenses) {
+        return expenses.stream()
+                .map(ExpenseConverter::toExpenseHistoryResponse)
                 .collect(Collectors.toList());
     }
 }

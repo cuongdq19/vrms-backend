@@ -11,16 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProviderResponse {
+public class FeedbackHistoryResponse {
 
     private Long id;
-    private String providerName;
-    private String address;
-    private Double latitude;
-    private Double longitude;
-    private String openTime;
-    private String closeTime;
+    private Integer ratings;
+    private String content;
     private String[] imageUrls;
-    private String contractPhoneNumber;
-    private String contractEmail;
 }

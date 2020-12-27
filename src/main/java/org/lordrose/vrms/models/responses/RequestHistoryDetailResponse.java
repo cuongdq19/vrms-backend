@@ -17,22 +17,16 @@ public class RequestHistoryDetailResponse {
 
     private Long id;
     private Long bookingTime;
+    private Long arriveTime;
+    private Long checkoutTime;
     private String note;
     private String status;
-    private String userFullName;
-    private String phoneNumber;
-    private String plateNumber;
-    private Long vehicleTypeId;
-    private String vehicleName;
-    private Long levelDetailId;
-    private Double maintenancePrice;
-    private String levelName;
-    private Integer levelMonth;
-    private Long levelTripDistance;
-    private FeedbackResponse feedback;
+    private List<PackageHistoryResponse> packages;
+    private List<ServiceHistoryResponse> services;
+    private List<PartHistoryResponse> parts;
+    private List<ExpenseHistoryResponse> expenses;
     private TechnicianResponse technician;
-    private List<ServiceCheckoutResponse> services;
-    private List<RequestProductResponse> products;
-    private List<ExpenseResponse> expenses;
+    private UserVehicleHistoryResponse userVehicle;
     private ProviderResponse provider;
+    private FeedbackHistoryResponse feedback;
 }

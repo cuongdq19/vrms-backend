@@ -62,6 +62,9 @@ public class Request extends TimeAuditable<LocalDateTime> {
     @OneToMany(mappedBy = "request")
     private Set<PartRequest> parts = new HashSet<>();
 
+    @OneToMany(mappedBy = "request")
+    private Set<IncurredExpense> expenses = new HashSet<>();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "technician_id")
     private User technician;
@@ -70,13 +73,10 @@ public class Request extends TimeAuditable<LocalDateTime> {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
-    @OneToOne(mappedBy = "request")
-    private Feedback feedback;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "service_provider_id")
     private Provider provider;
 
-    @OneToMany(mappedBy = "request")
-    private Set<IncurredExpense> expenses = new HashSet<>();
+    @OneToOne(mappedBy = "request")
+    private Feedback feedback;
 }

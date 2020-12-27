@@ -1,10 +1,13 @@
 package org.lordrose.vrms.converters;
 
 import org.lordrose.vrms.domains.Feedback;
+import org.lordrose.vrms.models.responses.FeedbackHistoryResponse;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 public class FeedbackConverter {
 
@@ -25,5 +28,14 @@ public class FeedbackConverter {
         return feedbacks.stream()
                 .map(FeedbackConverter::toFeedbackResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static FeedbackHistoryResponse toFeedbackHistoryResponse(Feedback feedback) {
+        return FeedbackHistoryResponse.builder()
+                .id(feedback.getId())
+                .ratings(feedback.getRatings())
+                .content(feedback.getContent())
+                .imageUrls(getUrlsAsArray(feedback.getImageUrls()))
+                .build();
     }
 }

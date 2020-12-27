@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.responses.ServiceDetailResponse;
+import org.lordrose.vrms.models.responses.ServiceHistoryResponse;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
 import org.lordrose.vrms.models.responses.ServicePriceDetailResponse;
 import org.lordrose.vrms.models.responses.ServiceResponse;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponses;
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelServicePartResponses;
+import static org.lordrose.vrms.converters.PartConverter.toServicePartHistoryResponses;
 
 public class ServiceConverter {
 
@@ -133,5 +135,23 @@ public class ServiceConverter {
         return services.stream()
                 .map(ServiceConverter::toServiceOptionResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static ServiceHistoryResponse toServiceHistoryResponse(ServiceRequest service) {
+        return ServiceHistoryResponse.builder()
+                .id(service.getService().getId())
+                .price(service.getPrice())
+                .serviceName(service.getService().getName())
+                .typeDetailId(service.getService().getTypeDetail().getId())
+                .typeId(service.getService().getTypeDetail().getType().getId())
+                .typeName(service.getService().getTypeDetail().getType().getName())
+                .sectionId(service.getService().getTypeDetail().getSection().getId())
+                .sectionName(service.getService().getTypeDetail().getSection().getName())
+                .parts(toServicePartHistoryResponses(service.getRequestParts()))
+                .build();
+    }
+
+    public static List<ServiceHistoryResponse> toServiceHistoryResponses(Collection<ServiceRequest> services) {
+        return null;
     }
 }
