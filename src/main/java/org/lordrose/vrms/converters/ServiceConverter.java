@@ -152,6 +152,8 @@ public class ServiceConverter {
     }
 
     public static List<ServiceHistoryResponse> toServiceHistoryResponses(Collection<ServiceRequest> services) {
-        return null;
+        return services.stream()
+                .map(ServiceConverter::toServiceHistoryResponse)
+                .collect(Collectors.toList());
     }
 }
