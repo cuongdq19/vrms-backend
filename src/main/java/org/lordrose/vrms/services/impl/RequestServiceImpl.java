@@ -20,7 +20,7 @@ import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
 import org.lordrose.vrms.repositories.FeedbackRepository;
 import org.lordrose.vrms.repositories.IncurredExpenseRepository;
-import org.lordrose.vrms.repositories.PartRequestRepository;
+import org.lordrose.vrms.repositories.IncurredPartRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,7 +57,7 @@ public class RequestServiceImpl implements RequestService {
     private final ServiceRepository serviceRepository;
     private final ServiceRequestRepository serviceRequestRepository;
     private final VehiclePartRepository partRepository;
-    private final PartRequestRepository partRequestRepository;
+    private final IncurredPartRepository incurredPartRepository;
     private final ServiceRequestPartRepository requestPartRepository;
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
@@ -94,10 +93,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Object create(RequestInfoRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Map<Long, Double> partMap = request.getParts();
         List<Long> serviceIds = request.getServiceIds();
 
-        if (packageIds.isEmpty() && serviceIds.isEmpty() && partMap.keySet().isEmpty()) {
+        if (packageIds.isEmpty() && serviceIds.isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -178,7 +176,7 @@ public class RequestServiceImpl implements RequestService {
         serviceIds.forEach(serviceId -> {
             Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(() -> newExceptionWithId(serviceId));
-            Set<ServiceRequestPart> list = new LinkedHashSet<>();
+            List<ServiceRequestPart> list = new ArrayList<>();
 
             service.getPartSet().forEach(servicePart -> {
                 list.add(ServiceRequestPart.builder()
@@ -191,7 +189,7 @@ public class RequestServiceImpl implements RequestService {
                     .price(service.getPrice())
                     .service(service)
                     .request(result)
-                    .requestParts(list)
+                    .requestParts(new LinkedHashSet<>(requestPartRepository.saveAll(list)))
                     .build());
         });
         result.setServices(new LinkedHashSet<>(serviceRequestRepository.saveAll(services)));
@@ -199,17 +197,26 @@ public class RequestServiceImpl implements RequestService {
         result.getExpenses().forEach(expenseRepository::delete);
         List<IncurredExpense> expenses = expenseRequests.stream()
                 .map(expenseRequest -> {
-                    Set<IncurredPart> incurredParts =
-                            partRepository.findAllById(expenseRequest.getParts().keySet()).stream()
-                                    .map(part -> IncurredPart.builder().build())
-                                    .collect(Collectors.toSet());
-                    return IncurredExpense.builder()
+                    IncurredExpense expense = expenseRepository.save(IncurredExpense.builder()
                             .name(expenseRequest.getName())
                             .price(expenseRequest.getPrice())
                             .description(expenseRequest.getDescription())
                             .request(result)
-                            .parts(incurredParts)
-                            .build();
+                            .build());
+
+                    Set<IncurredPart> incurredParts =
+                            partRepository.findAllById(expenseRequest.getParts().keySet()).stream()
+                                    .map(part -> IncurredPart.builder()
+                                            .quantity(expenseRequest.getParts().get(part.getId()))
+                                        .price(part.getPrice())
+                                        .vehiclePart(part)
+                                        .expense(expense)
+                                        .build())
+                                    .collect(Collectors.toSet());
+
+                    expense.setParts(new LinkedHashSet<>(incurredPartRepository.saveAll(incurredParts)));
+
+                    return expense;
                 })
                 .collect(Collectors.toList());
         result.setExpenses(new LinkedHashSet<>(expenseRepository.saveAll(expenses)));

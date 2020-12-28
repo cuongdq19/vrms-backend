@@ -44,6 +44,6 @@ public class IncurredExpense {
     @JoinColumn(name = "request_id")
     private Request request;
 
-    @OneToMany(mappedBy = "expense")
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.REMOVE)
     private Set<IncurredPart> parts;
 }
