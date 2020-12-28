@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.PartConverter.toPartDetailResponses;
+import static org.lordrose.vrms.converters.PartConverter.toPartHistoryResponses;
+
 public class ExpenseConverter {
 
     public static ExpenseResponse toExpenseResponse(IncurredExpense expense) {
@@ -17,13 +20,13 @@ public class ExpenseConverter {
                 .name(expense.getName())
                 .price(expense.getPrice())
                 .description(expense.getDescription())
+                .parts(toPartDetailResponses(expense.getParts()))
                 .build();
     }
 
     public static List<ExpenseResponse> toExpenseResponses(Collection<IncurredExpense> expenses) {
-        if (expenses == null) {
+        if (expenses == null)
             expenses = Collections.emptyList();
-        }
         return expenses.stream()
                 .map(ExpenseConverter::toExpenseResponse)
                 .collect(Collectors.toList());
@@ -35,10 +38,13 @@ public class ExpenseConverter {
                 .name(expense.getName())
                 .price(expense.getPrice())
                 .description(expense.getDescription())
+                .parts(toPartHistoryResponses(expense.getParts()))
                 .build();
     }
 
     public static List<ExpenseHistoryResponse> toExpenseHistoryResponses(Collection<IncurredExpense> expenses) {
+        if (expenses == null)
+            expenses = Collections.emptyList();
         return expenses.stream()
                 .map(ExpenseConverter::toExpenseHistoryResponse)
                 .collect(Collectors.toList());

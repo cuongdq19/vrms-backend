@@ -60,9 +60,6 @@ public class Request extends TimeAuditable<LocalDateTime> {
     private Set<ServiceRequest> services = new HashSet<>();
 
     @OneToMany(mappedBy = "request")
-    private Set<PartRequest> parts = new HashSet<>();
-
-    @OneToMany(mappedBy = "request")
     private Set<IncurredExpense> expenses = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -2,7 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Accessory;
-import org.lordrose.vrms.domains.PartRequest;
+import org.lordrose.vrms.domains.IncurredPart;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.repositories.AccessoryRepository;
@@ -19,11 +19,11 @@ public class AccessoryServiceImpl {
     private final AccessoryRepository accessoryRepository;
 
     public int registerAccessoryFromPartRequests(User vehicleOwner,
-                                                 Collection<PartRequest> parts) {
+                                                 Collection<IncurredPart> parts) {
         List<Accessory> accessories = parts.stream()
-                .map(partRequest -> Accessory.builder()
-                        .quantity(partRequest.getQuantity())
-                        .part(partRequest.getVehiclePart())
+                .map(incurredPart -> Accessory.builder()
+                        .quantity(incurredPart.getQuantity())
+                        .part(incurredPart.getVehiclePart())
                         .user(vehicleOwner)
                         .build())
                 .collect(Collectors.toList());

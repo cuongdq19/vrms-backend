@@ -3,7 +3,7 @@ package org.lordrose.vrms.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Feedback;
 import org.lordrose.vrms.domains.IncurredExpense;
-import org.lordrose.vrms.domains.PartRequest;
+import org.lordrose.vrms.domains.IncurredPart;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.Service;
@@ -12,6 +12,7 @@ import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.Vehicle;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.CheckinRequest;
+import org.lordrose.vrms.models.requests.ExpenseRequest;
 import org.lordrose.vrms.models.requests.FeedbackRequest;
 import org.lordrose.vrms.models.requests.RequestInfoRequest;
 import org.lordrose.vrms.models.responses.FeedbackResponse;
@@ -33,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -141,16 +142,6 @@ public class RequestServiceImpl implements RequestService {
         });
         saved.setServices(new LinkedHashSet<>(services));
 
-        Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
-                .map(part -> PartRequest.builder()
-                        .quantity(partMap.get(part.getId()))
-                        .price(part.getPrice())
-                        .request(saved)
-                        .vehiclePart(part)
-                        .build())
-                .collect(Collectors.toSet());
-        saved.setParts(new HashSet<>(partRequestRepository.saveAll(parts)));
-
         return toRequestCheckoutResponse(
                 requestRepository.findById(saved.getId())
                         .orElseThrow(() -> newExceptionWithId(saved.getId())));
@@ -173,9 +164,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestCheckOutResponse update(Long requestId, CheckinRequest request) {
         Set<Long> packageIds = request.getPackageIds();
-        Map<Long, Double> partMap = request.getParts();
+        Set<ExpenseRequest> expenseRequests = request.getExpenses();
         List<Long> serviceIds = request.getServiceIds();
-        if (packageIds.isEmpty() && serviceIds.isEmpty() && partMap.keySet().isEmpty()) {
+        if (packageIds.isEmpty() && serviceIds.isEmpty()) {
             throw new InvalidArgumentException("At least one field is required!");
         }
 
@@ -205,27 +196,23 @@ public class RequestServiceImpl implements RequestService {
         });
         result.setServices(new LinkedHashSet<>(serviceRequestRepository.saveAll(services)));
 
-        result.getParts().forEach(partRequestRepository::delete);
-        Set<PartRequest> parts = partRepository.findAllById(partMap.keySet()).stream()
-                .map(part -> PartRequest.builder()
-                        .quantity(partMap.get(part.getId()))
-                        .price(part.getPrice())
-                        .request(result)
-                        .vehiclePart(part)
-                        .build())
-                .collect(Collectors.toSet());
-        result.setParts(new HashSet<>(partRequestRepository.saveAll(parts)));
-
         result.getExpenses().forEach(expenseRepository::delete);
-        Set<IncurredExpense> expenses = new HashSet<>(expenseRepository.saveAll(request.getExpenses().stream()
-                .map(expenseRequest -> IncurredExpense.builder()
-                        .name(expenseRequest.getName())
-                        .price(expenseRequest.getPrice())
-                        .description(expenseRequest.getDescription())
-                        .request(result)
-                        .build())
-                .collect(Collectors.toList())));
-        result.setExpenses(expenses);
+        List<IncurredExpense> expenses = expenseRequests.stream()
+                .map(expenseRequest -> {
+                    Set<IncurredPart> incurredParts =
+                            partRepository.findAllById(expenseRequest.getParts().keySet()).stream()
+                                    .map(part -> IncurredPart.builder().build())
+                                    .collect(Collectors.toSet());
+                    return IncurredExpense.builder()
+                            .name(expenseRequest.getName())
+                            .price(expenseRequest.getPrice())
+                            .description(expenseRequest.getDescription())
+                            .request(result)
+                            .parts(incurredParts)
+                            .build();
+                })
+                .collect(Collectors.toList());
+        result.setExpenses(new LinkedHashSet<>(expenseRepository.saveAll(expenses)));
 
         return toRequestCheckoutResponse(
                 requestRepository.findById(result.getId())
@@ -290,7 +277,7 @@ public class RequestServiceImpl implements RequestService {
         messageService.pushNotification(content);*/
 
         int count_1 = accessoryService.registerAccessoryFromPartRequests(
-                result.getVehicle().getUser(), result.getParts());
+                result.getVehicle().getUser(), Collections.emptyList());
 
         int count_2 = accessoryService.registerAccessoryFromServiceRequestParts(
                 result.getVehicle().getUser(), result.getServices().stream()

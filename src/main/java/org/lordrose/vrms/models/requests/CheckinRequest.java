@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -16,7 +15,6 @@ import java.util.Set;
 public class CheckinRequest {
 
     private Set<Long> packageIds;
-    private Map<Long, Double> parts;
     private List<Long> serviceIds;
     private Set<ExpenseRequest> expenses;
 }

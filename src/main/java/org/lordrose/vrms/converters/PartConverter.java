@@ -1,6 +1,6 @@
 package org.lordrose.vrms.converters;
 
-import org.lordrose.vrms.domains.PartRequest;
+import org.lordrose.vrms.domains.IncurredPart;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehiclePart;
@@ -88,7 +88,7 @@ public class PartConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PartCheckoutResponse toPartDetailResponse(PartRequest part) {
+    public static PartCheckoutResponse toPartDetailResponse(IncurredPart part) {
         return PartCheckoutResponse.builder()
                 .id(part.getId())
                 .partId(part.getVehiclePart().getId())
@@ -103,7 +103,7 @@ public class PartConverter {
                 .build();
     }
 
-    public static List<PartCheckoutResponse> toPartDetailResponses(Collection<PartRequest> parts) {
+    public static List<PartCheckoutResponse> toPartDetailResponses(Collection<IncurredPart> parts) {
         return parts.stream()
                 .map(PartConverter::toPartDetailResponse)
                 .collect(Collectors.toList());
@@ -149,7 +149,7 @@ public class PartConverter {
                 .build();
     }
 
-    public static PartHistoryResponse toPartHistoryResponse(PartRequest part) {
+    public static PartHistoryResponse toPartHistoryResponse(IncurredPart part) {
         return PartHistoryResponse.builder()
                 .partId(part.getVehiclePart().getId())
                 .quantity(part.getQuantity())
@@ -166,7 +166,7 @@ public class PartConverter {
                 .build();
     }
 
-    public static List<PartHistoryResponse> toPartHistoryResponses(Collection<PartRequest> parts) {
+    public static List<PartHistoryResponse> toPartHistoryResponses(Collection<IncurredPart> parts) {
         return parts.stream()
                 .map(PartConverter::toPartHistoryResponse)
                 .collect(Collectors.toList());

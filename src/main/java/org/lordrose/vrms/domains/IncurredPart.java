@@ -22,8 +22,8 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_request_part")
-public class PartRequest {
+@Table(name = "tbl_incurred_part")
+public class IncurredPart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +36,8 @@ public class PartRequest {
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "request_id")
-    private Request request;
+    @JoinColumn(name = "expense_id")
+    private IncurredExpense expense;
 
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "part_id")

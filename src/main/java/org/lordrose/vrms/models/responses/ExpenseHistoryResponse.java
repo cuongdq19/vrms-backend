@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,4 +19,5 @@ public class ExpenseHistoryResponse {
     private Double price;
     private String name;
     private String description;
+    private List<PartHistoryResponse> parts;
 }

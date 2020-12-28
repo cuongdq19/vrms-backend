@@ -15,8 +15,6 @@ import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseHistoryResp
 import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseResponses;
 import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackHistoryResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponses;
-import static org.lordrose.vrms.converters.PartConverter.toPartDetailResponses;
-import static org.lordrose.vrms.converters.PartConverter.toPartHistoryResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderHistoryResponse;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toRequestServiceResponses;
@@ -44,7 +42,6 @@ public class RequestConverter {
                 .technicianName(request.getTechnician().getFullName())
                 .model(toModelResponse(request.getVehicle().getModel()))
                 .services(toRequestServiceResponses(request.getServices()))
-                .parts(toPartDetailResponses(request.getParts()))
                 .expenses(toExpenseResponses(request.getExpenses()))
                 .provider(toProviderResponse(request.getProvider()))
                 .build();
@@ -60,7 +57,6 @@ public class RequestConverter {
                 .status(request.getStatus())
                 .packages(toPackageHistoryResponses(request.getPackages()))
                 .services(toServiceHistoryResponses(request.getServices()))
-                .parts(toPartHistoryResponses(request.getParts()))
                 .expenses(toExpenseHistoryResponses(request.getExpenses()))
                 .technician(toTechnicianHistoryResponse(request.getTechnician()))
                 .userVehicle(toUserVehicleHistoryResponse(request.getVehicle()))
@@ -93,7 +89,7 @@ public class RequestConverter {
                                 .parts(toPartCheckoutResponses(service.getRequestParts()))
                                 .build())
                         .collect(Collectors.toList()))
-                .parts(toPartDetailResponses(request.getParts()))
+                // toPartDetailResponses(request.getParts())
                 .expenses(toExpenseResponses(request.getExpenses()))
                 .build();
     }
