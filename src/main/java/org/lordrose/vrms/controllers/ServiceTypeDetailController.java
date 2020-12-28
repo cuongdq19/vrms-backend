@@ -32,4 +32,9 @@ public class ServiceTypeDetailController {
     public Object findAllCategoriesBySection(@PathVariable Long sectionId) {
         return typeDetailService.findAllCategories(sectionId);
     }
+
+    @GetMapping("/sections/categories")
+    public Object findAllSectionsWithCategory() {
+        return typeDetailService.findAllSectionsWithCategory();
+    }
 }

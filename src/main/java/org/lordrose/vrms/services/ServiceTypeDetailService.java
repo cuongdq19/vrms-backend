@@ -9,4 +9,6 @@ public interface ServiceTypeDetailService {
     Object findAllServiceTypeSections();
 
     Object findAllCategories(Long sectionId);
+
+    Object findAllSectionsWithCategory();
 }
