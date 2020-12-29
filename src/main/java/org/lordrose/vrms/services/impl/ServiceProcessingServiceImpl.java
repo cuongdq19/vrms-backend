@@ -182,8 +182,9 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
 
         result.setName(request.getName());
         result.setPrice(request.getPrice());
+        servicePartRepository.deleteAll(result.getPartSet());
         result.getPartSet().clear();
-        result.setPartSet(new LinkedHashSet<>(servicePartRepository.saveAll(list)));
+        result.getPartSet().addAll(servicePartRepository.saveAll(list));
 
         return toServiceResponse(serviceRepository.save(result));
     }

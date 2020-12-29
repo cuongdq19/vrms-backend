@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.lordrose.vrms.domains.bases.TimeAuditable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,11 +34,11 @@ public class ServiceVehiclePart extends TimeAuditable<LocalDateTime> {
     @Column(name = "quantity")
     private Double quantity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "vehicle_part_id", nullable = false)
     private VehiclePart part;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 }

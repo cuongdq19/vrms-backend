@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,7 +53,7 @@ public class Service {
     @ManyToMany(mappedBy = "packagedServices")
     private Set<ServicePackage> packages = new HashSet<>();
 
-    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE)
     private Set<ServiceVehiclePart> partSet = new LinkedHashSet<>();
 
     @ManyToMany
