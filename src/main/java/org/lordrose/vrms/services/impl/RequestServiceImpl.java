@@ -30,7 +30,9 @@ import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
 import org.lordrose.vrms.services.RequestService;
+import org.lordrose.vrms.services.StorageService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ public class RequestServiceImpl implements RequestService {
     private final IncurredExpenseRepository expenseRepository;
 
     private final AccessoryServiceImpl accessoryService;
+    private final StorageService storageService;
     
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
@@ -307,13 +310,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public FeedbackResponse sendFeedback(Long requestId, FeedbackRequest feedbackRequest) {
+    public FeedbackResponse sendFeedback(Long requestId, FeedbackRequest feedbackRequest,
+                                         MultipartFile[] images) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> newExceptionWithId(requestId));
         Feedback saved = feedbackRepository.save(Feedback.builder()
                 .ratings(feedbackRequest.getRatings())
                 .content(feedbackRequest.getContent())
-                .imageUrls(feedbackRequest.getImageUrls())
+                .imageUrls(storageService.uploadFiles(images))
                 .user(request.getVehicle().getUser())
                 .request(request)
                 .build());

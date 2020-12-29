@@ -16,7 +16,7 @@ public class FeedbackResponse {
     private Long id;
     private Integer ratings;
     private String content;
-    private String imageUrls;
+    private String[] imageUrls;
     private Long userId;
     private String fullName;
     private String userImageUrl;

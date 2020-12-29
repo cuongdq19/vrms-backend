@@ -38,7 +38,7 @@ public class Feedback extends TimeAuditable<LocalDateTime> {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "imageUrls")
+    @Column(name = "imageUrls", length = 6000)
     private String imageUrls;
 
     @ManyToOne

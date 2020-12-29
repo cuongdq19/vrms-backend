@@ -13,5 +13,4 @@ public class FeedbackRequest {
 
     private Integer ratings;
     private String content;
-    private String imageUrls;
 }

@@ -5,6 +5,7 @@ import org.lordrose.vrms.models.requests.FeedbackRequest;
 import org.lordrose.vrms.models.requests.RequestInfoRequest;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,5 +33,5 @@ public interface RequestService {
 
     RequestCheckOutResponse cancel(Long requestId);
 
-    Object sendFeedback(Long requestId, FeedbackRequest request);
+    Object sendFeedback(Long requestId, FeedbackRequest request, MultipartFile[] images);
 }

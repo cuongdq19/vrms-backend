@@ -16,7 +16,7 @@ public class FeedbackConverter {
                 .id(feedback.getId())
                 .ratings(feedback.getRatings())
                 .content(feedback.getContent())
-                .imageUrls(feedback.getImageUrls())
+                .imageUrls(getUrlsAsArray(feedback.getImageUrls()))
                 .userId(feedback.getUser().getId())
                 .fullName(feedback.getUser().getFullName())
                 .userImageUrl(feedback.getUser().getImageUrl())
