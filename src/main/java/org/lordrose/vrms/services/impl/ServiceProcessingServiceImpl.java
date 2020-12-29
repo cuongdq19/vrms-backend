@@ -57,8 +57,11 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     @Transactional
     @Override
     public Object findAllByProviderIdAndModelId(Long providerId, Long modelId) {
-        return toAllServicesResponses(new LinkedHashSet<>(
-                serviceRepository.findAllByProviderIdAndPartSet_Part_Models_Id(providerId, modelId)));
+        Set<Service> services = new LinkedHashSet<>(
+                        serviceRepository.findAllByProviderIdAndPartSet_Part_Models_Id(providerId, modelId));
+        List<Service> list = serviceRepository.findAllByProviderIdAndModels_Id(providerId, modelId);
+        services.addAll(list);
+        return toAllServicesResponses(services);
     }
 
     @Transactional

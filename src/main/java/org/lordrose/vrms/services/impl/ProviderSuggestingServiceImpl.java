@@ -14,7 +14,6 @@ import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.repositories.ServiceVehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
-import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
@@ -41,29 +40,23 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     private final VehicleModelRepository modelRepository;
     private final ServiceRepository serviceRepository;
     private final FeedbackService feedbackService;
-    private final VehiclePartRepository partRepository;
     private final ServiceTypeDetailRepository typeDetailRepository;
     private final ServiceVehiclePartRepository servicePartRepository;
 
     @Transactional
     @Override
     public Object findProviders(FindProviderWithServicesRequest request) {
-        VehicleModel model = modelRepository.findById(request.getModelId())
-                .orElseThrow(() -> newExceptionWithId(request.getModelId()));
+        final Long modelId = request.getModelId();
 
         Set<Service> services = new LinkedHashSet<>();
         List<ServiceTypeDetail> typeDetails = typeDetailRepository.findAllById(request.getServiceDetailIds());
-        request.getServiceDetailIds().forEach(detailId -> services.addAll(
-                serviceRepository.findAllByTypeDetailIdAndPartSet_Part_Models_Id(detailId, model.getId())
-        ));
+        request.getServiceDetailIds().forEach(detailId -> {
+            services.addAll(
+                    serviceRepository.findAllByTypeDetailIdAndPartSet_Part_Models_Id(detailId, modelId));
+            services.addAll(
+                    serviceRepository.findAllByTypeDetailIdAndModels_Id(detailId, modelId));});
 
         Map<Provider, List<Service>> byProvider = services.stream()
-                .filter(service -> {
-                    if (!service.getTypeDetail().getType().isReplacingTyped()) {
-                        return true;
-                    }
-                    return servicePartRepository.existsByServiceIdAndPart_Models_Id(service.getId(), model.getId());
-                })
                 .collect(Collectors.groupingBy(Service::getProvider));
 
         List<ProviderSuggestedServiceGroupedResponse> responses = new ArrayList<>();
