@@ -89,7 +89,6 @@ public class RequestConverter {
                                 .parts(toPartCheckoutResponses(service.getRequestParts()))
                                 .build())
                         .collect(Collectors.toList()))
-                // toPartDetailResponses(request.getParts())
                 .expenses(toExpenseResponses(request.getExpenses()))
                 .build();
     }

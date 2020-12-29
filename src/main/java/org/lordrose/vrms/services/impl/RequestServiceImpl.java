@@ -177,20 +177,22 @@ public class RequestServiceImpl implements RequestService {
             Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(() -> newExceptionWithId(serviceId));
             List<ServiceRequestPart> list = new ArrayList<>();
-
+            ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
+                    .price(service.getPrice())
+                    .service(service)
+                    .request(result)
+                    .build());
             service.getPartSet().forEach(servicePart -> {
                 list.add(ServiceRequestPart.builder()
                         .quantity(servicePart.getQuantity())
                         .price(servicePart.getPart().getPrice())
                         .vehiclePart(servicePart.getPart())
+                        .serviceRequest(serviceRequest)
                         .build());
             });
-            services.add(ServiceRequest.builder()
-                    .price(service.getPrice())
-                    .service(service)
-                    .request(result)
-                    .requestParts(new LinkedHashSet<>(requestPartRepository.saveAll(list)))
-                    .build());
+            serviceRequest.setRequestParts(
+                    new LinkedHashSet<>(requestPartRepository.saveAll(list)));
+            services.add(serviceRequest);
         });
         result.setServices(new LinkedHashSet<>(serviceRequestRepository.saveAll(services)));
 

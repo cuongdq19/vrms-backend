@@ -201,7 +201,6 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         if (modelIds.isEmpty()) {
             throw new InvalidArgumentException("Conflict r bro oi! K lam v duoc dau!");
         }
-
         if (result.getModels() == null) {
             throw new InvalidArgumentException("Conflict r bro oi! K lam v duoc dau!");
         } else {
