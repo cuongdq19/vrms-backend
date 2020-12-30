@@ -45,6 +45,7 @@ import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutRes
 import static org.lordrose.vrms.converters.RequestConverter.toRequestHistoryDetailResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.utils.DateTimeUtils.toLocalDateTime;
+import static org.lordrose.vrms.utils.RequestValidator.validatePartsRequest;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -166,7 +167,7 @@ public class RequestServiceImpl implements RequestService {
         Map<Long, Map<Long, Double>> servicePartMap = request.getServicePartMap();
         Set<ExpenseRequest> expenses = request.getExpenses();
         Request result = requestRepository.findById(requestId)
-                .orElseThrow();
+                .orElseThrow(() -> newExceptionWithId(requestId));
 
         boolean isIncurred = isIncurred(result);
         if (!isIncurred) {
@@ -187,11 +188,14 @@ public class RequestServiceImpl implements RequestService {
                     .service(service)
                     .request(result)
                     .build());
-            values.forEach((partId, partQuantity) -> {
-                VehiclePart part = partRepository.findById(partId)
-                        .orElseThrow(() -> newExceptionWithId(partId));
+
+            List<VehiclePart> parts = partRepository.findAllById(values.keySet());
+
+            validatePartsRequest(parts, values);
+
+            parts.forEach(part -> {
                 list.add(ServiceRequestPart.builder()
-                        .quantity(partQuantity)
+                        .quantity(values.get(part.getId()))
                         .price(part.getPrice())
                         .vehiclePart(part)
                         .serviceRequest(serviceRequest)
@@ -212,17 +216,17 @@ public class RequestServiceImpl implements RequestService {
                     .service(null)
                     .request(result)
                     .build());
-            expense.getParts()
-                    .forEach((partId, partQuantity) -> {
-                        VehiclePart part = partRepository.findById(partId)
-                                .orElseThrow(() -> newExceptionWithId(partId));
-                        list.add(ServiceRequestPart.builder()
-                                .quantity(partQuantity)
-                                .price(part.getPrice())
-                                .vehiclePart(part)
-                                .serviceRequest(serviceRequest)
-                                .build());
-                    });
+
+            List<VehiclePart> parts = partRepository.findAllById(expense.getParts().keySet());
+
+            validatePartsRequest(parts, expense.getParts());
+
+            parts.forEach(part -> list.add(ServiceRequestPart.builder()
+                    .quantity(expense.getParts().get(part.getId()))
+                    .price(part.getPrice())
+                    .vehiclePart(part)
+                    .serviceRequest(serviceRequest)
+                    .build()));
             serviceRequest.setRequestParts(
                     new LinkedHashSet<>(requestPartRepository.saveAll(list)));
             services.add(serviceRequest);

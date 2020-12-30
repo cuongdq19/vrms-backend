@@ -33,7 +33,8 @@ import static org.lordrose.vrms.converters.ServiceConverter.toServiceOptionRespo
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
-import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
+import static org.lordrose.vrms.utils.RequestValidator.validateModelsRequest;
+import static org.lordrose.vrms.utils.RequestValidator.validatePartsRequest;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -92,15 +93,8 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Set<Long> partIds = partMap.keySet();
 
         List<VehiclePart> parts = partRepository.findAllById(partIds);
-        if (parts.size() != partIds.size()) {
-            List<Long> retrievedIds = parts.stream()
-                    .map(VehiclePart::getId)
-                    .collect(Collectors.toList());
-            List<Long> notFounds = partIds.stream()
-                    .filter(partId -> !retrievedIds.contains(partId))
-                    .collect(Collectors.toList());
-            throw newExceptionWithIds(notFounds);
-        }
+
+        validatePartsRequest(parts, partMap);
 
         Service service = serviceRepository.save(Service.builder()
                 .name(request.getGroupPriceRequest().getName())
@@ -129,15 +123,8 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .orElseThrow(() -> newExceptionWithId(providerId));
         Set<Long> modelIds = request.getModelIds();
         Set<VehicleModel> models = new LinkedHashSet<>(modelRepository.findAllById(modelIds));
-        if (models.size() != modelIds.size()) {
-            Set<Long> retrievedModelIds = models.stream()
-                    .map(VehicleModel::getId)
-                    .collect(Collectors.toSet());
-            List<Long> missingIds = modelIds.stream()
-                    .filter(id -> !retrievedModelIds.contains(id))
-                    .collect(Collectors.toList());
-            throw newExceptionWithIds(missingIds);
-        }
+
+        validateModelsRequest(models, modelIds);
 
         Service service = serviceRepository.save(Service.builder()
                 .name(request.getServiceName())
@@ -165,15 +152,8 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Map<Long, Double> partMap = request.getPartQuantity();
         Set<Long> partIds = partMap.keySet();
         List<VehiclePart> parts = partRepository.findAllById(partIds);
-        if (parts.size() != partIds.size()) {
-            List<Long> retrievedIds = parts.stream()
-                    .map(VehiclePart::getId)
-                    .collect(Collectors.toList());
-            List<Long> notFounds = partIds.stream()
-                    .filter(partId -> !retrievedIds.contains(partId))
-                    .collect(Collectors.toList());
-            throw newExceptionWithIds(notFounds);
-        }
+
+        validatePartsRequest(parts, partMap);
 
         List<ServiceVehiclePart> list = parts.stream()
                 .map(part -> ServiceVehiclePart.builder()
@@ -213,15 +193,8 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         }
 
         Set<VehicleModel> models = new LinkedHashSet<>(modelRepository.findAllById(modelIds));
-        if (models.size() != modelIds.size()) {
-            Set<Long> retrievedModelIds = models.stream()
-                    .map(VehicleModel::getId)
-                    .collect(Collectors.toSet());
-            List<Long> missingIds = modelIds.stream()
-                    .filter(id -> !retrievedModelIds.contains(id))
-                    .collect(Collectors.toList());
-            throw newExceptionWithIds(missingIds);
-        }
+
+        validateModelsRequest(models, modelIds);
 
         result.setName(request.getServiceName());
         result.setPrice(request.getPrice());
