@@ -28,6 +28,7 @@ import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
 import org.lordrose.vrms.services.RequestService;
 import org.lordrose.vrms.services.StorageService;
+import org.lordrose.vrms.utils.IncrementalPartCollection;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -294,10 +295,15 @@ public class RequestServiceImpl implements RequestService {
                 .build();
         messageService.pushNotification(content);*/
 
-        /*int count_2 =*/ accessoryService.registerAccessoryFromServiceRequestParts(
-                result.getVehicle().getUser(), result.getServices().stream()
-                        .flatMap(serviceRequest -> serviceRequest.getRequestParts().stream())
-                        .collect(Collectors.toSet()));
+        IncrementalPartCollection incrementalCollection = new IncrementalPartCollection();
+
+        result.getServices().forEach(serviceRequest ->
+                incrementalCollection.addAll(serviceRequest.getRequestParts().stream()
+                        .filter(ServiceRequestPart::isAccessory)
+                        .collect(Collectors.toList())));
+
+        accessoryService.registerAccessoryFromServiceRequestParts(
+                result.getVehicle(), incrementalCollection.getCollection());
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
@@ -321,7 +327,7 @@ public class RequestServiceImpl implements RequestService {
                 .ratings(feedbackRequest.getRatings())
                 .content(feedbackRequest.getContent())
                 .imageUrls(storageService.uploadFiles(images))
-                .user(request.getVehicle().getUser())
+                .user(request.getVehicle().getUser()) // TODO
                 .request(request)
                 .build());
         return toFeedbackResponse(saved);

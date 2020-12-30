@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -56,4 +57,7 @@ public class Vehicle extends TimeAuditable<LocalDateTime> {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vehicle_type_id")
     private VehicleModel model;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "vehicle")
+    private Set<Accessory> accessories = new HashSet<>();
 }

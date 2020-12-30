@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -41,4 +42,25 @@ public class ServiceRequestPart {
     @ManyToOne
     @JoinColumn(name = "service_request_id")
     private ServiceRequest serviceRequest;
+
+    public boolean isAccessory() {
+        return vehiclePart.getCategory().getIsAccessory();
+    }
+
+    public void addQuantity(double value) {
+        quantity += value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ServiceRequestPart that = (ServiceRequestPart) o;
+        return vehiclePart.getId().equals(that.vehiclePart.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vehiclePart.getId());
+    }
 }

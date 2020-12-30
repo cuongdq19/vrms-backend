@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,10 +33,10 @@ public class Accessory {
     private Double quantity;
 
     @ManyToOne
-    @JoinColumn(name = "accessory_id")
+    @JoinColumn(name = "part_id")
     private VehiclePart part;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
 }
