@@ -22,6 +22,5 @@ public class RequestHistoryResponse {
     private String technicianName;
     private VehicleModelResponse model;
     private List<Object> services;
-    private List<ExpenseResponse> expenses;
     private ProviderResponse provider;
 }

@@ -23,7 +23,6 @@ public class RequestHistoryDetailResponse {
     private String status;
     private List<PackageHistoryResponse> packages;
     private List<ServiceHistoryResponse> services;
-    private List<ExpenseHistoryResponse> expenses;
     private TechnicianResponse technician;
     private UserVehicleHistoryResponse userVehicle;
     private ProviderResponse provider;

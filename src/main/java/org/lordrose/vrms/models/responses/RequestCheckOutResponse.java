@@ -23,5 +23,4 @@ public class RequestCheckOutResponse {
     private UserRequestInfoResponse user;
     private List<ServicePackageResponse> packages;
     private List<ServiceCheckoutResponse> services;
-    private List<ExpenseResponse> expenses;
 }

@@ -32,16 +32,21 @@ public class ServiceRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "serviceName")
+    private String serviceName;
+
     @Column(name = "price")
     private Double price;
+
+    @Column(name = "note")
+    private String note;
+
+    @Column(name = "is_incurred")
+    private Boolean isIncurred;
 
     @ManyToOne
     @JoinColumn(name = "service_id")
     private Service service;
-
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private Request request;
 
     @ManyToOne
     @JoinColumn(name = "package_id")
@@ -49,4 +54,12 @@ public class ServiceRequest {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "serviceRequest")
     private Set<ServiceRequestPart> requestParts = new LinkedHashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private Request request;
+
+    public Long returnServiceId() {
+        return service == null ? null : service.getId();
+    }
 }

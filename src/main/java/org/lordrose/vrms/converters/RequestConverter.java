@@ -7,12 +7,9 @@ import org.lordrose.vrms.models.responses.RequestHistoryResponse;
 import org.lordrose.vrms.models.responses.ServiceCheckoutResponse;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseHistoryResponses;
-import static org.lordrose.vrms.converters.ExpenseConverter.toExpenseResponses;
 import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackHistoryResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderHistoryResponse;
@@ -32,8 +29,6 @@ public class RequestConverter {
     public static RequestHistoryResponse toRequestHistoryResponse(Request request) {
         if (request == null)
             return null;
-        if (request.getExpenses() == null)
-            request.setExpenses(Collections.emptySet());
         return RequestHistoryResponse.builder()
                 .id(request.getId())
                 .bookingTime(toSeconds(request.getBookingTime()))
@@ -42,7 +37,6 @@ public class RequestConverter {
                 .technicianName(request.getTechnician().getFullName())
                 .model(toModelResponse(request.getVehicle().getModel()))
                 .services(toRequestServiceResponses(request.getServices()))
-                .expenses(toExpenseResponses(request.getExpenses()))
                 .provider(toProviderResponse(request.getProvider()))
                 .build();
     }
@@ -57,7 +51,6 @@ public class RequestConverter {
                 .status(request.getStatus())
                 .packages(toPackageHistoryResponses(request.getPackages()))
                 .services(toServiceHistoryResponses(request.getServices()))
-                .expenses(toExpenseHistoryResponses(request.getExpenses()))
                 .technician(toTechnicianHistoryResponse(request.getTechnician()))
                 .userVehicle(toUserVehicleHistoryResponse(request.getVehicle()))
                 .provider(toProviderHistoryResponse(request.getProvider()))
@@ -83,13 +76,14 @@ public class RequestConverter {
                 .services(request.getServices().stream()
                         .map(service -> ServiceCheckoutResponse.builder()
                                 .id(service.getId())
-                                .serviceId(service.getService().getId())
-                                .serviceName(service.getService().getName())
+                                .serviceId(service.returnServiceId())
+                                .serviceName(service.getServiceName())
                                 .servicePrice(service.getPrice())
+                                .note(service.getNote())
                                 .parts(toPartCheckoutResponses(service.getRequestParts()))
+                                .isIncurred(service.getIsIncurred())
                                 .build())
                         .collect(Collectors.toList()))
-                .expenses(toExpenseResponses(request.getExpenses()))
                 .build();
     }
 

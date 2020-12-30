@@ -1,6 +1,5 @@
 package org.lordrose.vrms.converters;
 
-import org.lordrose.vrms.domains.IncurredPart;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehiclePart;
@@ -88,27 +87,6 @@ public class PartConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PartCheckoutResponse toPartDetailResponse(IncurredPart part) {
-        return PartCheckoutResponse.builder()
-                .id(part.getId())
-                .partId(part.getVehiclePart().getId())
-                .partName(part.getVehiclePart().getName())
-                .quantity(part.getQuantity())
-                .price(part.getPrice())
-                .warrantyDuration(part.getVehiclePart().getWarrantyDuration())
-                .monthsPerMaintenance(part.getVehiclePart().getMonthsPerMaintenance())
-                .imageUrls(getUrlsAsArray(part.getVehiclePart().getImageUrls()))
-                .categoryId(part.getVehiclePart().getCategory().getId())
-                .categoryName(part.getVehiclePart().getCategory().getName())
-                .build();
-    }
-
-    public static List<PartCheckoutResponse> toPartDetailResponses(Collection<IncurredPart> parts) {
-        return parts.stream()
-                .map(PartConverter::toPartDetailResponse)
-                .collect(Collectors.toList());
-    }
-
     public static PartCheckoutResponse toPartCheckoutResponse(ServiceRequestPart servicePart) {
         if (servicePart == null)
             return null;
@@ -147,29 +125,6 @@ public class PartConverter {
                 .isSupportedByService(true)
                 .models(Collections.emptyList())
                 .build();
-    }
-
-    public static PartHistoryResponse toPartHistoryResponse(IncurredPart part) {
-        return PartHistoryResponse.builder()
-                .partId(part.getVehiclePart().getId())
-                .quantity(part.getQuantity())
-                .priceEach(part.getPrice())
-                .partName(part.getVehiclePart().getName())
-                .description(part.getVehiclePart().getDescription())
-                .partImageUrls(getUrlsAsArray(part.getVehiclePart().getImageUrls()))
-                .warrantyDuration(part.getVehiclePart().getWarrantyDuration())
-                .categoryId(part.getVehiclePart().getCategory().getId())
-                .categoryName(part.getVehiclePart().getCategory().getName())
-                .sectionId(part.getVehiclePart().getCategory().getSection().getId())
-                .sectionName(part.getVehiclePart().getCategory().getSection().getName())
-                .isAccessory(part.getVehiclePart().getCategory().getIsAccessory())
-                .build();
-    }
-
-    public static List<PartHistoryResponse> toPartHistoryResponses(Collection<IncurredPart> parts) {
-        return parts.stream()
-                .map(PartConverter::toPartHistoryResponse)
-                .collect(Collectors.toList());
     }
 
     public static PartHistoryResponse toServicePartHistoryResponse(ServiceRequestPart part) {

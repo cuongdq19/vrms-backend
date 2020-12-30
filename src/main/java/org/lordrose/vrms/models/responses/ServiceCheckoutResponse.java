@@ -19,5 +19,7 @@ public class ServiceCheckoutResponse {
     private Long serviceId;
     private String serviceName;
     private Double servicePrice;
+    private String note;
     private List<PartCheckoutResponse> parts;
+    private Boolean isIncurred;
 }

@@ -15,6 +15,6 @@ public class ExpenseRequest {
 
     private String name;
     private Double price;
-    private String description;
+    private String note;
     private Map<Long, Double> parts;
 }

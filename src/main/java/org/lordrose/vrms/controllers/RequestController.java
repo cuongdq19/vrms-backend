@@ -1,8 +1,8 @@
 package org.lordrose.vrms.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.lordrose.vrms.models.requests.CheckinRequest;
 import org.lordrose.vrms.models.requests.FeedbackRequest;
+import org.lordrose.vrms.models.requests.RequestIncurredUpdateRequest;
 import org.lordrose.vrms.models.requests.RequestInfoRequest;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
@@ -60,7 +60,7 @@ public class RequestController {
 
     @PostMapping("/update/{requestId}")
     public RequestCheckOutResponse updateBookingRequest(@PathVariable Long requestId,
-                                                 @RequestBody CheckinRequest request) {
+                                                                @RequestBody RequestIncurredUpdateRequest request) {
         return requestService.update(requestId, request);
     }
 
