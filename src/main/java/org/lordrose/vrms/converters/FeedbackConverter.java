@@ -17,9 +17,9 @@ public class FeedbackConverter {
                 .ratings(feedback.getRatings())
                 .content(feedback.getContent())
                 .imageUrls(getUrlsAsArray(feedback.getImageUrls()))
-                .userId(feedback.getUser().getId())
-                .fullName(feedback.getUser().getFullName())
-                .userImageUrl(feedback.getUser().getImageUrl())
+                .userId(feedback.getRequest().getVehicle().getUser().getId())
+                .fullName(feedback.getRequest().getVehicle().getUser().getFullName())
+                .userImageUrl(feedback.getRequest().getVehicle().getUser().getImageUrl())
                 .requestId(feedback.getRequest().getId())
                 .build();
     }

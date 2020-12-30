@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -40,10 +39,6 @@ public class Feedback extends TimeAuditable<LocalDateTime> {
 
     @Column(name = "imageUrls", length = 6000)
     private String imageUrls;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "request_id", referencedColumnName = "id")

@@ -327,7 +327,6 @@ public class RequestServiceImpl implements RequestService {
                 .ratings(feedbackRequest.getRatings())
                 .content(feedbackRequest.getContent())
                 .imageUrls(storageService.uploadFiles(images))
-                .user(request.getVehicle().getUser()) // TODO
                 .request(request)
                 .build());
         return toFeedbackResponse(saved);

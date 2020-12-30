@@ -66,14 +66,8 @@ public class User extends TimeAuditable<LocalDateTime> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Notification> notifications = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "technician")
-    private Set<Request> requests = new HashSet<>();
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Vehicle> vehicles = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Set<Feedback> feedbacks = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
