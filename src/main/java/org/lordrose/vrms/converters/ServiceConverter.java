@@ -139,7 +139,7 @@ public class ServiceConverter {
 
     public static ServiceHistoryResponse toServiceHistoryResponse(ServiceRequest service) {
         return ServiceHistoryResponse.builder()
-                .id(service.getService().getId())
+                .id(service.returnServiceId())
                 .price(service.getPrice())
                 .serviceName(service.getService().getName())
                 .typeDetailId(service.getService().getTypeDetail().getId())
