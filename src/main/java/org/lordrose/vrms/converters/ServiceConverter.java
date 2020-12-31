@@ -141,12 +141,12 @@ public class ServiceConverter {
         return ServiceHistoryResponse.builder()
                 .id(service.returnServiceId())
                 .price(service.getPrice())
-                .serviceName(service.getService().getName())
-                .typeDetailId(service.getService().getTypeDetail().getId())
-                .typeId(service.getService().getTypeDetail().getType().getId())
-                .typeName(service.getService().getTypeDetail().getType().getName())
-                .sectionId(service.getService().getTypeDetail().getSection().getId())
-                .sectionName(service.getService().getTypeDetail().getSection().getName())
+                .serviceName(service.getServiceName())
+                .typeDetailId(service.returnTypeDetailId())
+                .typeId(service.returnTypeId())
+                .typeName(service.returnTypeName())
+                .sectionId(service.returnSectionId())
+                .sectionName(service.returnSectionName())
                 .parts(toServicePartHistoryResponses(service.getRequestParts()))
                 .build();
     }

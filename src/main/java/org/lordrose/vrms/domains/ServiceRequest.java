@@ -62,4 +62,24 @@ public class ServiceRequest {
     public Long returnServiceId() {
         return service == null ? null : service.getId();
     }
+
+    public Long returnTypeDetailId() {
+        return service == null ? null : service.getTypeDetail().getId();
+    }
+
+    public Long returnTypeId() {
+        return service == null ? null : service.getTypeDetail().getType().getId();
+    }
+
+    public String returnTypeName() {
+        return service == null ? null : service.getTypeDetail().getType().getName();
+    }
+
+    public Long returnSectionId() {
+        return service == null ? null : service.getTypeDetail().getSection().getId();
+    }
+
+    public String returnSectionName() {
+        return service == null ? null : service.getTypeDetail().getSection().getName();
+    }
 }
