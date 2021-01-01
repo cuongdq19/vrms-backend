@@ -98,8 +98,6 @@ public class ContractServiceImpl implements ContractService {
                 .slotCapacity(providerRequest.getSlotCapacity())
                 .slotDuration(providerRequest.getSlotDuration())
                 .imageUrls(storageService.uploadFiles(images))
-                .manufacturer(manufacturerRepository.findById(providerRequest.getManufacturerId())
-                        .orElse(null))
                 .isActive(false)
                 .imageUrls(storageService.uploadFiles(images))
                 .contract(saved)

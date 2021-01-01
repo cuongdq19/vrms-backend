@@ -23,6 +23,4 @@ public class ProviderDetailResponse {
     private Integer slotDuration;
     private Integer slotCapacity;
     private String[] imageUrls;
-    private Long manufacturerId;
-    private String manufacturerName;
 }

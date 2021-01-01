@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -70,24 +69,10 @@ public class Provider {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "provider")
     private Set<VehiclePart> parts = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "manufacturer_id")
-    private Manufacturer manufacturer;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "provider")
     private Set<Request> requests = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "contract_id", referencedColumnName = "id")
     private Contract contract;
-
-    public Long getManufacturerId() {
-        return this.getManufacturer() == null ?
-                null : this.getManufacturer().getId();
-    }
-
-    public String getManufacturerName() {
-        return this.getManufacturer() == null ?
-                "Have no manufacturer" : this.getManufacturer().getName();
-    }
 }

@@ -106,7 +106,6 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .latitude(provider.getLatitude())
                         .longitude(provider.getLongitude())
                         .build()))
-                .manufacturerName(provider.getManufacturerName())
                 .suggestedParts(partList.stream()
                         .map(part -> toPartSuggestingResponse(part.getPart()))
                         .collect(Collectors.toList()))
@@ -128,7 +127,6 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .latitude(provider.getLatitude())
                         .longitude(provider.getLongitude())
                         .build()))
-                .manufacturerName(provider.getManufacturerName())
                 .services(toAllServicesResponses(typeDetails, services))
                 .build();
     }

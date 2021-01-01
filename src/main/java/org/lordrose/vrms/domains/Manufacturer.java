@@ -40,8 +40,5 @@ public class Manufacturer {
     private String imageUrl;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "manufacturer")
-    private Set<Provider> providers = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "manufacturer")
     private Set<VehicleModel> models = new HashSet<>();
 }

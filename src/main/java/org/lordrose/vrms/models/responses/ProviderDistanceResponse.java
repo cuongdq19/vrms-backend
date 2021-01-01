@@ -19,8 +19,6 @@ public class ProviderDistanceResponse {
     private String[] imageUrls;
     private String openTime;
     private String closeTime;
-    private Long manufacturerId;
-    private String manufacturerName;
     private Double ratings;
     private Double distance;
 }

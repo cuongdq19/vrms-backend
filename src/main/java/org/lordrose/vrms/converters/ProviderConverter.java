@@ -30,8 +30,6 @@ public class ProviderConverter {
                 .slotDuration(provider.getSlotDuration())
                 .slotCapacity(provider.getSlotCapacity())
                 .imageUrls(getUrlsAsArray(provider.getImageUrls()))
-                .manufacturerId(provider.getManufacturerId())
-                .manufacturerName(provider.getManufacturerName())
                 .build();
     }
 

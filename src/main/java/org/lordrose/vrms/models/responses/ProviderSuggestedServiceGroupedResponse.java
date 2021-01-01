@@ -23,6 +23,5 @@ public class ProviderSuggestedServiceGroupedResponse {
     private String closeTime;
     private Double ratings;
     private Double distance;
-    private String manufacturerName;
     private List<ServiceResponse> services;
 }

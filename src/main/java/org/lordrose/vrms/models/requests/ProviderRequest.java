@@ -19,5 +19,4 @@ public class ProviderRequest {
     private Long closeTime;
     private Integer slotDuration;
     private Integer slotCapacity;
-    private Long manufacturerId;
 }

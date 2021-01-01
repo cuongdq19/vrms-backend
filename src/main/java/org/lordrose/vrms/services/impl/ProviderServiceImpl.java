@@ -2,7 +2,6 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.converters.UserConverter;
-import org.lordrose.vrms.domains.Manufacturer;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.User;
@@ -63,8 +62,6 @@ public class ProviderServiceImpl implements ProviderService {
                         .imageUrls(FileUrlUtils.getUrlsAsArray(provider.getImageUrls()))
                         .openTime(provider.getOpenTime().toString())
                         .closeTime(provider.getCloseTime().toString())
-                        .manufacturerId(provider.getManufacturerId())
-                        .manufacturerName(provider.getManufacturerName())
                         .ratings(feedbackService.getAverageRating(provider.getId()))
                         .distance(calculate(currentPos, GeoPoint.builder()
                                 .latitude(provider.getLatitude())
@@ -79,8 +76,6 @@ public class ProviderServiceImpl implements ProviderService {
     public ProviderDetailResponse update(Long id, ProviderRequest request) {
         Provider result = providerRepository.findById(id)
                 .orElseThrow(() -> newExceptionWithId(id));
-        Manufacturer manufacturer = manufacturerRepository.findById(request.getManufacturerId())
-                .orElse(null);
 
         result.setName(request.getProviderName());
         result.setAddress(request.getAddress());
@@ -90,7 +85,6 @@ public class ProviderServiceImpl implements ProviderService {
         result.setCloseTime(toLocalTime(request.getCloseTime()));
         result.setSlotDuration(request.getSlotDuration());
         result.setSlotCapacity(request.getSlotCapacity());
-        result.setManufacturer(manufacturer);
 
         return toProviderDetailResponse(providerRepository.save(result));
     }
