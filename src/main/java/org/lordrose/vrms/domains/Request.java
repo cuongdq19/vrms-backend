@@ -6,9 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.lordrose.vrms.domains.bases.TimeAuditable;
+import org.lordrose.vrms.domains.constants.RequestStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,8 +50,8 @@ public class Request extends TimeAuditable<LocalDateTime> {
     @Column(name = "note")
     private String note;
 
-    @Column(name = "status")
-    private String status;
+    @Enumerated(value = EnumType.STRING)
+    private RequestStatus status;
 
     @Column(name = "imageUrls")
     private String imageUrls;

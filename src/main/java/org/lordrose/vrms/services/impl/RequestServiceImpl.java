@@ -9,6 +9,7 @@ import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.Vehicle;
 import org.lordrose.vrms.domains.VehiclePart;
+import org.lordrose.vrms.domains.constants.RequestStatus;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.ExpenseRequest;
 import org.lordrose.vrms.models.requests.FeedbackRequest;
@@ -108,7 +109,7 @@ public class RequestServiceImpl implements RequestService {
                 .bookingTime(toLocalDateTime(request.getBookingTime()))
                 .note(request.getNote())
                 .imageUrls("")
-                .status("ACCEPTED")
+                .status(RequestStatus.ACCEPTED)
                 .vehicle(vehicle)
                 .provider(provider)
                 .build());
@@ -156,7 +157,7 @@ public class RequestServiceImpl implements RequestService {
 
         request.setTechnician(userRepository.findById(userId)
                 .orElseThrow(() -> newExceptionWithId(userId)));
-        request.setStatus("ARRIVED");
+        request.setStatus(RequestStatus.ARRIVED);
         request.setArriveTime(LocalDateTime.now());
 
         return toRequestCheckoutResponse(requestRepository.save(request));
@@ -194,14 +195,12 @@ public class RequestServiceImpl implements RequestService {
 
             validatePartsRequest(parts, values);
 
-            parts.forEach(part -> {
-                list.add(ServiceRequestPart.builder()
-                        .quantity(values.get(part.getId()))
-                        .price(part.getPrice())
-                        .vehiclePart(part)
-                        .serviceRequest(serviceRequest)
-                        .build());
-            });
+            parts.forEach(part -> list.add(ServiceRequestPart.builder()
+                    .quantity(values.get(part.getId()))
+                    .price(part.getPrice())
+                    .vehiclePart(part)
+                    .serviceRequest(serviceRequest)
+                    .build()));
             serviceRequest.setRequestParts(
                     new LinkedHashSet<>(requestPartRepository.saveAll(list)));
             services.add(serviceRequest);
@@ -245,7 +244,7 @@ public class RequestServiceImpl implements RequestService {
         Request result = requestRepository.findById(requestId)
                 .orElseThrow(() -> newExceptionWithId(requestId));
 
-        result.setStatus("CONFIRMED");
+        result.setStatus(RequestStatus.CONFIRMED);
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
@@ -256,7 +255,7 @@ public class RequestServiceImpl implements RequestService {
         Request result = requestRepository.findById(requestId)
                 .orElseThrow(() -> newExceptionWithId(requestId));
 
-        result.setStatus("WORK COMPLETED");
+        result.setStatus(RequestStatus.WORK_COMPLETED);
 
         /*final String body = "Your car's repair/maintenance is completed." +
                 "Please retrieve your car at " + saved.getProvider().getName() +
@@ -280,7 +279,7 @@ public class RequestServiceImpl implements RequestService {
         Request result = requestRepository.findById(requestId)
                 .orElseThrow();
 
-        result.setStatus("FINISHED");
+        result.setStatus(RequestStatus.FINISHED);
         result.setCheckoutTime(LocalDateTime.now());
 
         /*final String body = "Your booking is completed. " +
@@ -313,7 +312,7 @@ public class RequestServiceImpl implements RequestService {
         Request result = requestRepository.findById(requestId)
                 .orElseThrow();
 
-        result.setStatus("CANCELED");
+        result.setStatus(RequestStatus.CANCELED);
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
@@ -335,14 +334,14 @@ public class RequestServiceImpl implements RequestService {
     private boolean isIncurred(Request request) {
         boolean isIncurred;
         switch (request.getStatus()) {
-            case "ACCEPTED":
-            case "ARRIVED":
-            case "CANCELED":
+            case ACCEPTED:
+            case ARRIVED:
+            case CANCELED:
                 isIncurred = false;
                 break;
-            case "CONFIRMED":
-            case "WORK COMPLETED":
-            case "FINISHED":
+            case CONFIRMED:
+            case WORK_COMPLETED:
+            case FINISHED:
                 isIncurred = true;
                 break;
             default:
