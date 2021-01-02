@@ -25,6 +25,12 @@ public class ServicePackageConverter {
                 .build();
     }
 
+    public static List<ServicePackageResponse> toServicePackageResponses(Collection<ServicePackage> servicePackages) {
+        return servicePackages.stream()
+                .map(ServicePackageConverter::toServicePackageResponse)
+                .collect(Collectors.toList());
+    }
+
     public static PackageHistoryResponse toPackageHistoryResponse(PackageRequest packageRequest) {
         return PackageHistoryResponse.builder()
                 .packageId(packageRequest.getServicePackage().getId())

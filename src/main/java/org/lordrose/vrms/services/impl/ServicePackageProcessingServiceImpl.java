@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ServicePackageConverter.toServicePackageResponse;
+import static org.lordrose.vrms.converters.ServicePackageConverter.toServicePackageResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
 
@@ -30,6 +31,17 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
     private final PartSectionRepository sectionRepository;
     private final ServiceRepository serviceRepository;
     private final ProviderRepository providerRepository;
+
+    @Override
+    public Object findAllByProviderId(Long providerId) {
+        return toServicePackageResponses(packageRepository.findAllByProviderId(providerId));
+    }
+
+    @Override
+    public Object findById(Long packageId) {
+        return toServicePackageResponse(packageRepository.findById(packageId)
+                .orElseThrow(() -> newExceptionWithId(packageId)));
+    }
 
     @Override
     public Object create(Long providerId, ServicePackageRequest request) {

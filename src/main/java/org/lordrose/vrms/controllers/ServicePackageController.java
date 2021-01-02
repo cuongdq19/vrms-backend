@@ -25,13 +25,23 @@ public class ServicePackageController {
         return milestone.getMilesAsMap();
     }
 
-    @PostMapping("/packages/providers/{providerId}")
+    @GetMapping("/{packageId}")
+    public Object getOneById(@PathVariable Long packageId) {
+        return packageService.findById(packageId);
+    }
+
+    @GetMapping("/providers/{providerId}")
+    public Object getAllByProvider(@PathVariable Long providerId) {
+        return packageService.findAllByProviderId(providerId);
+    }
+
+    @PostMapping("/providers/{providerId}")
     public Object createPackage(@PathVariable Long providerId,
                                 @RequestBody ServicePackageRequest request) {
         return packageService.create(providerId, request);
     }
 
-    @PostMapping("/packages/{packageId}")
+    @PostMapping("/{packageId}")
     public Object updatePackage(@PathVariable Long packageId,
                                 @RequestBody ServicePackageRequest request) {
         return packageService.update(packageId, request);
