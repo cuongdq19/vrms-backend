@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.constants.MaintenanceConstants;
 import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
@@ -32,6 +33,8 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
     private final ServiceRepository serviceRepository;
     private final ProviderRepository providerRepository;
 
+    private final MaintenanceConstants.MaintenanceMilestone milestone;
+
     @Override
     public Object findAllByProviderId(Long providerId) {
         return toServicePackageResponses(packageRepository.findAllByProviderId(providerId));
@@ -56,7 +59,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
 
         ServicePackage saved = packageRepository.save(ServicePackage.builder()
                 .name(request.getPackageName())
-                .milestone(request.getMilestone())
+                .milestone(milestone.getMilestoneAt(request.getMilestoneId()))
                 .section(section)
                 .packagedServices(new LinkedHashSet<>(services))
                 .provider(provider)
@@ -77,7 +80,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
         result.getPackagedServices().clear();
 
         result.setName(request.getPackageName());
-        result.setMilestone(request.getMilestone());
+        result.setMilestone(milestone.getMilestoneAt(request.getMilestoneId()));
         result.setSection(section);
         result.setPackagedServices(new LinkedHashSet<>(services));
 

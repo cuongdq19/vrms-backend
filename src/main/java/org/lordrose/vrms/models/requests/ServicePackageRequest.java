@@ -16,5 +16,5 @@ public class ServicePackageRequest {
     private Set<Long> serviceIds;
     private Long sectionId;
     private String packageName;
-    private Double milestone;
+    private Integer milestoneId;
 }
