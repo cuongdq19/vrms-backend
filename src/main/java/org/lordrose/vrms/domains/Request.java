@@ -71,7 +71,7 @@ public class Request extends TimeAuditable<LocalDateTime> {
     private Vehicle vehicle;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "service_provider_id")
+    @JoinColumn(name = "provider_id")
     private Provider provider;
 
     @OneToOne(mappedBy = "request")

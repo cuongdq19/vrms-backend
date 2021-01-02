@@ -55,7 +55,7 @@ public class Vehicle extends TimeAuditable<LocalDateTime> {
     private Set<Request> requests;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "vehicle_type_id")
+    @JoinColumn(name = "model_id")
     private VehicleModel model;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "vehicle")

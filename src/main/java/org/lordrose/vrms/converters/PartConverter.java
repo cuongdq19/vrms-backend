@@ -19,19 +19,19 @@ import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 public class PartConverter {
 
-    public static PartQuantityResponse toEmptyModelServicePartResponse(ServiceVehiclePart part) {
+    public static PartQuantityResponse toEmptyModelServicePartResponse(ServiceVehiclePart servicePart) {
         return PartQuantityResponse.builder()
-                .id(part.getPart().getId())
-                .name(part.getPart().getName())
-                .description(part.getPart().getDescription())
-                .quantity(part.getQuantity())
-                .price(part.getPart().getPrice())
-                .warrantyDuration(part.getPart().getWarrantyDuration())
-                .monthsPerMaintenance(part.getPart().getMonthsPerMaintenance())
-                .imageUrls(getUrlsAsArray(part.getPart().getImageUrls()))
-                .sectionId(part.getPart().getCategory().getSection().getId())
-                .categoryId(part.getPart().getCategory().getId())
-                .categoryName(part.getPart().getCategory().getName())
+                .id(servicePart.getPart().getId())
+                .name(servicePart.getPart().getName())
+                .description(servicePart.getPart().getDescription())
+                .quantity(servicePart.getQuantity())
+                .price(servicePart.getPart().getPrice())
+                .warrantyDuration(servicePart.getPart().getWarrantyDuration())
+                .monthsPerMaintenance(servicePart.getPart().getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(servicePart.getPart().getImageUrls()))
+                .sectionId(servicePart.getPart().getCategory().getSection().getId())
+                .categoryId(servicePart.getPart().getCategory().getId())
+                .categoryName(servicePart.getPart().getCategory().getName())
                 .build();
     }
 

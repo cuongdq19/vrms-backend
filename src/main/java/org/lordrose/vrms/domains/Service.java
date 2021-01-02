@@ -43,7 +43,7 @@ public class Service {
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "type_id", nullable = false)
+    @JoinColumn(name = "type_detail_id", nullable = false)
     private ServiceTypeDetail typeDetail;
 
     @ManyToOne

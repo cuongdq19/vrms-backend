@@ -68,7 +68,7 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
 
     @ManyToMany
     @JoinTable(name = "tbl_vehicle_part_model",
-            joinColumns = @JoinColumn(name = "vehicle_part_id"),
+            joinColumns = @JoinColumn(name = "part_id"),
             inverseJoinColumns = @JoinColumn(name = "model_id"))
     private Set<VehicleModel> models = new HashSet<>();
 
