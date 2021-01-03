@@ -2,10 +2,10 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.constants.MaintenanceConstants;
+import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.PartSection;
-import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
-import org.lordrose.vrms.domains.ServicePackage;
+import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.ServicePackageRequest;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
@@ -37,7 +37,8 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
 
     @Override
     public Object findAllByProviderId(Long providerId) {
-        return toServicePackageResponses(packageRepository.findAllByProviderId(providerId));
+        return toServicePackageResponses(
+                packageRepository.findDistinctByPackagedServices_Provider_Id(providerId));
     }
 
     @Override
@@ -48,21 +49,31 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
 
     @Override
     public Object create(Long providerId, ServicePackageRequest request) {
-        Provider provider = providerRepository.findById(providerId)
-                .orElseThrow(() -> newExceptionWithId(providerId));
-        PartSection section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
+        PartSection section = null;
+        Double milestone = null;
+
+        if (request.getSectionId() == null) {
+            if (request.getMilestoneId() == null) {
+                throw new InvalidArgumentException("SectionId and MilestoneId mustn't both be null");
+            } else {
+                milestone = this.milestone.getMilestoneAt(request.getMilestoneId());
+            }
+        } else if (request.getMilestoneId() != null) {
+            throw new InvalidArgumentException("Section ID and Milestone mustn't both be present");
+        } else {
+            section = sectionRepository.findById(request.getSectionId())
+                    .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
+        }
         Set<Long> serviceIds = request.getServiceIds();
-        List<Service> services = serviceRepository.findAllById(serviceIds);
+        List<Service> services = serviceRepository.findAllByProviderIdAndIdIsIn(providerId, serviceIds);
 
         validateRetrievedServices(services, serviceIds);
 
-        ServicePackage saved = packageRepository.save(ServicePackage.builder()
+        MaintenancePackage saved = packageRepository.save(MaintenancePackage.builder()
                 .name(request.getPackageName())
-                .milestone(milestone.getMilestoneAt(request.getMilestoneId()))
+                .milestone(milestone)
                 .section(section)
                 .packagedServices(new LinkedHashSet<>(services))
-                .provider(provider)
                 .build());
         return toServicePackageResponse(saved);
     }
@@ -71,7 +82,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
     public Object update(Long packageId, ServicePackageRequest request) {
         PartSection section = sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
-        ServicePackage result = packageRepository.findById(packageId)
+        MaintenancePackage result = packageRepository.findById(packageId)
                 .orElseThrow(() -> newExceptionWithId(packageId));
         Set<Long> serviceIds = request.getServiceIds();
         List<Service> services = serviceRepository.findAllById(serviceIds);
@@ -84,14 +95,14 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
         result.setSection(section);
         result.setPackagedServices(new LinkedHashSet<>(services));
 
-        ServicePackage saved = packageRepository.save(result);
+        MaintenancePackage saved = packageRepository.save(result);
 
         return toServicePackageResponse(saved);
     }
 
     @Override
     public void delete(Long packageId) {
-        ServicePackage result = packageRepository.findById(packageId)
+        MaintenancePackage result = packageRepository.findById(packageId)
                 .orElseThrow(() -> newExceptionWithId(packageId));
 
         packageRepository.delete(result);

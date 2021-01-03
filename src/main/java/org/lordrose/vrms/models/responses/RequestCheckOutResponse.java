@@ -21,6 +21,6 @@ public class RequestCheckOutResponse {
     private String status;
     private String[] imageUrls;
     private UserRequestInfoResponse user;
-    private List<ServicePackageResponse> packages;
+    private List<PackageCheckoutResponse> packages;
     private List<ServiceCheckoutResponse> services;
 }

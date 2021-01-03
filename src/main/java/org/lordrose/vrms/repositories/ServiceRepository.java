@@ -5,12 +5,15 @@ import org.lordrose.vrms.domains.ServiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long> {
 
     List<Service> findAllByProviderId(Long providerId);
+
+    List<Service> findAllByProviderIdAndIdIsIn(Long providerId, Collection<Long> serviceIds);
 
     List<Service> findAllByProviderIdAndTypeDetailType(Long providerId, ServiceType type);
 

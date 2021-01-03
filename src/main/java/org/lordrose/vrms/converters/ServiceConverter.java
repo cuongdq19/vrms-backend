@@ -5,6 +5,7 @@ import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
+import org.lordrose.vrms.models.responses.ServiceCheckoutResponse;
 import org.lordrose.vrms.models.responses.ServiceDetailResponse;
 import org.lordrose.vrms.models.responses.ServiceHistoryResponse;
 import org.lordrose.vrms.models.responses.ServiceOptionResponse;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponses;
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelServicePartResponses;
+import static org.lordrose.vrms.converters.PartConverter.toPartCheckoutResponses;
 import static org.lordrose.vrms.converters.PartConverter.toServicePartHistoryResponses;
 
 public class ServiceConverter {
@@ -154,6 +156,24 @@ public class ServiceConverter {
     public static List<ServiceHistoryResponse> toServiceHistoryResponses(Collection<ServiceRequest> services) {
         return services.stream()
                 .map(ServiceConverter::toServiceHistoryResponse)
+                .collect(Collectors.toList());
+    }
+
+    public static ServiceCheckoutResponse toServiceCheckoutResponse(ServiceRequest service) {
+        return ServiceCheckoutResponse.builder()
+                .id(service.getId())
+                .serviceId(service.returnServiceId())
+                .serviceName(service.getServiceName())
+                .servicePrice(service.getPrice())
+                .note(service.getNote())
+                .parts(toPartCheckoutResponses(service.getRequestParts()))
+                .isIncurred(service.getIsIncurred())
+                .build();
+    }
+
+    public static List<ServiceCheckoutResponse> toServiceCheckoutResponses(Collection<ServiceRequest> services) {
+        return services.stream()
+                .map(ServiceConverter::toServiceCheckoutResponse)
                 .collect(Collectors.toList());
     }
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,4 +20,5 @@ public class PackageHistoryResponse {
     private Double milestone;
     private Long sectionId;
     private String sectionName;
+    private List<ServiceHistoryResponse> services;
 }

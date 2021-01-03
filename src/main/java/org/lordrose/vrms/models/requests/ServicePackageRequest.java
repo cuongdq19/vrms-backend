@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,8 +13,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class ServicePackageRequest {
 
-    private Set<Long> serviceIds;
-    private Long sectionId;
     private String packageName;
+    private Long sectionId;
     private Integer milestoneId;
+    private List<Long> serviceIds;
 }

@@ -1,49 +1,75 @@
 package org.lordrose.vrms.converters;
 
-import org.lordrose.vrms.domains.PackageRequest;
-import org.lordrose.vrms.domains.ServicePackage;
+import org.lordrose.vrms.domains.MaintenancePackage;
+import org.lordrose.vrms.domains.ServiceRequest;
+import org.lordrose.vrms.models.responses.PackageCheckoutResponse;
 import org.lordrose.vrms.models.responses.PackageHistoryResponse;
 import org.lordrose.vrms.models.responses.ServicePackageResponse;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceCheckoutResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceDetailResponses;
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceHistoryResponses;
 
 public class ServicePackageConverter {
 
-    public static ServicePackageResponse toServicePackageResponse(ServicePackage servicePackage) {
+    public static ServicePackageResponse toServicePackageResponse(MaintenancePackage maintenancePackage) {
         return ServicePackageResponse.builder()
-                .id(servicePackage.getId())
-                .name(servicePackage.getName())
-                .milestone(servicePackage.getMilestone())
-                .sectionId(servicePackage.getSection().getId())
-                .sectionName(servicePackage.getSection().getName())
-                .providerId(servicePackage.getProvider().getId())
-                .packagedServices(toServiceDetailResponses(servicePackage.getPackagedServices()))
+                .id(maintenancePackage.getId())
+                .name(maintenancePackage.getName())
+                .milestone(maintenancePackage.getMilestone())
+                .sectionId(maintenancePackage.returnSectionId())
+                .sectionName(maintenancePackage.returnSectionName())
+                .packagedServices(toServiceDetailResponses(maintenancePackage.getPackagedServices()))
                 .build();
     }
 
-    public static List<ServicePackageResponse> toServicePackageResponses(Collection<ServicePackage> servicePackages) {
-        return servicePackages.stream()
+    public static List<ServicePackageResponse> toServicePackageResponses(Collection<MaintenancePackage> maintenancePackages) {
+        return maintenancePackages.stream()
                 .map(ServicePackageConverter::toServicePackageResponse)
                 .collect(Collectors.toList());
     }
 
-    public static PackageHistoryResponse toPackageHistoryResponse(PackageRequest packageRequest) {
-        return PackageHistoryResponse.builder()
-                .packageId(packageRequest.getServicePackage().getId())
-                .packageName(packageRequest.getServicePackage().getName())
-                .milestone(packageRequest.getServicePackage().getMilestone())
-                .sectionId(packageRequest.getServicePackage().getSection().getId())
-                .sectionName(packageRequest.getServicePackage().getSection().getName())
-                .build();
+    public static List<PackageHistoryResponse> toPackageHistoryResponses(Collection<ServiceRequest> services) {
+        Map<MaintenancePackage, List<ServiceRequest>> resultMap = services.stream()
+                .filter(service -> service.getMaintenancePackage() != null)
+                .collect(Collectors.groupingBy(ServiceRequest::getMaintenancePackage));
+        List<PackageHistoryResponse> responses = new ArrayList<>();
+
+        resultMap.forEach((maintenancePackage, serviceRequests) ->
+                responses.add(PackageHistoryResponse.builder()
+                        .packageId(maintenancePackage.getId())
+                        .packageName(maintenancePackage.getName())
+                        .milestone(maintenancePackage.getMilestone())
+                        .sectionId(maintenancePackage.returnSectionId())
+                        .sectionName(maintenancePackage.returnSectionName())
+                        .services(toServiceHistoryResponses(serviceRequests))
+                        .build()));
+
+        return responses;
     }
 
-    public static List<PackageHistoryResponse> toPackageHistoryResponses(Collection<PackageRequest> packages) {
-        return packages.stream()
-                .map(ServicePackageConverter::toPackageHistoryResponse)
-                .collect(Collectors.toList());
+    public static List<PackageCheckoutResponse> toPackageCheckoutResponses(Collection<ServiceRequest> services) {
+        Map<MaintenancePackage, List<ServiceRequest>> resultMap = services.stream()
+                .filter(service -> service.getMaintenancePackage() != null)
+                .collect(Collectors.groupingBy(ServiceRequest::getMaintenancePackage));
+        List<PackageCheckoutResponse> responses = new ArrayList<>();
+
+        resultMap.forEach((maintenancePackage, serviceRequests) ->
+                responses.add(PackageCheckoutResponse.builder()
+                        .packageId(maintenancePackage.getId())
+                        .packageName(maintenancePackage.getName())
+                        .milestone(maintenancePackage.getMilestone())
+                        .sectionId(maintenancePackage.returnSectionId())
+                        .sectionName(maintenancePackage.returnSectionName())
+                        .services(toServiceCheckoutResponses(serviceRequests))
+                        .build()));
+
+        return responses;
     }
 }

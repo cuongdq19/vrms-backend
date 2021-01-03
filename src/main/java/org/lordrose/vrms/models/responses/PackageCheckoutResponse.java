@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServicePackageResponse {
+public class PackageCheckoutResponse {
 
-    private Long id;
-    private String name;
+    private Long packageId;
+    private String packageName;
     private Double milestone;
     private Long sectionId;
     private String sectionName;
-    private List<ServiceDetailResponse> packagedServices;
+    private List<ServiceCheckoutResponse> services;
 }

@@ -50,7 +50,7 @@ public class ServiceRequest {
 
     @ManyToOne
     @JoinColumn(name = "package_id")
-    private PackageRequest servicePackage;
+    private MaintenancePackage maintenancePackage;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "serviceRequest")
     private Set<ServiceRequestPart> requestParts = new LinkedHashSet<>();

@@ -26,8 +26,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_service_package")
-public class ServicePackage {
+@Table(name = "tbl_maintenance_package")
+public class MaintenancePackage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,11 +45,15 @@ public class ServicePackage {
 
     @ManyToMany(cascade = CascadeType.DETACH)
     @JoinTable(name = "tbl_package_service",
-            joinColumns = @JoinColumn(name = "service_package_id"),
+            joinColumns = @JoinColumn(name = "package_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     private Set<Service> packagedServices = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "provider_id", nullable = false)
-    private Provider provider;
+    public Long returnSectionId() {
+        return section == null ? null : section.getId();
+    }
+
+    public String returnSectionName() {
+        return section == null ? null : section.getName();
+    }
 }

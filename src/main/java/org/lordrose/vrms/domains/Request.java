@@ -57,9 +57,6 @@ public class Request extends TimeAuditable<LocalDateTime> {
     private String imageUrls;
 
     @OneToMany(mappedBy = "request", fetch = FetchType.EAGER)
-    private Set<PackageRequest> packages = new HashSet<>();
-
-    @OneToMany(mappedBy = "request", fetch = FetchType.EAGER)
     private Set<ServiceRequest> services = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)

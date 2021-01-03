@@ -51,7 +51,7 @@ public class Service {
     private Provider provider;
 
     @ManyToMany(mappedBy = "packagedServices")
-    private Set<ServicePackage> packages = new HashSet<>();
+    private Set<MaintenancePackage> packages = new HashSet<>();
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE)
     private Set<ServiceVehiclePart> partSet = new LinkedHashSet<>();
