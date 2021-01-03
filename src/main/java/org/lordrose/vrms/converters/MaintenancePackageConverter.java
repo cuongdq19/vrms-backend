@@ -2,9 +2,9 @@ package org.lordrose.vrms.converters;
 
 import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.ServiceRequest;
+import org.lordrose.vrms.models.responses.MaintenancePackageResponse;
 import org.lordrose.vrms.models.responses.PackageCheckoutResponse;
 import org.lordrose.vrms.models.responses.PackageHistoryResponse;
-import org.lordrose.vrms.models.responses.ServicePackageResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,10 +16,10 @@ import static org.lordrose.vrms.converters.ServiceConverter.toServiceCheckoutRes
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceDetailResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceHistoryResponses;
 
-public class ServicePackageConverter {
+public class MaintenancePackageConverter {
 
-    public static ServicePackageResponse toServicePackageResponse(MaintenancePackage maintenancePackage) {
-        return ServicePackageResponse.builder()
+    public static MaintenancePackageResponse toMaintenancePackageResponse(MaintenancePackage maintenancePackage) {
+        return MaintenancePackageResponse.builder()
                 .id(maintenancePackage.getId())
                 .name(maintenancePackage.getName())
                 .milestone(maintenancePackage.getMilestone())
@@ -29,9 +29,9 @@ public class ServicePackageConverter {
                 .build();
     }
 
-    public static List<ServicePackageResponse> toServicePackageResponses(Collection<MaintenancePackage> maintenancePackages) {
+    public static List<MaintenancePackageResponse> toMaintenancePackageResponses(Collection<MaintenancePackage> maintenancePackages) {
         return maintenancePackages.stream()
-                .map(ServicePackageConverter::toServicePackageResponse)
+                .map(MaintenancePackageConverter::toMaintenancePackageResponse)
                 .collect(Collectors.toList());
     }
 

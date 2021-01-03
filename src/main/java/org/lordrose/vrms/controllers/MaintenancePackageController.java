@@ -2,8 +2,8 @@ package org.lordrose.vrms.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.constants.MaintenanceConstants;
-import org.lordrose.vrms.models.requests.ServicePackageRequest;
-import org.lordrose.vrms.services.ServicePackageProcessingService;
+import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
+import org.lordrose.vrms.services.MaintenancePackageService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/service-packages")
-public class ServicePackageController {
+@RequestMapping("/maintenance-packages")
+public class MaintenancePackageController {
 
-    private final ServicePackageProcessingService packageService;
+    private final MaintenancePackageService packageService;
     private final MaintenanceConstants.MaintenanceMilestone milestone;
 
     @GetMapping("/milestones")
@@ -37,13 +37,13 @@ public class ServicePackageController {
 
     @PostMapping("/providers/{providerId}")
     public Object createPackage(@PathVariable Long providerId,
-                                @RequestBody ServicePackageRequest request) {
+                                @RequestBody MaintenancePackageRequest request) {
         return packageService.create(providerId, request);
     }
 
     @PostMapping("/{packageId}")
     public Object updatePackage(@PathVariable Long packageId,
-                                @RequestBody ServicePackageRequest request) {
+                                @RequestBody MaintenancePackageRequest request) {
         return packageService.update(packageId, request);
     }
 

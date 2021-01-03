@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServicePackageResponse {
+public class MaintenancePackageResponse {
 
     private Long id;
     private String name;

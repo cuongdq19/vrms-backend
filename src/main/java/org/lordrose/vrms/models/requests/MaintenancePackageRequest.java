@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServicePackageRequest {
+public class MaintenancePackageRequest {
 
     private String packageName;
     private Long sectionId;

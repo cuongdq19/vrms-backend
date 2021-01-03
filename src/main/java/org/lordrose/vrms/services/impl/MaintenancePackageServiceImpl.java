@@ -6,12 +6,11 @@ import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
-import org.lordrose.vrms.models.requests.ServicePackageRequest;
+import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
 import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
-import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
-import org.lordrose.vrms.services.ServicePackageProcessingService;
+import org.lordrose.vrms.services.MaintenancePackageService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -19,37 +18,36 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.lordrose.vrms.converters.ServicePackageConverter.toServicePackageResponse;
-import static org.lordrose.vrms.converters.ServicePackageConverter.toServicePackageResponses;
+import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponse;
+import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
-public class ServicePackageProcessingServiceImpl implements ServicePackageProcessingService {
+public class MaintenancePackageServiceImpl implements MaintenancePackageService {
 
     private final MaintenancePackageRepository packageRepository;
     private final PartSectionRepository sectionRepository;
     private final ServiceRepository serviceRepository;
-    private final ProviderRepository providerRepository;
 
     private final MaintenanceConstants.MaintenanceMilestone milestone;
 
     @Override
     public Object findAllByProviderId(Long providerId) {
-        return toServicePackageResponses(
+        return toMaintenancePackageResponses(
                 packageRepository.findDistinctByPackagedServices_Provider_Id(providerId));
     }
 
     @Override
     public Object findById(Long packageId) {
-        return toServicePackageResponse(packageRepository.findById(packageId)
+        return toMaintenancePackageResponse(packageRepository.findById(packageId)
                 .orElseThrow(() -> newExceptionWithId(packageId)));
     }
 
     @Transactional
     @Override
-    public Object create(Long providerId, ServicePackageRequest request) {
+    public Object create(Long providerId, MaintenancePackageRequest request) {
         PartSection section = null;
         Double milestone = null;
 
@@ -76,11 +74,11 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
                 .section(section)
                 .packagedServices(new LinkedHashSet<>(services))
                 .build());
-        return toServicePackageResponse(saved);
+        return toMaintenancePackageResponse(saved);
     }
 
     @Override
-    public Object update(Long packageId, ServicePackageRequest request) {
+    public Object update(Long packageId, MaintenancePackageRequest request) {
         PartSection section = sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
         MaintenancePackage result = packageRepository.findById(packageId)
@@ -98,7 +96,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
 
         MaintenancePackage saved = packageRepository.save(result);
 
-        return toServicePackageResponse(saved);
+        return toMaintenancePackageResponse(saved);
     }
 
     @Override
