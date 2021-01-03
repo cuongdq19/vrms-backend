@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -18,6 +17,6 @@ public class RequestInfoRequest {
     private String note;
     private Long vehicleId;
     private Long providerId;
-    private Set<Long> packageIds;
+    private List<Long> packageIds;
     private List<Long> serviceIds;
 }

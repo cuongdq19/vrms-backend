@@ -2,6 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Feedback;
+import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.Service;
@@ -19,6 +20,7 @@ import org.lordrose.vrms.models.responses.FeedbackResponse;
 import org.lordrose.vrms.models.responses.RequestCheckOutResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
 import org.lordrose.vrms.repositories.FeedbackRepository;
+import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -62,6 +64,7 @@ public class RequestServiceImpl implements RequestService {
     private final ServiceRequestPartRepository requestPartRepository;
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
+    private final MaintenancePackageRepository packageRepository;
 
     private final AccessoryServiceImpl accessoryService;
     private final StorageService storageService;
@@ -94,7 +97,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public Object create(RequestInfoRequest request) {
-        Set<Long> packageIds = request.getPackageIds();
+        List<Long> packageIds = request.getPackageIds();
         List<Long> serviceIds = request.getServiceIds();
 
         if (packageIds.isEmpty() && serviceIds.isEmpty()) {
@@ -142,6 +145,35 @@ public class RequestServiceImpl implements RequestService {
 
             services.add(serviceRequest);
         });
+
+        packageIds.forEach(packageId -> {
+            MaintenancePackage maintenancePackage = packageRepository.findById(packageId)
+                    .orElseThrow(() -> newExceptionWithId(packageId));
+            Set<ServiceRequestPart> list = new LinkedHashSet<>();
+
+            maintenancePackage.getPackagedServices().forEach(service -> {
+                service.getPartSet().forEach(servicePart -> list.add(ServiceRequestPart.builder()
+                        .quantity(servicePart.getQuantity())
+                        .price(servicePart.getPart().getPrice())
+                        .vehiclePart(servicePart.getPart())
+                        .build()));
+
+                ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
+                        .serviceName(service.getName())
+                        .price(service.getPrice())
+                        .note("")
+                        .isIncurred(isIncurred)
+                        .service(service)
+                        .maintenancePackage(maintenancePackage)
+                        .request(saved)
+                        .build());
+
+                list.forEach(item -> item.setServiceRequest(serviceRequest));
+                serviceRequest.setRequestParts(new LinkedHashSet<>(requestPartRepository.saveAll(list)));
+                services.add(serviceRequest);
+            });
+        });
+
         saved.setServices(new LinkedHashSet<>(services));
 
         return toRequestCheckoutResponse(
@@ -166,6 +198,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public RequestCheckOutResponse update(Long requestId, RequestIncurredUpdateRequest request) {
+        Map<Long, Map<Long, Map<Long, Double>>> packageMap = request.getPackageMap();
         Map<Long, Map<Long, Double>> servicePartMap = request.getServicePartMap();
         Set<ExpenseRequest> expenses = request.getExpenses();
         Request result = requestRepository.findById(requestId)
@@ -178,9 +211,9 @@ public class RequestServiceImpl implements RequestService {
         }
 
         List<ServiceRequest> services = new ArrayList<>();
-        servicePartMap.forEach((key, values) -> {
-            Service service = serviceRepository.findById(key)
-                    .orElseThrow();
+        servicePartMap.forEach((serviceId, values) -> {
+            Service service = serviceRepository.findById(serviceId)
+                    .orElseThrow(() -> newExceptionWithId(serviceId));
             List<ServiceRequestPart> list = new ArrayList<>();
             ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
                     .serviceName(service.getName())
@@ -207,6 +240,10 @@ public class RequestServiceImpl implements RequestService {
         });
 
         expenses.forEach(expense -> {
+            MaintenancePackage maintenancePackage = null;
+            if (expense.getMaintenancePackageId() != null)
+                maintenancePackage = packageRepository.findById(expense.getMaintenancePackageId())
+                        .orElseThrow(() -> newExceptionWithId(expense.getMaintenancePackageId()));
             List<ServiceRequestPart> list = new ArrayList<>();
             ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
                     .serviceName(expense.getName())
@@ -214,6 +251,7 @@ public class RequestServiceImpl implements RequestService {
                     .note(expense.getNote())
                     .isIncurred(isIncurred)
                     .service(null)
+                    .maintenancePackage(maintenancePackage)
                     .request(result)
                     .build());
 
@@ -231,6 +269,41 @@ public class RequestServiceImpl implements RequestService {
                     new LinkedHashSet<>(requestPartRepository.saveAll(list)));
             services.add(serviceRequest);
         });
+
+        packageMap.forEach((packageId, serviceMap) -> {
+            MaintenancePackage maintenancePackage = packageRepository.findById(packageId)
+                    .orElseThrow(() -> newExceptionWithId(packageId));
+
+            serviceMap.forEach((serviceId, partMap) -> {
+                Service service = serviceRepository.findById(serviceId)
+                        .orElseThrow(() -> newExceptionWithId(serviceId));
+                List<ServiceRequestPart> list = new ArrayList<>();
+                ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
+                        .serviceName(service.getName())
+                        .price(service.getPrice())
+                        .note("")
+                        .isIncurred(isIncurred)
+                        .service(service)
+                        .maintenancePackage(maintenancePackage)
+                        .request(result)
+                        .build());
+
+                List<VehiclePart> parts = partRepository.findAllById(partMap.keySet());
+
+                validatePartsRequest(parts, partMap);
+
+                parts.forEach(part -> list.add(ServiceRequestPart.builder()
+                        .quantity(partMap.get(part.getId()))
+                        .price(part.getPrice())
+                        .vehiclePart(part)
+                        .serviceRequest(serviceRequest)
+                        .build()));
+                serviceRequest.setRequestParts(
+                        new LinkedHashSet<>(requestPartRepository.saveAll(list)));
+                services.add(serviceRequest);
+            });
+        });
+
         result.getServices().addAll(serviceRequestRepository.saveAll(services));
 
         return toRequestCheckoutResponse(

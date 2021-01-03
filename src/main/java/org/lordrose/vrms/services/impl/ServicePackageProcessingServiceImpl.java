@@ -7,16 +7,16 @@ import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.ServicePackageRequest;
+import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
-import org.lordrose.vrms.repositories.ServicePackageRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.services.ServicePackageProcessingService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.ServicePackageConverter.toServicePackageResponse;
@@ -28,7 +28,7 @@ import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptio
 @org.springframework.stereotype.Service
 public class ServicePackageProcessingServiceImpl implements ServicePackageProcessingService {
 
-    private final ServicePackageRepository packageRepository;
+    private final MaintenancePackageRepository packageRepository;
     private final PartSectionRepository sectionRepository;
     private final ServiceRepository serviceRepository;
     private final ProviderRepository providerRepository;
@@ -47,6 +47,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
                 .orElseThrow(() -> newExceptionWithId(packageId)));
     }
 
+    @Transactional
     @Override
     public Object create(Long providerId, ServicePackageRequest request) {
         PartSection section = null;
@@ -64,7 +65,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
             section = sectionRepository.findById(request.getSectionId())
                     .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
         }
-        Set<Long> serviceIds = request.getServiceIds();
+        List<Long> serviceIds = request.getServiceIds();
         List<Service> services = serviceRepository.findAllByProviderIdAndIdIsIn(providerId, serviceIds);
 
         validateRetrievedServices(services, serviceIds);
@@ -84,7 +85,7 @@ public class ServicePackageProcessingServiceImpl implements ServicePackageProces
                 .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
         MaintenancePackage result = packageRepository.findById(packageId)
                 .orElseThrow(() -> newExceptionWithId(packageId));
-        Set<Long> serviceIds = request.getServiceIds();
+        List<Long> serviceIds = request.getServiceIds();
         List<Service> services = serviceRepository.findAllById(serviceIds);
 
         validateRetrievedServices(services, serviceIds);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ServicePackageRepository extends JpaRepository<MaintenancePackage, Long> {
+public interface MaintenancePackageRepository extends JpaRepository<MaintenancePackage, Long> {
 
     List<MaintenancePackage> findDistinctByPackagedServices_Provider_Id(Long providerId);
 }
