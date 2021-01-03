@@ -2,6 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Provider;
+import org.lordrose.vrms.domains.constants.RequestStatus;
 import org.lordrose.vrms.models.responses.SlotResponse;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
@@ -76,7 +77,7 @@ public class RequestSchedulingServiceImpl implements RequestSchedulingService {
     private boolean isFull(LocalDate date, LocalTime slotBeginning, int capacity) {
         LocalDateTime dateToCheck = LocalDateTime.of(date, slotBeginning);
         return requestRepository
-                .countAllByBookingTimeEqualsAndStatus(dateToCheck, "ACCEPTED")
+                .countAllByBookingTimeEqualsAndStatus(dateToCheck, RequestStatus.ACCEPTED)
                 >= capacity;
     }
 }

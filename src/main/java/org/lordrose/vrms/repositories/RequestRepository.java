@@ -2,6 +2,7 @@ package org.lordrose.vrms.repositories;
 
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
+import org.lordrose.vrms.domains.constants.RequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +21,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByProviderOrderByBookingTimeDesc(Provider provider);
 
-    Long countAllByBookingTimeEqualsAndStatus(LocalDateTime bookingTime, String status);
+    Long countAllByBookingTimeEqualsAndStatus(LocalDateTime bookingTime, RequestStatus status);
 
     List<Request> findAllByProviderIdAndBookingTime(Long providerId, LocalDateTime bookingTime);
 }
