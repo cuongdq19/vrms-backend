@@ -31,7 +31,6 @@ import org.lordrose.vrms.repositories.VehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
 import org.lordrose.vrms.services.RequestService;
 import org.lordrose.vrms.services.StorageService;
-import org.lordrose.vrms.utils.IncrementalPartCollection;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,7 +40,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackResponse;
 import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutResponse;
@@ -122,7 +120,7 @@ public class RequestServiceImpl implements RequestService {
         serviceIds.forEach(serviceId -> {
             Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(() -> newExceptionWithId(serviceId));
-            Set<ServiceRequestPart> list = new LinkedHashSet<>();
+            List<ServiceRequestPart> list = new ArrayList<>();
 
             service.getPartSet().forEach(servicePart -> list.add(ServiceRequestPart.builder()
                     .quantity(servicePart.getQuantity())
@@ -149,7 +147,7 @@ public class RequestServiceImpl implements RequestService {
         packageIds.forEach(packageId -> {
             MaintenancePackage maintenancePackage = packageRepository.findById(packageId)
                     .orElseThrow(() -> newExceptionWithId(packageId));
-            Set<ServiceRequestPart> list = new LinkedHashSet<>();
+            List<ServiceRequestPart> list = new ArrayList<>();
 
             maintenancePackage.getPackagedServices().forEach(service -> {
                 service.getPartSet().forEach(servicePart -> list.add(ServiceRequestPart.builder()
@@ -367,15 +365,7 @@ public class RequestServiceImpl implements RequestService {
                 .build();
         messageService.pushNotification(content);*/
 
-        IncrementalPartCollection incrementalCollection = new IncrementalPartCollection();
-
-        result.getServices().forEach(serviceRequest ->
-                incrementalCollection.addAll(serviceRequest.getRequestParts().stream()
-                        .filter(ServiceRequestPart::isAccessory)
-                        .collect(Collectors.toList())));
-
-        accessoryService.registerAccessoryFromServiceRequestParts(
-                result.getVehicle(), incrementalCollection.getCollection());
+        accessoryService.registerAccessoryFromServiceRequests(result.getServices());
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }

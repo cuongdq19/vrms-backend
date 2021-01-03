@@ -6,15 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -26,17 +25,21 @@ import javax.persistence.Table;
 public class Accessory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "request_part_id")
     private Long id;
 
-    @Column(name = "quantity")
-    private Double quantity;
+    @Column(name = "duration")
+    private Integer warrantyDuration;
 
-    @ManyToOne
-    @JoinColumn(name = "part_id")
-    private VehiclePart part;
+    @Column(name = "monthsPerMaintenance")
+    private Integer monthsPerMaintenance;
 
-    @ManyToOne(cascade = CascadeType.DETACH)
-    @JoinColumn(name = "vehicle_id")
-    private Vehicle vehicle;
+    @Column(name = "installed_date")
+    private LocalDate installedDate;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "service_request_part_id")
+    private ServiceRequestPart serviceRequestPart;
+
 }

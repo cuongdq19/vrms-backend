@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface AccessoryRepository extends JpaRepository<Accessory, Long> {
 
-    List<Accessory> findAllByVehicleId(Long vehicleId);
+    List<Accessory> findAllByServiceRequestPart_ServiceRequest_Request_Vehicle_Id(Long vehicleId);
 }

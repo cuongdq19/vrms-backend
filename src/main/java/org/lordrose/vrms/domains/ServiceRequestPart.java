@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -43,12 +46,12 @@ public class ServiceRequestPart {
     @JoinColumn(name = "service_request_id")
     private ServiceRequest serviceRequest;
 
+    @OneToOne(mappedBy = "serviceRequestPart", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Accessory accessory;
+
     public boolean isAccessory() {
         return vehiclePart.getCategory().getIsAccessory();
-    }
-
-    public void addQuantity(double value) {
-        quantity += value;
     }
 
     @Override
@@ -56,11 +59,12 @@ public class ServiceRequestPart {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServiceRequestPart that = (ServiceRequestPart) o;
-        return vehiclePart.getId().equals(that.vehiclePart.getId());
+        if (id == null || that.getId() == null) return false;
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vehiclePart.getId());
+        return Objects.hash(id);
     }
 }
