@@ -6,16 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BaseResponse {
+public class MilestoneResponse {
 
-    private String name;
-    private String description;
-    private List<ServiceResponse> services;
+    private Integer id;
+    private Double milestone;
 }

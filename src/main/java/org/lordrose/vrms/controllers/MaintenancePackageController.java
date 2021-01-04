@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.constants.MaintenanceConstants;
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
 import org.lordrose.vrms.models.requests.ProviderMaintenanceRequest;
+import org.lordrose.vrms.models.responses.MilestoneResponse;
 import org.lordrose.vrms.services.MaintenancePackageService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,7 +27,12 @@ public class MaintenancePackageController {
 
     @GetMapping("/milestones")
     public Object getMilestones() {
-        return milestone.getMilesAsMap();
+        return milestone.getMilesAsMap().entrySet().stream()
+                .map(entry -> MilestoneResponse.builder()
+                        .id(entry.getKey())
+                        .milestone(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{packageId}")
