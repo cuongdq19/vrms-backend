@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.constants.RequestStatus;
 import org.lordrose.vrms.models.responses.ServiceAccessoriesResponse;
 import org.lordrose.vrms.repositories.ServiceRequestPartRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class AccessoryServiceImpl {
 
     private final ServiceRequestPartRepository requestPartRepository;
 
+    @Transactional
     public List<ServiceAccessoriesResponse> findAllByVehicle(Long vehicleId) {
         List<ServiceAccessoriesResponse> responses = new ArrayList<>();
 

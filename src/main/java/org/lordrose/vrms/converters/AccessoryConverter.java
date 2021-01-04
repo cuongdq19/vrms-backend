@@ -3,6 +3,7 @@ package org.lordrose.vrms.converters;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.models.responses.AccessoryResponse;
+import org.lordrose.vrms.models.responses.ReminderResponse;
 import org.lordrose.vrms.models.responses.ServiceAccessoriesResponse;
 
 import java.util.List;
@@ -16,8 +17,13 @@ public class AccessoryConverter {
         return AccessoryResponse.builder()
                 .id(requestPart.getId())
                 .quantity(requestPart.getQuantity())
-                .warrantyDuration(requestPart.getVehiclePart().getWarrantyDuration())
-                .monthsPerMaintenance(requestPart.getVehiclePart().getMonthsPerMaintenance())
+                .reminders(requestPart.getReminders().stream()
+                        .map(reminder -> ReminderResponse.builder()
+                                .id(reminder.getId())
+                                .remindDate(reminder.getRemindAt().toString())
+                                .maintenanceDate(reminder.getMaintenanceDate())
+                                .build())
+                        .collect(Collectors.toList()))
                 .part(toEmptyModelPartResponse(requestPart.getVehiclePart()))
                 .build();
     }

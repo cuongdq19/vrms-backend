@@ -6,17 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccessoryResponse {
+public class ReminderResponse {
 
     private Long id;
-    private Double quantity;
-    private List<ReminderResponse> reminders;
-    private PartResponse part;
+    private String remindDate;
+    private LocalDate maintenanceDate;
 }
