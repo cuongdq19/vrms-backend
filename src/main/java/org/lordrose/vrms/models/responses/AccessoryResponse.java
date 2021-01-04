@@ -17,6 +17,5 @@ public class AccessoryResponse {
     private Double quantity;
     private Integer warrantyDuration;
     private Integer monthsPerMaintenance;
-    private String installedDate;
     private PartResponse part;
 }

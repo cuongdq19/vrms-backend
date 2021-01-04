@@ -64,7 +64,6 @@ public class RequestServiceImpl implements RequestService {
     private final FeedbackRepository feedbackRepository;
     private final MaintenancePackageRepository packageRepository;
 
-    private final AccessoryServiceImpl accessoryService;
     private final StorageService storageService;
     
     @Override
@@ -364,8 +363,6 @@ public class RequestServiceImpl implements RequestService {
                         .build())
                 .build();
         messageService.pushNotification(content);*/
-
-        accessoryService.registerAccessoryFromServiceRequests(result.getServices());
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }

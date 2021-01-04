@@ -1,12 +1,10 @@
 package org.lordrose.vrms.converters;
 
-import org.lordrose.vrms.domains.Accessory;
 import org.lordrose.vrms.domains.ServiceRequest;
+import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.models.responses.AccessoryResponse;
 import org.lordrose.vrms.models.responses.ServiceAccessoriesResponse;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,40 +12,27 @@ import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartRespons
 
 public class AccessoryConverter {
 
-    private static AccessoryResponse toAccessoryResponse(Accessory accessory) {
+    private static AccessoryResponse toAccessoryResponse(ServiceRequestPart requestPart) {
         return AccessoryResponse.builder()
-                .id(accessory.getId())
-                .quantity(accessory.getServiceRequestPart().getQuantity())
-                .warrantyDuration(accessory.getWarrantyDuration())
-                .monthsPerMaintenance(accessory.getMonthsPerMaintenance())
-                .installedDate(accessory.getInstalledDate().toString())
-                .part(toEmptyModelPartResponse(accessory.getServiceRequestPart().getVehiclePart()))
+                .id(requestPart.getId())
+                .quantity(requestPart.getQuantity())
+                .warrantyDuration(requestPart.getVehiclePart().getWarrantyDuration())
+                .monthsPerMaintenance(requestPart.getVehiclePart().getMonthsPerMaintenance())
+                .part(toEmptyModelPartResponse(requestPart.getVehiclePart()))
                 .build();
     }
 
-    private static ServiceAccessoriesResponse toServiceAccessories(ServiceRequest serviceRequest,
-                                                                   Collection<Accessory> accessories) {
+    public static ServiceAccessoriesResponse toServiceAccessories(ServiceRequest serviceRequest,
+                                                                  List<ServiceRequestPart> requestParts) {
         return ServiceAccessoriesResponse.builder()
                 .serviceRequestId(serviceRequest.getId())
                 .requestId(serviceRequest.getRequest().getId())
                 .serviceName(serviceRequest.getServiceName())
                 .serviceNote(serviceRequest.getNote())
                 .isIncurred(serviceRequest.getIsIncurred())
-                .accessories(accessories.stream()
+                .accessories(requestParts.stream()
                         .map(AccessoryConverter::toAccessoryResponse)
                         .collect(Collectors.toList()))
                 .build();
-    }
-
-    public static List<ServiceAccessoriesResponse> toAccessoryResponses(Collection<Accessory> accessories) {
-        List<ServiceAccessoriesResponse> responses = new ArrayList<>();
-
-        accessories.stream()
-                .collect(Collectors.groupingBy(accessory ->
-                            accessory.getServiceRequestPart().getServiceRequest()))
-                .forEach((serviceRequest, accessoryList) ->
-                        responses.add(toServiceAccessories(serviceRequest, accessoryList)));
-
-        return responses;
     }
 }
