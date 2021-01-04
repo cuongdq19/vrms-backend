@@ -56,7 +56,6 @@ public class MaintenancePackageConverter {
 
     public static List<PackageCheckoutResponse> toPackageCheckoutResponses(Collection<ServiceRequest> services) {
         Map<MaintenancePackage, List<ServiceRequest>> resultMap = services.stream()
-                .filter(service -> service.getMaintenancePackage() != null)
                 .collect(Collectors.groupingBy(ServiceRequest::getMaintenancePackage));
         List<PackageCheckoutResponse> responses = new ArrayList<>();
 

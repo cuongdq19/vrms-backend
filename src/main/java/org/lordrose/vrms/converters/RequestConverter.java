@@ -72,8 +72,14 @@ public class RequestConverter {
                 .status(request.getStatus().textValue)
                 .imageUrls(getUrlsAsArray(request.getImageUrls()))
                 .user(toRequestUserInfoResponse(request.getVehicle().getUser()))
-                .packages(toPackageCheckoutResponses(request.getServices()))
-                .services(toServiceCheckoutResponses(request.getServices()))
+                .packages(toPackageCheckoutResponses(
+                        request.getServices().stream()
+                                .filter(service -> service.getMaintenancePackage() != null)
+                                .collect(Collectors.toList())))
+                .services(toServiceCheckoutResponses(
+                        request.getServices().stream()
+                                .filter(service -> service.getMaintenancePackage() == null)
+                                .collect(Collectors.toList())))
                 .build();
     }
 

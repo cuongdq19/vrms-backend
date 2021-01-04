@@ -13,8 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -42,6 +45,9 @@ public class ServiceRequestPart {
     @ManyToOne
     @JoinColumn(name = "service_request_id")
     private ServiceRequest serviceRequest;
+
+    @OneToMany(mappedBy = "requestPart")
+    private Set<MaintenanceReminder> reminders = new LinkedHashSet<>();
 
     public boolean isAccessory() {
         return vehiclePart.getCategory().getIsAccessory();

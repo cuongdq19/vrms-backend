@@ -40,6 +40,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackResponse;
 import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutResponse;
@@ -65,6 +66,7 @@ public class RequestServiceImpl implements RequestService {
     private final MaintenancePackageRepository packageRepository;
 
     private final StorageService storageService;
+    private final ReminderServiceImpl reminderService;
     
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
@@ -347,7 +349,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestCheckOutResponse checkout(Long requestId) {
         Request result = requestRepository.findById(requestId)
-                .orElseThrow();
+                .orElseThrow(() -> newExceptionWithId(requestId));
 
         result.setStatus(RequestStatus.FINISHED);
         result.setCheckoutTime(LocalDateTime.now());
@@ -363,6 +365,10 @@ public class RequestServiceImpl implements RequestService {
                         .build())
                 .build();
         messageService.pushNotification(content);*/
+
+        reminderService.createReminders(result.getServices().stream()
+                .flatMap(serviceRequest -> serviceRequest.getRequestParts().stream())
+                .collect(Collectors.toList()));
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
