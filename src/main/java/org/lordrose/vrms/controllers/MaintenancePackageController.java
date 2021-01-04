@@ -3,6 +3,7 @@ package org.lordrose.vrms.controllers;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.constants.MaintenanceConstants;
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
+import org.lordrose.vrms.models.requests.ProviderMaintenanceRequest;
 import org.lordrose.vrms.services.MaintenancePackageService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,17 +60,16 @@ public class MaintenancePackageController {
         return packageService.findAllByProviderIdAndModelId(providerId, modelId);
     }
 
-    @PostMapping("/sections/{sectionId}/models/{modelId}")
-    public Object getAllBySectionAndModelId(@PathVariable Long sectionId,
-                                            @PathVariable Long modelId,
-                                            @RequestBody GeoPoint currentLocation) {
-        return packageService.findAllBySectionIdAndModelId(sectionId, modelId, currentLocation);
+    @PostMapping("/models/{modelId}")
+    public Object getAllBySectionAndModelId(@PathVariable Long modelId,
+                                            @RequestBody ProviderMaintenanceRequest request) {
+        return packageService.findAllBySectionIdAndModelId(modelId, request);
     }
 
     @PostMapping("/milestones/{milestoneId}/models/{modelId}")
     public Object getAllByMilestoneAndModelId(@PathVariable Integer milestoneId,
-                                            @PathVariable Long modelId,
-                                            @RequestBody GeoPoint currentLocation) {
+                                              @PathVariable Long modelId,
+                                              @RequestBody GeoPoint currentLocation) {
         return packageService.findAllByMilestoneIdAndModelId(milestoneId, modelId, currentLocation);
     }
 }

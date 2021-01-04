@@ -36,12 +36,13 @@ public class DataLoader implements CommandLineRunner {
         replacingService_2();
         createPackage_1();
         createPackage_2();
+        createPackage_3();
         createRequest();
-        createRequest();
+        createRequest();*/
 
         RequestCheckOutResponse temp1 = incurredUpdateRequest();
 
-        System.out.println("CBA");*/
+        System.out.println("CBA");
     }
 
     private void replacingService_1() {
@@ -94,6 +95,14 @@ public class DataLoader implements CommandLineRunner {
         request.setServiceIds(List.of(2L, 3L));
         request.setPackageName("Test Maintenance Package Name 2");
         request.setSectionId(1L);
+        packageProcessingService.create(1L, request);
+    }
+
+    private void createPackage_3() {
+        MaintenancePackageRequest request = new MaintenancePackageRequest();
+        request.setServiceIds(List.of(1L, 3L));
+        request.setPackageName("Test Maintenance Package Name 3");
+        request.setSectionId(3L);
         packageProcessingService.create(1L, request);
     }
 

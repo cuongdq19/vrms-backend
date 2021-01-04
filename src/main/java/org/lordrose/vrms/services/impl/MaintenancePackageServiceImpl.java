@@ -9,6 +9,7 @@ import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
+import org.lordrose.vrms.models.requests.ProviderMaintenanceRequest;
 import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -18,6 +19,7 @@ import org.lordrose.vrms.services.MaintenancePackageService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -158,13 +160,12 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
 
     @Transactional
     @Override
-    public Object findAllBySectionIdAndModelId(Long sectionId, Long modelId, GeoPoint currentLocation) {
-        PartSection section = sectionRepository.findById(sectionId)
-                .orElseThrow(() -> newExceptionWithId(sectionId));
+    public Object findAllBySectionIdAndModelId(Long modelId, ProviderMaintenanceRequest request) {
         VehicleModel model = modelRepository.findById(modelId)
                 .orElseThrow(() -> newExceptionWithId(modelId));
-        List<MaintenancePackage> packages =
-                packageRepository.findAllBySectionId(section.getId());
+        List<MaintenancePackage> packages = new ArrayList<>();
+        request.getSectionIds().forEach(sectionId ->
+                packages.addAll(packageRepository.findAllBySectionId(sectionId)));
 
         List<MaintenancePackage> results = packages.stream()
                 .filter(maintenancePackage -> {
@@ -186,7 +187,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                     return count == services.size();})
                 .collect(Collectors.toList());
 
-        return toPackageProviderResponses(results, currentLocation, feedbackService);
+        return toPackageProviderResponses(results, request.getCurrentLocation(), feedbackService);
     }
 
     @Transactional
