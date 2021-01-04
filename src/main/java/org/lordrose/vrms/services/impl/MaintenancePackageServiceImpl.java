@@ -5,17 +5,21 @@ import org.lordrose.vrms.constants.MaintenanceConstants;
 import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Service;
+import org.lordrose.vrms.domains.ServiceVehiclePart;
+import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
 import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
+import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.services.MaintenancePackageService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponse;
@@ -30,6 +34,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
     private final MaintenancePackageRepository packageRepository;
     private final PartSectionRepository sectionRepository;
     private final ServiceRepository serviceRepository;
+    private final VehicleModelRepository modelRepository;
 
     private final MaintenanceConstants.MaintenanceMilestone milestone;
 
@@ -117,5 +122,33 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                     .collect(Collectors.toList());
             throw newExceptionWithIds(notFounds);
         }
+    }
+
+    @Transactional
+    @Override
+    public Object findAllByProviderIdAndModelId(Long providerId, Long modelId) {
+        List<MaintenancePackage> packages =
+                packageRepository.findDistinctByPackagedServices_Provider_Id(providerId);
+        VehicleModel model = modelRepository.findById(modelId)
+                .orElseThrow(() -> newExceptionWithId(modelId));
+
+        List<MaintenancePackage> results = packages.stream().filter(maintenancePackage -> {
+            Set<Service> services = maintenancePackage.getPackagedServices();
+            long count = services.stream().filter(service -> {
+                if (service.getModels() != null && !service.getModels().isEmpty()) {
+                    return service.getModels().contains(model);
+                } else if (service.getPartSet() != null) {
+                    Set<ServiceVehiclePart> serviceParts = service.getPartSet();
+                    for (ServiceVehiclePart servicePart : serviceParts) {
+                        if (servicePart.getPart().getModels().contains(model)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }).count();
+            return count == services.size();
+        }).collect(Collectors.toList());
+        return toMaintenancePackageResponses(results);
     }
 }

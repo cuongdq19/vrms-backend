@@ -25,6 +25,11 @@ public class MaintenancePackageConverter {
                 .milestone(maintenancePackage.getMilestone())
                 .sectionId(maintenancePackage.returnSectionId())
                 .sectionName(maintenancePackage.returnSectionName())
+                .totalPrice(maintenancePackage.getPackagedServices().stream()
+                        .mapToDouble(service -> service.getPrice() + service.getPartSet().stream()
+                                .mapToDouble(servicePart -> servicePart.getPart().getPrice())
+                                .sum())
+                        .sum())
                 .packagedServices(toServiceDetailResponses(maintenancePackage.getPackagedServices()))
                 .build();
     }

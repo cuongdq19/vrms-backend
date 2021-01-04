@@ -20,5 +20,6 @@ public class MaintenancePackageResponse {
     private Double milestone;
     private Long sectionId;
     private String sectionName;
+    private Double totalPrice;
     private List<ServiceDetailResponse> packagedServices;
 }

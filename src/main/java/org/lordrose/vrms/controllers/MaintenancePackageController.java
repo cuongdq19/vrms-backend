@@ -51,4 +51,10 @@ public class MaintenancePackageController {
     public void deletePackage(@PathVariable Long packageId) {
         packageService.delete(packageId);
     }
+
+    @GetMapping("/providers/{providerId}/models/{modelId}")
+    public Object getAllByProviderAndModelId(@PathVariable Long providerId,
+                                             @PathVariable Long modelId) {
+        return packageService.findAllByProviderIdAndModelId(providerId, modelId);
+    }
 }

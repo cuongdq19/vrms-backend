@@ -47,7 +47,6 @@ public class DataLoader implements CommandLineRunner {
     private void replacingService_1() {
         Map<Long, Double> partMap = new LinkedHashMap<>();
         partMap.put(1L, 1D);
-        partMap.put(2L, 2D);
         GroupPriceRequest temp = new GroupPriceRequest();
         temp.setName("Replacing Service 1");
         temp.setPrice(69D);

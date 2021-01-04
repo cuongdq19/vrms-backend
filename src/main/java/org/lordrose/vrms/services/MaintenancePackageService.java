@@ -13,4 +13,6 @@ public interface MaintenancePackageService {
     Object update(Long packageId, MaintenancePackageRequest request);
 
     void delete(Long packageId);
+
+    Object findAllByProviderIdAndModelId(Long providerId, Long modelId);
 }
