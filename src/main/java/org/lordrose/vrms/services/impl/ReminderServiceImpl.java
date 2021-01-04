@@ -40,7 +40,7 @@ public class ReminderServiceImpl {
             reminders.add(MaintenanceReminder.builder()
                     .remindAt(today.plusMonths(i).minusDays(3))
                     .maintenanceDate(today.plusMonths(i))
-                    .status("PENDING")
+                    .isActive(true)
                     .requestPart(requestPart)
                     .build());
         }

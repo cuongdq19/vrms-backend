@@ -20,7 +20,7 @@ public class ContractConverter {
                 .email(contract.getEmail())
                 .contractFileUrls(getUrlsAsArray(contract.getContractFileUrls()))
                 .proofImageUrls(getUrlsAsArray(contract.getProofImageUrls()))
-                .status(contract.getStatus())
+                .status(contract.getStatus().textValue)
                 .providerId(contract.getProvider() == null ? null : contract.getProvider().getId())
                 .build();
     }

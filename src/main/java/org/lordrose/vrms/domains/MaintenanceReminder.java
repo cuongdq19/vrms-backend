@@ -35,8 +35,8 @@ public class MaintenanceReminder {
     @Column(name = "maintenance_date")
     private LocalDate maintenanceDate;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "request_part_id")

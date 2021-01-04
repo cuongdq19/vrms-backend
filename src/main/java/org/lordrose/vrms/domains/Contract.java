@@ -6,9 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.lordrose.vrms.domains.bases.TimeAuditable;
+import org.lordrose.vrms.domains.constants.ContractStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,8 +50,8 @@ public class Contract extends TimeAuditable<LocalDateTime> {
     @Column(name = "proof_image_urls", length = 7000)
     private String proofImageUrls;
 
-    @Column(name = "status")
-    private String status;
+    @Enumerated(value = EnumType.STRING)
+    private ContractStatus status;
 
     @OneToOne(mappedBy = "contract")
     private Provider provider;

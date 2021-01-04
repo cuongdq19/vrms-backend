@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Contract;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.User;
+import org.lordrose.vrms.domains.constants.ContractStatus;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.ContactRequest;
 import org.lordrose.vrms.models.requests.ManagerCreateRequest;
 import org.lordrose.vrms.models.requests.ProviderRequest;
 import org.lordrose.vrms.models.responses.ContractResponse;
 import org.lordrose.vrms.repositories.ContractRepository;
-import org.lordrose.vrms.repositories.ManufacturerRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RoleRepository;
 import org.lordrose.vrms.repositories.UserRepository;
@@ -37,7 +37,6 @@ public class ContractServiceImpl implements ContractService {
     private final StorageService storageService;
     private final EmailService emailService;
     private final ContractRepository contractRepository;
-    private final ManufacturerRepository manufacturerRepository;
     private final ProviderRepository providerRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -55,7 +54,7 @@ public class ContractServiceImpl implements ContractService {
                 .address(contactRequest.getAddress())
                 .phoneNumber(contactRequest.getPhoneNumber())
                 .email(contactRequest.getEmail())
-                .status("PENDING")
+                .status(ContractStatus.PENDING)
                 .proofImageUrls(storageService.uploadFiles(images))
                 .build());
 
@@ -68,7 +67,7 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> newExceptionWithId(contractId));
 
         result.setContractFileUrls(storageService.uploadFiles(contractImages));
-        result.setStatus("CONFIRMED");
+        result.setStatus(ContractStatus.CONFIRMED);
 
         return toContractResponse(contractRepository.save(result));
     }
@@ -84,7 +83,7 @@ public class ContractServiceImpl implements ContractService {
 
         Contract result = contractRepository.findById(contractId)
                 .orElseThrow(() -> newExceptionWithId(contractId));
-        result.setStatus("RESOLVED");
+        result.setStatus(ContractStatus.RESOLVED);
 
         Contract saved = contractRepository.save(result);
 
