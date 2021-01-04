@@ -1,13 +1,19 @@
 package org.lordrose.vrms.converters;
 
 import org.lordrose.vrms.domains.MaintenancePackage;
+import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.ServiceRequest;
+import org.lordrose.vrms.exceptions.InvalidStateException;
 import org.lordrose.vrms.models.responses.MaintenancePackageResponse;
 import org.lordrose.vrms.models.responses.PackageCheckoutResponse;
 import org.lordrose.vrms.models.responses.PackageHistoryResponse;
+import org.lordrose.vrms.models.responses.PackageProviderResponse;
+import org.lordrose.vrms.services.FeedbackService;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,6 +21,8 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceCheckoutResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceDetailResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceHistoryResponses;
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
+import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
 
 public class MaintenancePackageConverter {
 
@@ -75,5 +83,43 @@ public class MaintenancePackageConverter {
                         .build()));
 
         return responses;
+    }
+
+    public static List<PackageProviderResponse> toPackageProviderResponses(Collection<MaintenancePackage> maintenancePackages,
+                                                                           GeoPoint currentLocation,
+                                                                           FeedbackService feedbackService) {
+        List<PackageProviderResponse> responses = new ArrayList<>();
+        Map<Provider, List<MaintenancePackage>> resultMap = maintenancePackages.stream()
+                .collect(Collectors.groupingBy(maintenancePackage ->
+                        maintenancePackage.getPackagedServices().stream()
+                                .findAny()
+                                    .orElseThrow(() -> new InvalidStateException("Something went wrong"))
+                                .getProvider()));
+
+        resultMap.forEach((provider, packages) ->
+                responses.add(test(provider, currentLocation, packages, feedbackService)));
+
+        return responses.stream()
+                .sorted(Comparator.comparingDouble(PackageProviderResponse::getDistance))
+                .collect(Collectors.toList());
+    }
+
+    private static PackageProviderResponse test(Provider provider, GeoPoint currentPos,
+                                                List<MaintenancePackage> packages,
+                                                FeedbackService feedbackService) {
+        return PackageProviderResponse.builder()
+                .id(provider.getId())
+                .name(provider.getName())
+                .address(provider.getAddress())
+                .imageUrls(getUrlsAsArray(provider.getImageUrls()))
+                .openTime(provider.getOpenTime().toString())
+                .closeTime(provider.getCloseTime().toString())
+                .ratings(feedbackService.getAverageRating(provider.getId()))
+                .distance(calculate(currentPos, GeoPoint.builder()
+                        .latitude(provider.getLatitude())
+                        .longitude(provider.getLongitude())
+                        .build()))
+                .packages(toMaintenancePackageResponses(packages))
+                .build();
     }
 }

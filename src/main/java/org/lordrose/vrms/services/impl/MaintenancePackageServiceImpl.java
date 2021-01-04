@@ -13,7 +13,9 @@ import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
+import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.MaintenancePackageService;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponse;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponses;
+import static org.lordrose.vrms.converters.MaintenancePackageConverter.toPackageProviderResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
 
@@ -36,6 +39,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
     private final ServiceRepository serviceRepository;
     private final VehicleModelRepository modelRepository;
 
+    private final FeedbackService feedbackService;
     private final MaintenanceConstants.MaintenanceMilestone milestone;
 
     @Override
@@ -150,5 +154,69 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
             return count == services.size();
         }).collect(Collectors.toList());
         return toMaintenancePackageResponses(results);
+    }
+
+    @Transactional
+    @Override
+    public Object findAllBySectionIdAndModelId(Long sectionId, Long modelId, GeoPoint currentLocation) {
+        PartSection section = sectionRepository.findById(sectionId)
+                .orElseThrow(() -> newExceptionWithId(sectionId));
+        VehicleModel model = modelRepository.findById(modelId)
+                .orElseThrow(() -> newExceptionWithId(modelId));
+        List<MaintenancePackage> packages =
+                packageRepository.findAllBySectionId(section.getId());
+
+        List<MaintenancePackage> results = packages.stream()
+                .filter(maintenancePackage -> {
+                    Set<Service> services = maintenancePackage.getPackagedServices();
+                    long count = services.stream()
+                            .filter(service -> {
+                                if (service.getModels() != null && !service.getModels().isEmpty()) {
+                                    return service.getModels().contains(model);
+                                } else if (service.getPartSet() != null) {
+                                    Set<ServiceVehiclePart> serviceParts = service.getPartSet();
+                                    for (ServiceVehiclePart servicePart : serviceParts) {
+                                        if (servicePart.getPart().getModels().contains(model)) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;})
+                            .count();
+                    return count == services.size();})
+                .collect(Collectors.toList());
+
+        return toPackageProviderResponses(results, currentLocation, feedbackService);
+    }
+
+    @Transactional
+    @Override
+    public Object findAllByMilestoneIdAndModelId(Integer milestoneId, Long modelId, GeoPoint currentLocation) {
+        VehicleModel model = modelRepository.findById(modelId)
+                .orElseThrow(() -> newExceptionWithId(modelId));
+        List<MaintenancePackage> packages =
+                packageRepository.findAllByMilestoneEquals(milestone.getMilestoneAt(milestoneId));
+
+        List<MaintenancePackage> results = packages.stream()
+                .filter(maintenancePackage -> {
+                    Set<Service> services = maintenancePackage.getPackagedServices();
+                    long count = services.stream()
+                            .filter(service -> {
+                                if (service.getModels() != null && !service.getModels().isEmpty()) {
+                                    return service.getModels().contains(model);
+                                } else if (service.getPartSet() != null) {
+                                    Set<ServiceVehiclePart> serviceParts = service.getPartSet();
+                                    for (ServiceVehiclePart servicePart : serviceParts) {
+                                        if (servicePart.getPart().getModels().contains(model)) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;})
+                            .count();
+                    return count == services.size();})
+                .collect(Collectors.toList());
+
+        return toPackageProviderResponses(results, currentLocation, feedbackService);
     }
 }

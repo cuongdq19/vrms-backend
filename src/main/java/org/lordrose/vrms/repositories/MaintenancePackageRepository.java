@@ -10,4 +10,8 @@ import java.util.List;
 public interface MaintenancePackageRepository extends JpaRepository<MaintenancePackage, Long> {
 
     List<MaintenancePackage> findDistinctByPackagedServices_Provider_Id(Long providerId);
+
+    List<MaintenancePackage> findAllBySectionId(Long sectionId);
+
+    List<MaintenancePackage> findAllByMilestoneEquals(Double milestone);
 }

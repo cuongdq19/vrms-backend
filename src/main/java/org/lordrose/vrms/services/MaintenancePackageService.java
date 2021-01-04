@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services;
 
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 
 public interface MaintenancePackageService {
 
@@ -15,4 +16,8 @@ public interface MaintenancePackageService {
     void delete(Long packageId);
 
     Object findAllByProviderIdAndModelId(Long providerId, Long modelId);
+
+    Object findAllBySectionIdAndModelId(Long sectionId, Long modelId, GeoPoint currentLocation);
+
+    Object findAllByMilestoneIdAndModelId(Integer milestoneId, Long modelId, GeoPoint currentLocation);
 }
