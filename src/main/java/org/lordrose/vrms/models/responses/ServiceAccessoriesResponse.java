@@ -15,10 +15,6 @@ import java.util.List;
 @Builder
 public class ServiceAccessoriesResponse {
 
-    private Long serviceRequestId;
     private Long requestId;
-    private String serviceName;
-    private String serviceNote;
-    private Boolean isIncurred;
     private List<AccessoryResponse> accessories;
 }

@@ -38,11 +38,11 @@ public class DataLoader implements CommandLineRunner {
         createPackage_2();
         createPackage_3();
         createRequest();
-        createRequest();*/
+        createRequest();
 
         RequestCheckOutResponse temp1 = incurredUpdateRequest();
 
-        System.out.println("CBA");
+        System.out.println("CBA");*/
     }
 
     private void replacingService_1() {
