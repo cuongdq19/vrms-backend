@@ -11,4 +11,6 @@ public interface ServiceTypeDetailService {
     Object findAllCategories(Long sectionId);
 
     Object findAllSectionsWithCategory();
+
+    Object findAllSections();
 }

@@ -37,4 +37,9 @@ public class ServiceTypeDetailController {
     public Object findAllSectionsWithCategory() {
         return typeDetailService.findAllSectionsWithCategory();
     }
+
+    @GetMapping("/sections/plain")
+    public Object findAllSections() {
+        return typeDetailService.findAllSections();
+    }
 }

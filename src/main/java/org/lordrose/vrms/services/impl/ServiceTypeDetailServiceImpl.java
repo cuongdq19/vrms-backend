@@ -6,11 +6,13 @@ import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
 import org.lordrose.vrms.models.responses.SectionWithCategoryResponse;
 import org.lordrose.vrms.repositories.PartCategoryRepository;
+import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ServiceTypeDetailRepository;
 import org.lordrose.vrms.services.ServiceTypeDetailService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +26,7 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
 
     private final ServiceTypeDetailRepository typeDetailRepository;
     private final PartCategoryRepository categoryRepository;
+    private final PartSectionRepository sectionRepository;
 
     @Override
     public Object findAll(Set<Long> typeIds) {
@@ -54,6 +57,18 @@ public class ServiceTypeDetailServiceImpl implements ServiceTypeDetailService {
                         .sectionName(entry.getKey().getName())
                         .sectionImageUrl(entry.getKey().getImageUrl())
                         .categories(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Object findAllSections() {
+        return sectionRepository.findAll().stream()
+                .map(section -> SectionWithCategoryResponse.builder()
+                        .sectionId(section.getId())
+                        .sectionName(section.getName())
+                        .sectionImageUrl(section.getImageUrl())
+                        .categories(Collections.emptyList())
                         .build())
                 .collect(Collectors.toList());
     }
