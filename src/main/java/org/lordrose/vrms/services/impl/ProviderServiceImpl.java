@@ -17,7 +17,6 @@ import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.ProviderService;
-import org.lordrose.vrms.utils.FileUrlUtils;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +31,7 @@ import static org.lordrose.vrms.converters.ProviderConverter.toProviderDetailRes
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.utils.DateTimeUtils.toLocalDateTime;
 import static org.lordrose.vrms.utils.DateTimeUtils.toLocalTime;
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
 
 @RequiredArgsConstructor
@@ -59,7 +59,7 @@ public class ProviderServiceImpl implements ProviderService {
                         .id(provider.getId())
                         .name(provider.getName())
                         .address(provider.getAddress())
-                        .imageUrls(FileUrlUtils.getUrlsAsArray(provider.getImageUrls()))
+                        .imageUrls(getUrlsAsArray(provider.getImageUrls()))
                         .openTime(provider.getOpenTime().toString())
                         .closeTime(provider.getCloseTime().toString())
                         .ratings(feedbackService.getAverageRating(provider.getId()))

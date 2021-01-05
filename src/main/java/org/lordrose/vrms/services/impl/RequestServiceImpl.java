@@ -388,6 +388,12 @@ public class RequestServiceImpl implements RequestService {
                                          MultipartFile[] images) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> newExceptionWithId(requestId));
+        if (feedbackRequest.getRatings() == null ||
+                feedbackRequest.getRatings() < 1 ||
+                feedbackRequest.getRatings() > 5) {
+            throw new InvalidArgumentException("Invalid value for request ratings.");
+        }
+
         Feedback saved = feedbackRepository.save(Feedback.builder()
                 .ratings(feedbackRequest.getRatings())
                 .content(feedbackRequest.getContent())

@@ -43,13 +43,13 @@ public class StorageServiceImpl implements StorageService {
         StringBuilder resultCollector = new StringBuilder();
         for (MultipartFile file : files) {
             resultCollector.append(uploadFile(file));
-            resultCollector.append("||");
         }
         return resultCollector.toString();
     }
 
-    private String processUploadFile(MultipartFile multipartFile)
-            throws IOException {
+    private String processUploadFile(MultipartFile multipartFile) throws IOException {
+        if (multipartFile.isEmpty())
+            return "";
         storage = storageOptions.getService();
         final String uuid = UUID.randomUUID().toString();
         final String path = uuid + multipartFile.getOriginalFilename();
@@ -63,6 +63,6 @@ public class StorageServiceImpl implements StorageService {
         URL url = storage.signUrl(
                 BlobInfo.newBuilder(returnedBlob.getBlobId()).build(), 10000L, TimeUnit.DAYS
         );
-        return url.toString();
+        return url.toString() + "||";
     }
 }
