@@ -86,8 +86,11 @@ public class RequestController {
 
     @PostMapping("{requestId}/feedbacks")
     public Object sendFeedback(@PathVariable Long requestId,
-                               @RequestPart MultipartFile[] images,
+                               @RequestPart(required = false) MultipartFile[] images,
                                @ModelAttribute FeedbackRequest request) {
+        if (images == null) {
+            images = new MultipartFile[0];
+        }
         return requestService.sendFeedback(requestId, request, images);
     }
 }
