@@ -31,7 +31,7 @@ public class AccessoryServiceImpl {
                 .filter(ServiceRequestPart::isAccessory)
                 .collect(Collectors.groupingBy(requestPart -> requestPart.getServiceRequest().getRequest()))
                 .forEach(((request, requestParts) -> {
-                    TestCollection collection = new TestCollection();
+                    AccessoryCollection collection = new AccessoryCollection();
                     collection.addAll(requestParts);
                     responses.addAll(collection.getResults());
                 }));
@@ -39,7 +39,7 @@ public class AccessoryServiceImpl {
         return responses;
     }
 
-    private static class TestCollection {
+    private static class AccessoryCollection {
         private final List<AccessoryResponse> storage = new ArrayList<>();
 
         public void add(ServiceRequestPart requestPart) {

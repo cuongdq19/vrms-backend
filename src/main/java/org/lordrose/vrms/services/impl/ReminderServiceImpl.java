@@ -3,6 +3,7 @@ package org.lordrose.vrms.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.MaintenanceReminder;
 import org.lordrose.vrms.domains.ServiceRequestPart;
+import org.lordrose.vrms.models.responses.ReminderResponse;
 import org.lordrose.vrms.repositories.MaintenanceReminderRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
+import static org.lordrose.vrms.utils.DateTimeUtils.toLocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -45,5 +49,20 @@ public class ReminderServiceImpl {
                     .build());
         }
         return reminders;
+    }
+
+    public Object updateReminderDate(Long reminderId, Long remindDate) {
+        MaintenanceReminder reminder = reminderRepository.findById(reminderId)
+                .orElseThrow(() -> newExceptionWithId(reminderId));
+
+        reminder.setRemindAt(toLocalDateTime(remindDate).toLocalDate());
+
+        MaintenanceReminder result = reminderRepository.save(reminder);
+
+        return ReminderResponse.builder()
+                .id(result.getId())
+                .remindDate(result.getRemindAt().toString())
+                .maintenanceDate(result.getMaintenanceDate())
+                .build();
     }
 }

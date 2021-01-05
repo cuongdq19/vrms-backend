@@ -80,4 +80,9 @@ public class MaintenancePackageController {
                                               @RequestBody GeoPoint currentLocation) {
         return packageService.findAllByMilestoneIdAndModelId(milestoneId, modelId, currentLocation);
     }
+
+    @GetMapping("/providers/{providerId}/services")
+    public Object findAllServicesInProviderForPackages(@PathVariable Long providerId) {
+        return packageService.findAllServicesByProviderId(providerId);
+    }
 }

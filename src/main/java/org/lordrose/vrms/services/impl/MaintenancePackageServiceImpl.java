@@ -10,6 +10,7 @@ import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
 import org.lordrose.vrms.models.requests.ProviderMaintenanceRequest;
+import org.lordrose.vrms.models.responses.ServiceForPackageResponse;
 import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -219,5 +220,20 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                 .collect(Collectors.toList());
 
         return toPackageProviderResponses(results, currentLocation, feedbackService);
+    }
+
+    @Override
+    public Object findAllServicesByProviderId(Long providerId) {
+        List<Service> services = serviceRepository.findAllByProviderId(providerId);
+
+        return services.stream()
+                .map(service -> ServiceForPackageResponse.builder()
+                        .id(service.getId())
+                        .name(service.getName())
+                        .price(service.getPrice())
+                        .parts(null)
+                        .models(null)
+                        .build())
+                .collect(Collectors.toList());
     }
 }

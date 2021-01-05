@@ -21,4 +21,6 @@ public interface MaintenancePackageService {
     Object findAllBySectionIdAndModelId(Long modelId, ProviderMaintenanceRequest request);
 
     Object findAllByMilestoneIdAndModelId(Integer milestoneId, Long modelId, GeoPoint currentLocation);
+
+    Object findAllServicesByProviderId(Long providerId);
 }
