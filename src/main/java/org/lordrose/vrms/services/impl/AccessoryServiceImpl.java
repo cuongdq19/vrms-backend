@@ -50,13 +50,13 @@ public class AccessoryServiceImpl {
             }
             storage.add(AccessoryResponse.builder()
                     .quantity(requestPart.getQuantity())
-                    .reminders(requestPart.getReminders().stream()
+                    .reminder(requestPart.getReminders().stream()
                             .map(reminder -> ReminderResponse.builder()
                                     .id(reminder.getId())
                                     .remindDate(reminder.getRemindAt().toString())
                                     .maintenanceDate(reminder.getMaintenanceDate())
                                     .build())
-                            .collect(Collectors.toList()))
+                            .findFirst().orElse(null))
                     .part(toEmptyModelPartResponse(requestPart.getVehiclePart()))
                     .build());
         }

@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +14,7 @@ import java.util.List;
 public class AccessoryResponse {
 
     private Double quantity;
-    private List<ReminderResponse> reminders;
+    private ReminderResponse reminder;
     private PartResponse part;
 
     public void addQuantity(Double value) {
