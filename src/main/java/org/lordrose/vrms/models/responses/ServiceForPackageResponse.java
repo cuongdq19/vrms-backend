@@ -18,6 +18,7 @@ public class ServiceForPackageResponse {
     private Long id;
     private String name;
     private Double price;
+    private ServiceTypeDetailResponse typeDetail;
     private List<PartQuantityResponse> parts;
     private List<VehicleModelResponse> models;
 }

@@ -32,6 +32,7 @@ import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMainten
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponses;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toPackageProviderResponses;
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelServicePartResponses;
+import static org.lordrose.vrms.converters.ServiceConverter.toServiceTypeDetailResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
@@ -242,15 +243,14 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                         modelLists.forEach(common::retainAll);
                         models = common;
                     }
-
                     return ServiceForPackageResponse.builder()
                             .id(service.getId())
                             .name(service.getName())
                             .price(service.getPrice())
+                            .typeDetail(toServiceTypeDetailResponse(service.getTypeDetail()))
                             .parts(toEmptyModelServicePartResponses(service.getPartSet()))
                             .models(toModelResponses(models))
-                            .build();
-                })
+                            .build();})
                 .collect(Collectors.toList());
     }
 }
