@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponse;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponses;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toPackageProviderResponses;
+import static org.lordrose.vrms.converters.PartConverter.toEmptyModelServicePartResponses;
+import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
 
@@ -227,13 +230,27 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
         List<Service> services = serviceRepository.findAllByProviderId(providerId);
 
         return services.stream()
-                .map(service -> ServiceForPackageResponse.builder()
-                        .id(service.getId())
-                        .name(service.getName())
-                        .price(service.getPrice())
-                        .parts(null)
-                        .models(null)
-                        .build())
+                .map(service -> {
+                    Set<VehicleModel> models;
+                    if (!service.getModels().isEmpty()) {
+                        models = service.getModels();
+                    } else {
+                        List<Set<VehicleModel>> modelLists = new ArrayList<>();
+                        service.getPartSet().forEach(servicePart ->
+                                modelLists.add(servicePart.getPart().getModels()));
+                        Set<VehicleModel> common = new HashSet<>(modelLists.get(0));
+                        modelLists.forEach(common::retainAll);
+                        models = common;
+                    }
+
+                    return ServiceForPackageResponse.builder()
+                            .id(service.getId())
+                            .name(service.getName())
+                            .price(service.getPrice())
+                            .parts(toEmptyModelServicePartResponses(service.getPartSet()))
+                            .models(toModelResponses(models))
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 }
