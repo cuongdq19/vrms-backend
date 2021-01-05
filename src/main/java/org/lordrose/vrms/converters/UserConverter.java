@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.VehicleConverter.toVehicleRequestInfoResponses;
+import static org.lordrose.vrms.converters.VehicleConverter.toVehicleResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
 
 public class UserConverter {
@@ -50,13 +51,14 @@ public class UserConverter {
                 .collect(Collectors.toList());
     }
 
-    public static UserRequestInfoResponse toRequestUserInfoResponse(User user) {
+    public static UserRequestInfoResponse toRequestUserInfoResponse(Vehicle vehicle) {
         return UserRequestInfoResponse.builder()
-                .id(user.getId())
-                .phoneNumber(user.getPhoneNumber())
-                .fullName(user.getFullName())
-                .gender(user.getGender())
-                .imageUrl(user.getImageUrl())
+                .id(vehicle.getUser().getId())
+                .phoneNumber(vehicle.getUser().getPhoneNumber())
+                .fullName(vehicle.getUser().getFullName())
+                .gender(vehicle.getUser().getGender())
+                .imageUrl(vehicle.getUser().getImageUrl())
+                .vehicle(toVehicleResponse(vehicle))
                 .build();
     }
 

@@ -22,4 +22,5 @@ public class ServiceCheckoutResponse {
     private String note;
     private List<PartCheckoutResponse> parts;
     private Boolean isIncurred;
+    private Boolean isActive;
 }

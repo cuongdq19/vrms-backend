@@ -44,6 +44,9 @@ public class ServiceRequest {
     @Column(name = "is_incurred")
     private Boolean isIncurred;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "service_id")
     private Service service;

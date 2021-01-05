@@ -17,4 +17,6 @@ public class RequestIncurredUpdateRequest {
     private Map<Long, Map<Long, Map<Long, Double>>> packageMap;
     private Map<Long, Map<Long, Double>> servicePartMap;
     private Set<ExpenseRequest> expenses;
+    private Set<Long> disables;
+    private Set<Long> enables;
 }

@@ -71,7 +71,7 @@ public class RequestConverter {
                 .note(request.getNote())
                 .status(request.getStatus().textValue)
                 .imageUrls(getUrlsAsArray(request.getImageUrls()))
-                .user(toRequestUserInfoResponse(request.getVehicle().getUser()))
+                .user(toRequestUserInfoResponse(request.getVehicle()))
                 .packages(toPackageCheckoutResponses(
                         request.getServices().stream()
                                 .filter(service -> service.getMaintenancePackage() != null)

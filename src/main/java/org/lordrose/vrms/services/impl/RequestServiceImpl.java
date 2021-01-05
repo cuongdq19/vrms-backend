@@ -134,6 +134,7 @@ public class RequestServiceImpl implements RequestService {
                     .price(service.getPrice())
                     .note("")
                     .isIncurred(isIncurred)
+                    .isActive(true)
                     .service(service)
                     .request(saved)
                     .build());
@@ -162,6 +163,7 @@ public class RequestServiceImpl implements RequestService {
                         .price(service.getPrice())
                         .note("")
                         .isIncurred(isIncurred)
+                        .isActive(true)
                         .service(service)
                         .maintenancePackage(maintenancePackage)
                         .request(saved)
@@ -197,6 +199,8 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public RequestCheckOutResponse update(Long requestId, RequestIncurredUpdateRequest request) {
+        Set<Long> disables = request.getDisables();
+        Set<Long> enables = request.getEnables();
         Map<Long, Map<Long, Map<Long, Double>>> packageMap = request.getPackageMap();
         Map<Long, Map<Long, Double>> servicePartMap = request.getServicePartMap();
         Set<ExpenseRequest> expenses = request.getExpenses();
@@ -219,6 +223,7 @@ public class RequestServiceImpl implements RequestService {
                     .price(service.getPrice())
                     .note("")
                     .isIncurred(isIncurred)
+                    .isActive(true)
                     .service(service)
                     .request(result)
                     .build());
@@ -249,6 +254,7 @@ public class RequestServiceImpl implements RequestService {
                     .price(expense.getPrice())
                     .note(expense.getNote())
                     .isIncurred(isIncurred)
+                    .isActive(true)
                     .service(null)
                     .maintenancePackage(maintenancePackage)
                     .request(result)
@@ -282,6 +288,7 @@ public class RequestServiceImpl implements RequestService {
                         .price(service.getPrice())
                         .note("")
                         .isIncurred(isIncurred)
+                        .isActive(true)
                         .service(service)
                         .maintenancePackage(maintenancePackage)
                         .request(result)
@@ -304,6 +311,16 @@ public class RequestServiceImpl implements RequestService {
         });
 
         result.getServices().addAll(serviceRequestRepository.saveAll(services));
+
+        serviceRequestRepository.saveAll(
+                serviceRequestRepository.findAllByRequestIdAndIdIn(result.getId(), disables).stream()
+                        .peek(serviceRequest -> serviceRequest.setIsActive(false))
+                        .collect(Collectors.toList()));
+
+        serviceRequestRepository.saveAll(
+                serviceRequestRepository.findAllByRequestIdAndIdIn(result.getId(), enables).stream()
+                        .peek(serviceRequest -> serviceRequest.setIsActive(true))
+                        .collect(Collectors.toList()));
 
         return toRequestCheckoutResponse(
                 requestRepository.findById(result.getId())

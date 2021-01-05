@@ -18,4 +18,5 @@ public class UserRequestInfoResponse {
     private String fullName;
     private Boolean gender;
     private String imageUrl;
+    private VehicleResponse vehicle;
 }

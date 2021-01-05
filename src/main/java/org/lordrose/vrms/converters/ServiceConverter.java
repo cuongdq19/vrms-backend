@@ -168,6 +168,7 @@ public class ServiceConverter {
                 .note(service.getNote())
                 .parts(toPartCheckoutResponses(service.getRequestParts()))
                 .isIncurred(service.getIsIncurred())
+                .isActive(service.getIsActive())
                 .build();
     }
 
