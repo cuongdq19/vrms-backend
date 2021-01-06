@@ -11,12 +11,10 @@ import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackHistoryResponse;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toPackageCheckoutResponses;
-import static org.lordrose.vrms.converters.MaintenancePackageConverter.toPackageHistoryResponses;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderHistoryResponse;
 import static org.lordrose.vrms.converters.ProviderConverter.toProviderResponse;
 import static org.lordrose.vrms.converters.ServiceConverter.toRequestServiceResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceCheckoutResponses;
-import static org.lordrose.vrms.converters.ServiceConverter.toServiceHistoryResponses;
 import static org.lordrose.vrms.converters.UserConverter.toRequestUserInfoResponse;
 import static org.lordrose.vrms.converters.UserConverter.toTechnicianHistoryResponse;
 import static org.lordrose.vrms.converters.UserConverter.toUserVehicleHistoryResponse;
@@ -49,8 +47,14 @@ public class RequestConverter {
                 .checkoutTime(toSeconds(request.getCheckoutTime()))
                 .note(request.getNote())
                 .status(request.getStatus().textValue)
-                .packages(toPackageHistoryResponses(request.getServices()))
-                .services(toServiceHistoryResponses(request.getServices()))
+                .packages(toPackageCheckoutResponses(
+                        request.getServices().stream()
+                                .filter(service -> service.getMaintenancePackage() != null)
+                                .collect(Collectors.toList())))
+                .services(toServiceCheckoutResponses(
+                        request.getServices().stream()
+                                .filter(service -> service.getMaintenancePackage() == null)
+                                .collect(Collectors.toList())))
                 .technician(toTechnicianHistoryResponse(request.getTechnician()))
                 .userVehicle(toUserVehicleHistoryResponse(request.getVehicle()))
                 .provider(toProviderHistoryResponse(request.getProvider()))

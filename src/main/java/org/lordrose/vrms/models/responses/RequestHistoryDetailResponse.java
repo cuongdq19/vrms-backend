@@ -21,8 +21,8 @@ public class RequestHistoryDetailResponse {
     private Long checkoutTime;
     private String note;
     private String status;
-    private List<PackageHistoryResponse> packages;
-    private List<ServiceHistoryResponse> services;
+    private List<PackageCheckoutResponse> packages;
+    private List<ServiceCheckoutResponse> services;
     private TechnicianResponse technician;
     private UserVehicleHistoryResponse userVehicle;
     private ProviderResponse provider;
