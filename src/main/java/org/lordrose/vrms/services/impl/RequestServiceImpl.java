@@ -384,6 +384,7 @@ public class RequestServiceImpl implements RequestService {
         messageService.pushNotification(content);*/
 
         reminderService.createReminders(result.getServices().stream()
+                .filter(ServiceRequest::getIsActive)
                 .flatMap(serviceRequest -> serviceRequest.getRequestParts().stream())
                 .collect(Collectors.toList()));
 

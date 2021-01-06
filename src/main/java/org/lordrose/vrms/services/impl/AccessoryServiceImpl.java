@@ -26,8 +26,8 @@ public class AccessoryServiceImpl {
     public List<AccessoryResponse> findAllByVehicle(Long vehicleId) {
         List<AccessoryResponse> responses = new ArrayList<>();
 
-        requestPartRepository.findAllByServiceRequest_Request_StatusAndServiceRequest_Request_Vehicle_Id(
-                RequestStatus.FINISHED, vehicleId).stream()
+        requestPartRepository.findAllByServiceRequestIsActiveAndServiceRequest_Request_StatusAndServiceRequest_Request_Vehicle_Id(
+                true, RequestStatus.FINISHED, vehicleId).stream()
                 .filter(ServiceRequestPart::isAccessory)
                 .collect(Collectors.groupingBy(requestPart -> requestPart.getServiceRequest().getRequest()))
                 .forEach(((request, requestParts) -> {

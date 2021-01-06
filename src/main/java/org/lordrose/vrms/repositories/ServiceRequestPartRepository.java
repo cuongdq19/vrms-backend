@@ -12,6 +12,6 @@ public interface ServiceRequestPartRepository extends JpaRepository<ServiceReque
 
     List<ServiceRequestPart> findAllByServiceRequest_Request_Vehicle_Id(Long vehicleId);
 
-    List<ServiceRequestPart> findAllByServiceRequest_Request_StatusAndServiceRequest_Request_Vehicle_Id(
-            RequestStatus requestStatus, Long vehicleId);
+    List<ServiceRequestPart> findAllByServiceRequestIsActiveAndServiceRequest_Request_StatusAndServiceRequest_Request_Vehicle_Id(
+            boolean isActive, RequestStatus requestStatus, Long vehicleId);
 }
