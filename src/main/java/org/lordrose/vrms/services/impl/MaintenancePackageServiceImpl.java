@@ -95,8 +95,22 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
 
     @Override
     public Object update(Long packageId, MaintenancePackageRequest request) {
-        PartSection section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
+        PartSection section = null;
+        Double milestone = null;
+
+        if (request.getSectionId() == null) {
+            if (request.getMilestoneId() == null) {
+                throw new InvalidArgumentException("SectionId and MilestoneId mustn't both be null");
+            } else {
+                milestone = this.milestone.getMilestoneAt(request.getMilestoneId());
+            }
+        } else if (request.getMilestoneId() != null) {
+            throw new InvalidArgumentException("Section ID and Milestone mustn't both be present");
+        } else {
+            section = sectionRepository.findById(request.getSectionId())
+                    .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
+        }
+
         MaintenancePackage result = packageRepository.findById(packageId)
                 .orElseThrow(() -> newExceptionWithId(packageId));
         List<Long> serviceIds = request.getServiceIds();
@@ -106,7 +120,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
         result.getPackagedServices().clear();
 
         result.setName(request.getPackageName());
-        result.setMilestone(milestone.getMilestoneAt(request.getMilestoneId()));
+        result.setMilestone(milestone);
         result.setSection(section);
         result.setPackagedServices(new LinkedHashSet<>(services));
 
