@@ -10,7 +10,9 @@ import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.MaintenancePackageRequest;
 import org.lordrose.vrms.models.requests.ProviderMaintenanceRequest;
+import org.lordrose.vrms.models.responses.PackageWithModelsResponse;
 import org.lordrose.vrms.models.responses.ServiceForPackageResponse;
+import org.lordrose.vrms.models.responses.VehicleModelResponse;
 import org.lordrose.vrms.repositories.MaintenancePackageRepository;
 import org.lordrose.vrms.repositories.PartSectionRepository;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -49,10 +51,28 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
     private final FeedbackService feedbackService;
     private final MaintenanceConstants.MaintenanceMilestone milestone;
 
+    @Transactional
     @Override
     public Object findAllByProviderId(Long providerId) {
-        return toMaintenancePackageResponses(
-                packageRepository.findDistinctByPackagedServices_Provider_Id(providerId));
+        List<MaintenancePackage> packages =
+                packageRepository.findDistinctByPackagedServices_Provider_Id(providerId);
+
+        return packages.stream()
+                .map(maintenancePackage -> {
+                    Set<Service> services = maintenancePackage.getPackagedServices();
+                    List<ServiceForPackageResponse> serviceFor = toServiceModelsResponses(services);
+                    List<VehicleModelResponse> modelResponses = getSuitableModels(serviceFor);
+                    return PackageWithModelsResponse.builder()
+                            .id(maintenancePackage.getId())
+                            .name(maintenancePackage.getName())
+                            .milestone(maintenancePackage.getMilestone())
+                            .sectionId(maintenancePackage.returnSectionId())
+                            .sectionName(maintenancePackage.returnSectionName())
+                            .packagedServices(toServiceModelsResponses(maintenancePackage.getPackagedServices()))
+                            .suitableModels(modelResponses)
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -244,6 +264,20 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
     public Object findAllServicesByProviderId(Long providerId) {
         List<Service> services = serviceRepository.findAllByProviderId(providerId);
 
+        return toServiceModelsResponses(services);
+    }
+
+    private List<VehicleModelResponse> getSuitableModels(Collection<ServiceForPackageResponse> services) {
+        List<Set<VehicleModelResponse>> modelSets = new ArrayList<>();
+        services.forEach(service -> modelSets.add(new LinkedHashSet<>(service.getModels())));
+        Set<VehicleModelResponse> common = new LinkedHashSet<>(modelSets.get(0));
+
+        modelSets.forEach(common::retainAll);
+
+        return new ArrayList<>(common);
+    }
+
+    private List<ServiceForPackageResponse> toServiceModelsResponses(Collection<Service> services) {
         return services.stream()
                 .map(service -> {
                     Set<VehicleModel> models;

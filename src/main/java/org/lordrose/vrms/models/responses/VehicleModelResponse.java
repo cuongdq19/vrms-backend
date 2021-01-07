@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,4 +23,17 @@ public class VehicleModelResponse {
     private String imageUrl;
     private Long manufacturerId;
     private String manufacturerName;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VehicleModelResponse that = (VehicleModelResponse) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
