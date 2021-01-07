@@ -49,10 +49,10 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
     @Column(name = "image_urls", length = 5000)
     private String imageUrls;
 
-    @Column(name = "maintenance_duration")
+    @Column(name = "warranty_duration")
     private Integer warrantyDuration;
 
-    @Column(name = "monthsPerMaintenance")
+    @Column(name = "months_per_maintenance")
     private Integer monthsPerMaintenance;
 
     @ManyToOne
