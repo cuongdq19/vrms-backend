@@ -246,10 +246,6 @@ public class RequestServiceImpl implements RequestService {
         });
 
         expenses.forEach(expense -> {
-            MaintenancePackage maintenancePackage = null;
-            if (expense.getMaintenancePackageId() != null)
-                maintenancePackage = packageRepository.findById(expense.getMaintenancePackageId())
-                        .orElseThrow(() -> newExceptionWithId(expense.getMaintenancePackageId()));
             List<ServiceRequestPart> list = new ArrayList<>();
             ServiceRequest serviceRequest = serviceRequestRepository.save(ServiceRequest.builder()
                     .serviceName(expense.getName())
@@ -258,7 +254,6 @@ public class RequestServiceImpl implements RequestService {
                     .isIncurred(isIncurred)
                     .isActive(true)
                     .service(null)
-                    .maintenancePackage(maintenancePackage)
                     .request(result)
                     .build());
 

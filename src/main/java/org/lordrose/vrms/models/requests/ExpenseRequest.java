@@ -13,7 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class ExpenseRequest {
 
-    private Long maintenancePackageId;
     private String name;
     private Double price;
     private String note;
