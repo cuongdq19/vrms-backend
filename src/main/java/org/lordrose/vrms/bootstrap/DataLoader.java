@@ -31,18 +31,18 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        replacingService_1();
-        non_replacingService();
-        replacingService_2();
-        createPackage_1();
-        createPackage_2();
-        createPackage_3();
-        createRequest();
-        createRequest();
-
-        RequestCheckOutResponse temp1 = incurredUpdateRequest();
-
-        System.out.println("CBA");
+//        replacingService_1();
+//        non_replacingService();
+//        replacingService_2();
+//        createPackage_1();
+//        createPackage_2();
+//        createPackage_3();
+//        createRequest();
+//        createRequest();
+//
+//        RequestCheckOutResponse temp1 = incurredUpdateRequest();
+//
+//        System.out.println("CBA");
     }
 
     private void replacingService_1() {
@@ -164,18 +164,8 @@ public class DataLoader implements CommandLineRunner {
         partMap2.put(3L, 16D);
         partMap2.put(4L, 19D);
         expense2.setParts(partMap2);
-        ExpenseRequest expense3 = new ExpenseRequest();
-        expense3.setMaintenancePackageId(1L);
-        expense3.setName("Expense 3 (in maintenance)");
-        expense3.setPrice(33D);
-        expense3.setNote("Test note expense 3 (in maintenance)");
-        Map<Long, Double> partMap3 = new LinkedHashMap<>();
-        partMap3.put(3L, 16D);
-        partMap3.put(4L, 19D);
-        expense3.setParts(partMap3);
         expenses.add(expense1);
         expenses.add(expense2);
-        expenses.add(expense3);
         RequestIncurredUpdateRequest request = new RequestIncurredUpdateRequest();
         request.setServicePartMap(serviceMap);
         request.setExpenses(expenses);
