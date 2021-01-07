@@ -166,7 +166,7 @@ public class PartServiceImpl implements PartService {
                                 .latitude(part.getProvider().getLatitude())
                                 .longitude(part.getProvider().getLongitude())
                                 .build()))
-                        .suggestedPart(PartSuggestingResponse.builder()
+                        .part(PartSuggestingResponse.builder()
                                 .id(part.getId())
                                 .name(part.getName())
                                 .description(part.getDescription())

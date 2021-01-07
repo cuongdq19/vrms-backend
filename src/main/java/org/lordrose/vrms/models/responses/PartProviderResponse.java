@@ -21,5 +21,5 @@ public class PartProviderResponse {
     private String closeTime;
     private Double ratings;
     private Double distance;
-    private PartSuggestingResponse suggestedPart;
+    private PartSuggestingResponse part;
 }
