@@ -67,6 +67,7 @@ public class RequestServiceImpl implements RequestService {
 
     private final StorageService storageService;
     private final ReminderServiceImpl reminderService;
+    private final FirebaseNotificationServiceImpl firebaseNotificationService;
     
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
@@ -172,6 +173,7 @@ public class RequestServiceImpl implements RequestService {
                 list.forEach(item -> item.setServiceRequest(serviceRequest));
                 serviceRequest.setRequestParts(new LinkedHashSet<>(requestPartRepository.saveAll(list)));
                 services.add(serviceRequest);
+                list.clear();
             });
         });
 
@@ -346,18 +348,7 @@ public class RequestServiceImpl implements RequestService {
 
         result.setStatus(RequestStatus.WORK_COMPLETED);
 
-        /*final String body = "Your car's repair/maintenance is completed." +
-                "Please retrieve your car at " + saved.getProvider().getName() +
-                ". Total cost is: " +
-                "[Enter Price Here]" + " VND";
-        Message content = Message.builder()
-                .setToken(saved.getVehicle().getUser().getDeviceToken())
-                .setNotification(Notification.builder()
-                        .setTitle("The repair/maintenance is finished.")
-                        .setBody(body)
-                        .build())
-                .build();
-        messageService.pushNotification(content);*/
+        firebaseNotificationService.sendCheckoutNotification(result);
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }

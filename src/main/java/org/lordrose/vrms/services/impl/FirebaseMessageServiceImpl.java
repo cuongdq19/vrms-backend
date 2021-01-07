@@ -10,13 +10,15 @@ import static java.util.Collections.singletonList;
 
 @Slf4j
 @Service
-public class FirebaseMessageServiceIml {
+public class FirebaseMessageServiceImpl {
 
-    public void pushNotification(Message message) {
+    public boolean pushNotification(Message message) {
         try {
             FirebaseMessaging.getInstance().send(message);
+            return true;
         } catch (FirebaseMessagingException e) {
             log.info("Error occurred while sending message: " + e.getLocalizedMessage());
+            return false;
         }
     }
 

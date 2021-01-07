@@ -10,5 +10,5 @@ import java.util.Set;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    Set<Notification> findAllByNotifyAtAfterAndIsActiveTrue(LocalDateTime currentTime);
+    Set<Notification> findAllByNotifyAtAfterAndIsSentTrue(LocalDateTime currentTime);
 }
