@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.models.requests.PartRequest;
 import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.services.PartService;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +25,13 @@ import java.util.Set;
 public class VehiclePartController {
 
     private final PartService partService;
+
+    @PostMapping("/sections/{sectionId}/models/{modelId}")
+    public Object getTopTenPartsByHungCriteria(@PathVariable Long sectionId,
+                                               @PathVariable Long modelId,
+                                               @RequestBody GeoPoint currentPos) {
+        return partService.findByHungCriteria(sectionId, modelId, currentPos);
+    }
 
     @PostMapping("/categories/{categoryId}/providers/{providerId}")
     public Object getAllByCategoryAndModelIds(@PathVariable Long categoryId,

@@ -3,20 +3,28 @@ package org.lordrose.vrms.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.PartCategory;
 import org.lordrose.vrms.domains.Provider;
+import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.requests.PartRequest;
+import org.lordrose.vrms.models.responses.PartProviderResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
+import org.lordrose.vrms.models.responses.PartSuggestingResponse;
 import org.lordrose.vrms.repositories.PartCategoryRepository;
 import org.lordrose.vrms.repositories.ProviderRepository;
+import org.lordrose.vrms.repositories.ServiceVehiclePartRepository;
 import org.lordrose.vrms.repositories.VehicleModelRepository;
 import org.lordrose.vrms.repositories.VehiclePartRepository;
+import org.lordrose.vrms.services.FeedbackService;
 import org.lordrose.vrms.services.PartService;
 import org.lordrose.vrms.services.StorageService;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +34,8 @@ import static org.lordrose.vrms.converters.PartConverter.toPartResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithIds;
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
+import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
 
 @RequiredArgsConstructor
 @Service
@@ -36,6 +46,8 @@ public class PartServiceImpl implements PartService {
     private final ProviderRepository providerRepository;
     private final PartCategoryRepository categoryRepository;
     private final StorageService storageService;
+    private final FeedbackService feedbackService;
+    private final ServiceVehiclePartRepository servicePartRepository;
 
     @Override
     public List<PartResponse> findAllByProviderId(Long providerId) {
@@ -130,5 +142,46 @@ public class PartServiceImpl implements PartService {
                 .collect(Collectors.toList());
 
         return toPartResponses(results);
+    }
+
+    @Override
+    public Object findByHungCriteria(Long sectionId, Long modelId, GeoPoint currentPos) {
+        VehicleModel model = modelRepository.findById(modelId)
+                .orElseThrow(() -> newExceptionWithId(modelId));
+
+        List<ServiceVehiclePart> serviceParts = servicePartRepository.findTop10AllByPartCategorySectionIdAndPartModelsContains(
+                sectionId, model);
+
+        return serviceParts.stream()
+                .map(ServiceVehiclePart::getPart)
+                .map(part -> PartProviderResponse.builder()
+                        .id(part.getProvider().getId())
+                        .name(part.getProvider().getName())
+                        .address(part.getProvider().getAddress())
+                        .imageUrls(getUrlsAsArray(part.getProvider().getImageUrls()))
+                        .openTime(part.getProvider().getOpenTime().toString())
+                        .closeTime(part.getProvider().getCloseTime().toString())
+                        .ratings(feedbackService.getAverageRating(part.getProvider().getId()))
+                        .distance(calculate(currentPos, GeoPoint.builder()
+                                .latitude(part.getProvider().getLatitude())
+                                .longitude(part.getProvider().getLongitude())
+                                .build()))
+                        .suggestedPart(PartSuggestingResponse.builder()
+                                .id(part.getId())
+                                .name(part.getName())
+                                .description(part.getDescription())
+                                .price(part.getPrice())
+                                .warrantyDuration(part.getWarrantyDuration())
+                                .monthsPerMaintenance(part.getMonthsPerMaintenance())
+                                .imageUrls(getUrlsAsArray(part.getImageUrls()))
+                                .sectionId(part.getCategory().getSection().getId())
+                                .categoryId(part.getCategory().getId())
+                                .categoryName(part.getCategory().getName())
+                                .isSupportedByService(true)
+                                .models(Collections.emptyList())
+                                .build())
+                        .build())
+                .sorted(Comparator.comparingDouble(PartProviderResponse::getDistance))
+                .collect(Collectors.toList());
     }
 }

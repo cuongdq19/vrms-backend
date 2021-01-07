@@ -31,18 +31,18 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        replacingService_1();
-//        non_replacingService();
-//        replacingService_2();
-//        createPackage_1();
-//        createPackage_2();
-//        createPackage_3();
-//        createRequest();
-//        createRequest();
-//
-//        RequestCheckOutResponse temp1 = incurredUpdateRequest();
-//
-//        System.out.println("CBA");
+        replacingService_1();
+        non_replacingService();
+        replacingService_2();
+        createPackage_1();
+        createPackage_2();
+        createPackage_3();
+        createRequest();
+        createRequest();
+
+        RequestCheckOutResponse temp1 = incurredUpdateRequest();
+
+        System.out.println("CBA");
     }
 
     private void replacingService_1() {

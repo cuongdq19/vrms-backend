@@ -2,6 +2,7 @@ package org.lordrose.vrms.services;
 
 import org.lordrose.vrms.models.requests.PartRequest;
 import org.lordrose.vrms.models.responses.PartResponse;
+import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface PartService {
 
     Object findAllByCategoryIdAndProviderIdAndModelIds(Long categoryId, Long providerId,
                                                        Set<Long> modelIds);
+
+    Object findByHungCriteria(Long sectionId, Long modelId, GeoPoint currentPos);
 }

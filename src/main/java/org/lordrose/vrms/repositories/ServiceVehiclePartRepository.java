@@ -14,6 +14,9 @@ public interface ServiceVehiclePartRepository extends JpaRepository<ServiceVehic
 
     boolean existsByServiceIdAndPart_Models_Id(Long serviceId, Long modelId);
 
+    List<ServiceVehiclePart> findTop10AllByPartCategorySectionIdAndPartModelsContains(Long sectionId,
+                                                                                      VehicleModel model);
+
     List<ServiceVehiclePart> findAllByPartCategoryIdAndPartModelsContains(
             Long categoryId, VehicleModel model);
 }
