@@ -89,6 +89,7 @@ public class FirebaseNotificationServiceImpl {
             Message message = Message.builder()
                     .setToken(request.getVehicle().getUser().getDeviceToken())
                     .setNotification(notification.toFirebaseNotification())
+                    .setAndroidConfig(notification.toAndroidConfig())
                     .build();
             notification.setIsSent(messageService.pushNotification(message));
         }
