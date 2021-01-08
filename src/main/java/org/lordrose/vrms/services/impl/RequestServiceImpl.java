@@ -378,6 +378,8 @@ public class RequestServiceImpl implements RequestService {
 
         result.setStatus(RequestStatus.CANCELED);
 
+        firebaseNotificationService.sendCancelNotification(result);
+
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
 

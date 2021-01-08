@@ -1,7 +1,6 @@
 package org.lordrose.vrms.services.impl;
 
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.WebpushConfig;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Notification;
 import org.lordrose.vrms.domains.Request;
@@ -25,10 +24,38 @@ public class FirebaseNotificationServiceImpl {
                 .content(body)
                 .notifyAt(LocalDateTime.now())
                 .isSent(false)
-                .user(request.getVehicle().getUser())
+                .user(null)
                 .build();
 
-        sendTopicMessage(request, systemNotification, notificationRepository);
+        sendTopicMessage(request, systemNotification, notificationRepository,
+                "CREATE_REQUEST_" + request.getId());
+    }
+
+    public void sendCancelNotification(Request request) {
+        final String body = "Your request with id: " +
+                request.getId() + " is canceled.";
+        final String topicBody = "The request with id: " +
+                request.getId() + " is canceled.";
+
+        Notification systemNotification = Notification.builder()
+                .title("Your request: " + request.getId() + " is canceled.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(request.getVehicle().getUser())
+                .build();
+        Notification topicNotification = Notification.builder()
+                .title("")
+                .content(topicBody)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(null)
+                .build();
+
+        sendMessage(request, systemNotification, notificationRepository,
+                "CANCEL_REQUEST_" + request.getId());
+        sendTopicMessage(request, topicNotification, notificationRepository,
+                "CANCEL_REQUEST_" + request.getId());
     }
 
     public void sendUpdateNotification(Request request) {
@@ -105,15 +132,13 @@ public class FirebaseNotificationServiceImpl {
 
     private void sendTopicMessage(Request request,
                                   Notification notification,
-                                  NotificationRepository notificationRepository) {
+                                  NotificationRepository notificationRepository,
+                                  String action) {
         if (validateDeviceToken(request)) {
             Message message = Message.builder()
                     .setTopic("ProviderId_" + request.getProvider().getId())
                     .setNotification(notification.toFirebaseNotification())
-                    .putData("action", "CREATE_REQUEST_" + request.getId())
-                    .setWebpushConfig(WebpushConfig.builder()
-                            .putHeader("action", "CREATE_REQUEST_" + request.getId())
-                            .build())
+                    .putData("action", action)
                     .build();
             notification.setIsSent(messageService.pushNotification(message));
         }
