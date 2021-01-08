@@ -9,6 +9,7 @@ import org.lordrose.vrms.repositories.NotificationRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +35,8 @@ public class FirebaseNotificationServiceImpl {
         final String body = "Provider " + request.getProvider().getName() +
                 " has changes your request content.";
         Notification systemNotification = Notification.builder()
-                .title("There are changes to your booking request.")
+                .title("There are changes to your booking request numbered: " +
+                        request.getId() + " at " + LocalTime.now().toString())
                 .content(body)
                 .notifyAt(LocalDateTime.now())
                 .isSent(false)
