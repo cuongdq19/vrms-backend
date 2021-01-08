@@ -110,6 +110,7 @@ public class FirebaseNotificationServiceImpl {
             Message message = Message.builder()
                     .setTopic("ProviderId_" + request.getProvider().getId())
                     .setNotification(notification.toFirebaseNotification())
+                    .putData("action", "CREATE_REQUEST_" + request.getId())
                     .setWebpushConfig(WebpushConfig.builder()
                             .putHeader("action", "CREATE_REQUEST_" + request.getId())
                             .build())
