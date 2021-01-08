@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.WebpushConfig;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Notification;
 import org.lordrose.vrms.domains.Request;
@@ -40,7 +41,8 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository);
+        sendMessage(request, systemNotification, notificationRepository,
+                "UPDATE_REQUEST_" + request.getId());
     }
 
     public void sendFinishRepairNotification(Request request) {
@@ -63,7 +65,8 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository);
+        sendMessage(request, systemNotification, notificationRepository,
+                "FINISH_REQUEST_" + request.getId());
     }
 
     public void sendCheckoutNotification(Request request) {
@@ -79,17 +82,19 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository);
+        sendMessage(request, systemNotification, notificationRepository,
+                "CHECKOUT_REQUEST_" + request.getId());
     }
 
     private void sendMessage(Request request,
                              Notification notification,
-                             NotificationRepository notificationRepository) {
+                             NotificationRepository notificationRepository,
+                             String clickAction) {
         if (validateDeviceToken(request)) {
             Message message = Message.builder()
                     .setToken(request.getVehicle().getUser().getDeviceToken())
                     .setNotification(notification.toFirebaseNotification())
-                    .setAndroidConfig(notification.toAndroidConfig())
+                    .setAndroidConfig(notification.toAndroidConfig(clickAction))
                     .build();
             notification.setIsSent(messageService.pushNotification(message));
         }
@@ -103,6 +108,9 @@ public class FirebaseNotificationServiceImpl {
             Message message = Message.builder()
                     .setTopic("ProviderId_" + request.getProvider().getId())
                     .setNotification(notification.toFirebaseNotification())
+                    .setWebpushConfig(WebpushConfig.builder()
+                            .putHeader("action", "CREATE_REQUEST_" + request.getId())
+                            .build())
                     .build();
             notification.setIsSent(messageService.pushNotification(message));
         }
