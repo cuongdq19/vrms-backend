@@ -26,7 +26,7 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository);
+        sendTopicMessage(request, systemNotification, notificationRepository);
     }
 
     public void sendUpdateNotification(Request request) {
@@ -88,6 +88,19 @@ public class FirebaseNotificationServiceImpl {
         if (validateDeviceToken(request)) {
             Message message = Message.builder()
                     .setToken(request.getVehicle().getUser().getDeviceToken())
+                    .setNotification(notification.toFirebaseNotification())
+                    .build();
+            notification.setIsSent(messageService.pushNotification(message));
+        }
+        notificationRepository.save(notification);
+    }
+
+    private void sendTopicMessage(Request request,
+                                  Notification notification,
+                                  NotificationRepository notificationRepository) {
+        if (validateDeviceToken(request)) {
+            Message message = Message.builder()
+                    .setTopic("ProviderId_" + request.getProvider().getId())
                     .setNotification(notification.toFirebaseNotification())
                     .build();
             notification.setIsSent(messageService.pushNotification(message));
