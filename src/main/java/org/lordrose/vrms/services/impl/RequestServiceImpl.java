@@ -179,6 +179,8 @@ public class RequestServiceImpl implements RequestService {
 
         saved.setServices(new LinkedHashSet<>(services));
 
+        firebaseNotificationService.sendCreateNotification(saved);
+
         return toRequestCheckoutResponse(
                 requestRepository.findById(saved.getId())
                         .orElseThrow(() -> newExceptionWithId(saved.getId())));
@@ -319,6 +321,8 @@ public class RequestServiceImpl implements RequestService {
                         .peek(serviceRequest -> serviceRequest.setIsActive(true))
                         .collect(Collectors.toList()));
 
+        firebaseNotificationService.sendUpdateNotification(result);
+
         return toRequestCheckoutResponse(
                 requestRepository.findById(result.getId())
                         .orElseThrow());
@@ -343,7 +347,7 @@ public class RequestServiceImpl implements RequestService {
 
         result.setStatus(RequestStatus.WORK_COMPLETED);
 
-        firebaseNotificationService.sendCheckoutNotification(result);
+        firebaseNotificationService.sendFinishRepairNotification(result);
 
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
@@ -357,17 +361,7 @@ public class RequestServiceImpl implements RequestService {
         result.setStatus(RequestStatus.FINISHED);
         result.setCheckoutTime(LocalDateTime.now());
 
-        /*final String body = "Your booking is completed. " +
-                "Please give us your feedback and ratings about provider: " +
-                saved.getProvider().getName();
-        Message content = Message.builder()
-                .setToken(saved.getVehicle().getUser().getDeviceToken())
-                .setNotification(Notification.builder()
-                        .setBody(body)
-                        .setTitle("Your car booking is finished.")
-                        .build())
-                .build();
-        messageService.pushNotification(content);*/
+        firebaseNotificationService.sendCheckoutNotification(result);
 
         reminderService.createReminders(result.getServices().stream()
                 .filter(ServiceRequest::getIsActive)

@@ -16,7 +16,34 @@ public class FirebaseNotificationServiceImpl {
     private final FirebaseMessageServiceImpl messageService;
     private final NotificationRepository notificationRepository;
 
-    public void sendCheckoutNotification(Request request) {
+    public void sendCreateNotification(Request request) {
+        final String body = "A new booking request is received with id: " + request.getId();
+        Notification systemNotification = Notification.builder()
+                .title("Incoming booking request.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(request.getVehicle().getUser())
+                .build();
+
+        sendMessage(request, systemNotification, notificationRepository);
+    }
+
+    public void sendUpdateNotification(Request request) {
+        final String body = "Provider " + request.getProvider().getName() +
+                " has changes your request content.";
+        Notification systemNotification = Notification.builder()
+                .title("There are changes to your booking request.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(request.getVehicle().getUser())
+                .build();
+
+        sendMessage(request, systemNotification, notificationRepository);
+    }
+
+    public void sendFinishRepairNotification(Request request) {
         Double totalCost = request.getServices().stream()
                 .mapToDouble(service ->
                         service.getPrice() +
@@ -27,7 +54,7 @@ public class FirebaseNotificationServiceImpl {
         final String body = "Your car's repair/maintenance is completed." +
                 "Please retrieve your car at " + request.getProvider().getName() +
                 ". Total cost is: " +
-                String.format("%.2f", totalCost) + " VND";
+                String.format("%,.2f", totalCost) + " VND.";
         Notification systemNotification = Notification.builder()
                 .title("The repair/maintenance is finished.")
                 .content(body)
@@ -36,14 +63,44 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        if (request.getVehicle().getUser().getDeviceToken() != null &&
-                !"".equals(request.getVehicle().getUser().getDeviceToken())) {
+        sendMessage(request, systemNotification, notificationRepository);
+    }
+
+    public void sendCheckoutNotification(Request request) {
+        final String body = "Your booking is completed. " +
+                "Please give us your feedback and ratings about: " +
+                request.getProvider().getName() + ".";
+
+        Notification systemNotification = Notification.builder()
+                .title("Your car booking is finished.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(request.getVehicle().getUser())
+                .build();
+
+        sendMessage(request, systemNotification, notificationRepository);
+    }
+
+    private void sendMessage(Request request,
+                             Notification notification,
+                             NotificationRepository notificationRepository) {
+        if (validateDeviceToken(request)) {
             Message message = Message.builder()
                     .setToken(request.getVehicle().getUser().getDeviceToken())
-                    .setNotification(systemNotification.toFirebaseNotification())
+                    .setNotification(notification.toFirebaseNotification())
                     .build();
-            systemNotification.setIsSent(messageService.pushNotification(message));
+            notification.setIsSent(messageService.pushNotification(message));
         }
-        notificationRepository.save(systemNotification);
+        notificationRepository.save(notification);
+    }
+
+    public void subscribeProviderTopic(String deviceToken, Long providerId) {
+        messageService.subscribeProviderTopic(deviceToken, providerId);
+    }
+
+    private boolean validateDeviceToken(Request request) {
+        return request.getVehicle().getUser().getDeviceToken() != null &&
+                !"".equals(request.getVehicle().getUser().getDeviceToken());
     }
 }

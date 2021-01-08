@@ -47,6 +47,8 @@ public class UserServiceImpl implements UserService {
     private final VehicleRepository vehicleRepository;
     private final RequestRepository requestRepository;
 
+    private final FirebaseNotificationServiceImpl notificationService;
+
     @Override
     public void verifyPhoneNumber(String phoneNumber) {
         userRepository.findUserByPhoneNumber(phoneNumber)
@@ -146,8 +148,8 @@ public class UserServiceImpl implements UserService {
 
         result.setDeviceToken(request.getDeviceToken());
 
-        /*messageService.subscribeProviderTopic(saved.getDeviceToken(),
-                saved.getProvider().getId());*/
+        notificationService.subscribeProviderTopic(result.getDeviceToken(),
+                result.getProvider().getId());
 
         return toUserInfoResponse(userRepository.save(result));
     }
