@@ -22,7 +22,7 @@ public class MessageSendingScheduler {
 
     private final FirebaseNotificationServiceImpl notificationService;
 
-    @Scheduled(cron = "")
+    @Scheduled(cron = "0 0 7 ? * *")
     public void sendMaintenanceReminder() {
         List<MaintenanceReminder> reminders =
                 reminderRepository.findAllByIsActiveTrueAndRemindAt(LocalDate.now());
