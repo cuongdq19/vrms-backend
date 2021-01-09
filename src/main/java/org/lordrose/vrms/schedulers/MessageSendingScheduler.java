@@ -30,13 +30,11 @@ public class MessageSendingScheduler {
         reminders.forEach(notificationService::sendMaintenanceReminderNotification);
     }
 
-    @Scheduled(cron = "")
+    /*@Scheduled(cron = "")
     public void sendRequestBeginReminder() {
-
     }
 
     @Scheduled(cron = "")
     public void reSendFailMessage() {
-
-    }
+    }*/
 }

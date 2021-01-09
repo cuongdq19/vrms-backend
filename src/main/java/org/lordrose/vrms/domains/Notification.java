@@ -45,7 +45,7 @@ public class Notification extends TimeAuditable<LocalDateTime> {
     private Boolean isSent;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public com.google.firebase.messaging.Notification toFirebaseNotification() {

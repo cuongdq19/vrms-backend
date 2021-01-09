@@ -6,15 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GroupResponse {
+public class ProviderMonthRevenueResponse {
 
-    //private Long id; remove due to redundancy
-    private List<VehicleModelResponse> models;
+    private Integer month;
+    private Double total;
+    private Double services;
+    private Double parts;
 }

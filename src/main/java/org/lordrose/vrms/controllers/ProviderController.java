@@ -11,6 +11,7 @@ import org.lordrose.vrms.models.responses.SlotResponse;
 import org.lordrose.vrms.services.ProviderService;
 import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.services.RequestSchedulingService;
+import org.lordrose.vrms.services.impl.ProviderChartServiceImpl;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class ProviderController {
     private final RequestSchedulingService schedulingService;
     private final ProviderService providerService;
     private final ProviderSuggestingService suggestingService;
+    private final ProviderChartServiceImpl providerChartService;
 
     @GetMapping("/{providerId}/bookings/{secondsOfDate}")
     public List<SlotResponse> getAllAvailableSlots(@PathVariable Long providerId,
@@ -78,5 +80,10 @@ public class ProviderController {
                                          @PathVariable Long modelId,
                                          @PathVariable Long typeId) {
         return suggestingService.findServicesInProvider(providerId, modelId, typeId);
+    }
+
+    @GetMapping("{providerId}/charts")
+    public Object getRevenueInfo(@PathVariable Long providerId) {
+        return providerChartService.getRevenueByProvider(providerId);
     }
 }
