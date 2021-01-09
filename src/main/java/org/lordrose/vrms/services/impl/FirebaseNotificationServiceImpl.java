@@ -2,6 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import com.google.firebase.messaging.Message;
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.domains.MaintenanceReminder;
 import org.lordrose.vrms.domains.Notification;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.repositories.NotificationRepository;
@@ -113,6 +114,12 @@ public class FirebaseNotificationServiceImpl {
 
         sendMessage(request, systemNotification, notificationRepository,
                 "CHECKOUT_REQUEST_" + request.getId());
+    }
+
+    public void sendMaintenanceReminderNotification(MaintenanceReminder reminder) {
+        final String body = "Your booking is completed. " +
+                "Please give us your feedback and ratings about: " +
+                reminder.getRequestPart().getVehiclePart().getName() + ".";
     }
 
     private void sendMessage(Request request,

@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.domains.MaintenanceReminder;
 import org.lordrose.vrms.domains.ServiceRequestPart;
 import org.lordrose.vrms.domains.constants.RequestStatus;
 import org.lordrose.vrms.models.responses.AccessoryResponse;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,8 @@ public class AccessoryServiceImpl {
             storage.add(AccessoryResponse.builder()
                     .quantity(requestPart.getQuantity())
                     .reminder(requestPart.getReminders().stream()
+                            .filter(MaintenanceReminder::getIsActive)
+                            .sorted(Comparator.comparing(MaintenanceReminder::getMaintenanceDate))
                             .map(reminder -> ReminderResponse.builder()
                                     .id(reminder.getId())
                                     .remindDate(reminder.getRemindAt().toString())
