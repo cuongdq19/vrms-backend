@@ -52,7 +52,8 @@ public class DataLoader implements CommandLineRunner {
 //        request.setServiceIds(List.of(2L));
 //        request.setPackageIds(List.of(1L));
 //        request.setProviderId(1L);
-//        requestService.checkout(((RequestCheckOutResponse)requestService.create(request)).getId());
+//        RequestCheckOutResponse temp = (RequestCheckOutResponse) requestService.create(request);
+//        requestService.checkout(temp.getId());
 //
 //        RequestInfoRequest temp3 = new RequestInfoRequest();
 //        temp3.setBookingTime(1609459200L);
@@ -64,6 +65,12 @@ public class DataLoader implements CommandLineRunner {
 //        requestService.cancel(((RequestCheckOutResponse)requestService.create(temp3)).getId());
 //
 //        System.out.println("CBA");
+//
+//        FeedbackRequest a = new FeedbackRequest();
+//        a.setContent("Good");
+//        a.setRatings(5);
+//        MultipartFile[] b = new MultipartFile[0];
+//        requestService.sendFeedback(temp.getId(), a, b);
     }
 
     private void replacingService_1() {

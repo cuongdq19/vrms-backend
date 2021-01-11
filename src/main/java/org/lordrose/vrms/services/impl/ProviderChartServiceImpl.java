@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.ServiceRequest;
 import org.lordrose.vrms.domains.ServiceRequestPart;
@@ -10,6 +11,8 @@ import org.lordrose.vrms.models.responses.PartSummaryResponse;
 import org.lordrose.vrms.models.responses.ProviderMonthRevenueResponse;
 import org.lordrose.vrms.models.responses.ProviderPartSummaryResponse;
 import org.lordrose.vrms.models.responses.ProviderRequestSummaryResponse;
+import org.lordrose.vrms.models.responses.ProviderResponse;
+import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.utils.DateTimeTuple;
 import org.springframework.stereotype.Service;
@@ -27,12 +30,15 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.getDateTimeTuples;
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 @RequiredArgsConstructor
 @Service
 public class ProviderChartServiceImpl {
 
     private final RequestRepository requestRepository;
+    private final ProviderRepository providerRepository;
+    private final FeedbackServiceImpl feedbackService;
 
     public Object getRevenueByProvider(Long providerId) {
         List<Month> months = Arrays.asList(Month.values());
@@ -119,6 +125,27 @@ public class ProviderChartServiceImpl {
                             .partSummaries(partSummaries)
                             .build();
                 })
+                .collect(Collectors.toList());
+    }
+
+    public Object getRatingsSummary() {
+        List<Provider> providers = providerRepository.findAll();
+
+        return providers.stream()
+                .map(provider -> ProviderResponse.builder()
+                        .id(provider.getId())
+                        .providerName(provider.getName())
+                        .address(provider.getAddress())
+                        .latitude(provider.getLatitude())
+                        .longitude(provider.getLongitude())
+                        .openTime(provider.getOpenTime().toString())
+                        .closeTime(provider.getCloseTime().toString())
+                        .imageUrls(getUrlsAsArray(provider.getImageUrls()))
+                        .contractPhoneNumber("provider.getContract().getPhoneNumber()")
+                        .contractEmail("provider.getContract().getEmail()")
+                        .ratings(feedbackService.getAverageRating(provider.getId()))
+                        .build())
+                .sorted(Comparator.comparingDouble(ProviderResponse::getRatings).reversed())
                 .collect(Collectors.toList());
     }
 }

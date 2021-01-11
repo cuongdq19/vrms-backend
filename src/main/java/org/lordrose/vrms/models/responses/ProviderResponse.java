@@ -23,4 +23,5 @@ public class ProviderResponse {
     private String[] imageUrls;
     private String contractPhoneNumber;
     private String contractEmail;
+    private Double ratings;
 }
