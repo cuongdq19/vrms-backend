@@ -11,7 +11,8 @@ import org.lordrose.vrms.models.responses.PartSummaryResponse;
 import org.lordrose.vrms.models.responses.ProviderMonthRevenueResponse;
 import org.lordrose.vrms.models.responses.ProviderPartSummaryResponse;
 import org.lordrose.vrms.models.responses.ProviderRequestSummaryResponse;
-import org.lordrose.vrms.models.responses.ProviderResponse;
+import org.lordrose.vrms.models.responses.ProviderSummaryResponse;
+import org.lordrose.vrms.models.responses.RevenueDetailResponse;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.utils.DateTimeTuple;
@@ -128,24 +129,58 @@ public class ProviderChartServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    public Object getRatingsSummary() {
+    public Object getRatingsSummary(int yearValue) {
+        List<DateTimeTuple> tuples = getDateTimeTuples(yearValue);
         List<Provider> providers = providerRepository.findAll();
+        List<ProviderSummaryResponse> responses = new ArrayList<>();
 
-        return providers.stream()
-                .map(provider -> ProviderResponse.builder()
-                        .id(provider.getId())
-                        .providerName(provider.getName())
-                        .address(provider.getAddress())
-                        .latitude(provider.getLatitude())
-                        .longitude(provider.getLongitude())
-                        .openTime(provider.getOpenTime().toString())
-                        .closeTime(provider.getCloseTime().toString())
-                        .imageUrls(getUrlsAsArray(provider.getImageUrls()))
-                        .contractPhoneNumber("provider.getContract().getPhoneNumber()")
-                        .contractEmail("provider.getContract().getEmail()")
-                        .ratings(feedbackService.getAverageRating(provider.getId()))
-                        .build())
-                .sorted(Comparator.comparingDouble(ProviderResponse::getRatings).reversed())
+        providers.forEach(provider -> {
+            ProviderSummaryResponse response = ProviderSummaryResponse.builder()
+                    .id(provider.getId())
+                    .providerName(provider.getName())
+                    .address(provider.getAddress())
+                    .latitude(provider.getLatitude())
+                    .longitude(provider.getLongitude())
+                    .openTime(provider.getOpenTime().toString())
+                    .closeTime(provider.getCloseTime().toString())
+                    .imageUrls(getUrlsAsArray(provider.getImageUrls()))
+                    .contractPhoneNumber("provider.getContract().getPhoneNumber()")
+                    .contractEmail("provider.getContract().getEmail()")
+                    .ratings(feedbackService.getAverageRating(provider.getId()))
+                    .revenues(new ArrayList<>())
+                    .build();
+            tuples.forEach(tuple -> {
+                List<Request> requests = requestRepository.findAllByProviderIdAndStatusAndBookingTimeBetween(
+                        provider.getId(), RequestStatus.FINISHED, tuple.from, tuple.to);
+                response.getRevenues().add(RevenueDetailResponse.builder()
+                        .month(tuple.from.getMonthValue())
+                        .totalRevenue(requests.stream()
+                                .mapToDouble(request -> request.getServices().stream()
+                                        .filter(ServiceRequest::getIsActive)
+                                        .mapToDouble(service ->
+                                                service.getPrice() + service.getRequestParts().stream()
+                                                        .mapToDouble(part -> part.getPrice() * part.getQuantity())
+                                                        .sum())
+                                        .sum())
+                                .sum())
+                        .incurredRevenue(requests.stream()
+                                .mapToDouble(request -> request.getServices().stream()
+                                        .filter(ServiceRequest::getIsActive)
+                                        .filter(ServiceRequest::getIsIncurred)
+                                        .mapToDouble(service ->
+                                                service.getPrice() + service.getRequestParts().stream()
+                                                        .mapToDouble(part -> part.getPrice() * part.getQuantity())
+                                                        .sum())
+                                        .sum())
+                                .sum())
+                        .build());
+            });
+
+            responses.add(response);
+        });
+
+        return responses.stream()
+                .sorted(Comparator.comparingDouble(ProviderSummaryResponse::getRatings).reversed())
                 .collect(Collectors.toList());
     }
 }

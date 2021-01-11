@@ -38,6 +38,7 @@ public class DataLoader implements CommandLineRunner {
 //        createPackage_2();
 //        createPackage_3();
 //        createRequest();
+//        requestService.confirm(1L);
 //        createRequest();
 //        createRequest();
 //
@@ -202,7 +203,7 @@ public class DataLoader implements CommandLineRunner {
         request.setServicePartMap(serviceMap);
         request.setExpenses(expenses);
         request.setPackageMap(packageMap);
-        request.setDisables(Set.of());
+        request.setDisables(Set.of(1L, 2L));
         request.setEnables(Set.of());
         return requestService.update(1L, request);
     }

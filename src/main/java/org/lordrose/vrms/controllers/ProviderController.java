@@ -99,8 +99,8 @@ public class ProviderController {
         return providerChartService.getPartSummary(providerId, year);
     }
 
-    @GetMapping("/ratings")
-    public Object getRatingsSummary() {
-        return providerChartService.getRatingsSummary();
+    @GetMapping("/ratings/{year}")
+    public Object getRatingsSummary(@PathVariable Integer year) {
+        return providerChartService.getRatingsSummary(year);
     }
 }
