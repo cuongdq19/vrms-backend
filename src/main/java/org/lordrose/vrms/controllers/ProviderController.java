@@ -82,8 +82,20 @@ public class ProviderController {
         return suggestingService.findServicesInProvider(providerId, modelId, typeId);
     }
 
-    @GetMapping("{providerId}/charts")
+    @GetMapping("/{providerId}/charts/revenue")
     public Object getRevenueInfo(@PathVariable Long providerId) {
         return providerChartService.getRevenueByProvider(providerId);
+    }
+
+    @GetMapping("/{providerId}/charts/request/{year}")
+    public Object getRequestSummary(@PathVariable Long providerId,
+                                    @PathVariable Integer year) {
+        return providerChartService.getRequestSummary(providerId, year);
+    }
+
+    @GetMapping("/{providerId}/charts/parts/{year}")
+    public Object getPartSummary(@PathVariable Long providerId,
+                                 @PathVariable Integer year) {
+        return providerChartService.getPartSummary(providerId, year);
     }
 }

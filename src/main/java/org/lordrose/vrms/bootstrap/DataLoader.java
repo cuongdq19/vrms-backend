@@ -31,18 +31,39 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        replacingService_1();
-        non_replacingService();
-        replacingService_2();
-        createPackage_1();
-        createPackage_2();
-        createPackage_3();
-        createRequest();
-        createRequest();
-
-        RequestCheckOutResponse temp1 = incurredUpdateRequest();
-
-        System.out.println("CBA");
+//        replacingService_1();
+//        non_replacingService();
+//        replacingService_2();
+//        createPackage_1();
+//        createPackage_2();
+//        createPackage_3();
+//        createRequest();
+//        createRequest();
+//        createRequest();
+//
+//        RequestCheckOutResponse temp1 = incurredUpdateRequest();
+//
+//        requestService.checkout(temp1.getId());
+//
+//        RequestInfoRequest request = new RequestInfoRequest();
+//        request.setBookingTime(1609459199L);
+//        request.setNote("Test note");
+//        request.setVehicleId(2L);
+//        request.setServiceIds(List.of(2L));
+//        request.setPackageIds(List.of(1L));
+//        request.setProviderId(1L);
+//        requestService.checkout(((RequestCheckOutResponse)requestService.create(request)).getId());
+//
+//        RequestInfoRequest temp3 = new RequestInfoRequest();
+//        temp3.setBookingTime(1609459200L);
+//        temp3.setNote("Test note");
+//        temp3.setVehicleId(2L);
+//        temp3.setServiceIds(List.of(2L));
+//        temp3.setPackageIds(List.of(1L));
+//        temp3.setProviderId(1L);
+//        requestService.cancel(((RequestCheckOutResponse)requestService.create(temp3)).getId());
+//
+//        System.out.println("CBA");
     }
 
     private void replacingService_1() {
@@ -137,6 +158,10 @@ public class DataLoader implements CommandLineRunner {
         Map<Long, Double> map1 = new LinkedHashMap<>();
         map1.put(1L, 1.0D);
         map1.put(2L, 2.0D);
+        map1.put(10L, 5.0D);
+        map1.put(11L, 6.0D);
+        map1.put(12L, 7.0D);
+        map1.put(13L, 8.0D);
         Map<Long, Double> map2 = new LinkedHashMap<>();
         map2.put(4L, 4.0D);
         map2.put(5L, 5.0D);

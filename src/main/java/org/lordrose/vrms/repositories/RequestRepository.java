@@ -26,4 +26,12 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findAllByProviderIdAndBookingTime(Long providerId, LocalDateTime bookingTime);
 
     List<Request> findAllByProviderIdAndCheckoutTimeNotNull(Long provider_id);
+
+    Long countAllByProviderIdAndBookingTimeBetween(Long providerId, LocalDateTime from, LocalDateTime to);
+
+    Long countAllByProviderIdAndStatusAndBookingTimeBetween(Long providerId, RequestStatus status,
+                                                            LocalDateTime from, LocalDateTime to);
+
+    List<Request> findAllByProviderIdAndStatusNotAndBookingTimeBetween(Long providerId, RequestStatus status,
+                                                                       LocalDateTime from, LocalDateTime to);
 }

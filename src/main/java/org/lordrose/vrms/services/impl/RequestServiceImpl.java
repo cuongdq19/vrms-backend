@@ -371,6 +371,7 @@ public class RequestServiceImpl implements RequestService {
         return toRequestCheckoutResponse(requestRepository.save(result));
     }
 
+    @Transactional
     @Override
     public RequestCheckOutResponse cancel(Long requestId) {
         Request result = requestRepository.findById(requestId)
