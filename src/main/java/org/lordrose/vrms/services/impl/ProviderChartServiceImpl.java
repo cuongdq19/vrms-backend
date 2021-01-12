@@ -19,10 +19,7 @@ import org.lordrose.vrms.utils.DateTimeTuple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Month;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -41,39 +38,34 @@ public class ProviderChartServiceImpl {
     private final ProviderRepository providerRepository;
     private final FeedbackServiceImpl feedbackService;
 
-    public Object getRevenueByProvider(Long providerId) {
-        List<Month> months = Arrays.asList(Month.values());
-        List<ProviderMonthRevenueResponse> responses = new ArrayList<>();
-        Map<Month, List<Request>> resultMap = months.stream()
-                .collect(Collectors.toMap(month -> month, month -> Collections.emptyList()));
+    public Object getRevenueByProvider(Long providerId, int yearValue) {
+        List<DateTimeTuple> tuples = getDateTimeTuples(yearValue);
 
-        resultMap.putAll(
-                requestRepository.findAllByProviderIdAndCheckoutTimeNotNull(providerId).stream()
-                        .collect(groupingBy(request -> request.getCheckoutTime().getMonth())));
+        return tuples.stream()
+                .map(tuple -> {
+                    List<Request> requests = requestRepository.findAllByProviderIdAndStatusAndCheckoutTimeBetween(
+                            providerId, RequestStatus.FINISHED, tuple.from, tuple.to);
 
-        resultMap.forEach(((month, requests) -> {
-            Double serviceTotal = requests.stream()
-                    .mapToDouble(request -> request.getServices().stream()
-                            .mapToDouble(ServiceRequest::getPrice)
-                            .sum())
-                    .sum();
-            Double partTotal = requests.stream()
-                    .mapToDouble(request -> request.getServices().stream()
-                            .mapToDouble(service -> service.getRequestParts().stream()
-                                    .mapToDouble(part -> part.getQuantity() * part.getPrice())
+                    Double serviceTotal = requests.stream()
+                            .mapToDouble(request -> request.getServices().stream()
+                                    .mapToDouble(ServiceRequest::getPrice)
                                     .sum())
-                            .sum())
-                    .sum();
-            responses.add(ProviderMonthRevenueResponse.builder()
-                    .month(month.getValue())
-                    .services(serviceTotal)
-                    .parts(partTotal)
-                    .total(serviceTotal + partTotal)
-                    .build());
-        }));
+                            .sum();
+                    Double partTotal = requests.stream()
+                            .mapToDouble(request -> request.getServices().stream()
+                                    .mapToDouble(service -> service.getRequestParts().stream()
+                                            .mapToDouble(part -> part.getQuantity() * part.getPrice())
+                                            .sum())
+                                    .sum())
+                            .sum();
 
-        return responses.stream()
-                .sorted(Comparator.comparingInt(ProviderMonthRevenueResponse::getMonth))
+                    return ProviderMonthRevenueResponse.builder()
+                            .month(tuple.from.getMonthValue())
+                            .services(serviceTotal)
+                            .parts(partTotal)
+                            .total(serviceTotal + partTotal)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 

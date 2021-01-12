@@ -82,9 +82,10 @@ public class ProviderController {
         return suggestingService.findServicesInProvider(providerId, modelId, typeId);
     }
 
-    @GetMapping("/{providerId}/charts/revenue")
-    public Object getRevenueInfo(@PathVariable Long providerId) {
-        return providerChartService.getRevenueByProvider(providerId);
+    @GetMapping("/{providerId}/charts/revenue/{year}")
+    public Object getRevenueInfo(@PathVariable Long providerId,
+                                 @PathVariable Integer year) {
+        return providerChartService.getRevenueByProvider(providerId, year);
     }
 
     @GetMapping("/{providerId}/charts/request/{year}")
