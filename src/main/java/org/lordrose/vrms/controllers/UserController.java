@@ -58,8 +58,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/provider")
-    public UserInfoResponse deleteEmployeeByProvider(@PathVariable Long userId) {
-        return userService.deleteEmployee(userId);
+    public UserInfoResponse toggleEmployeeStatus(@PathVariable Long userId) {
+        return userService.toggleEmployeeStatus(userId);
     }
 
     @PostMapping

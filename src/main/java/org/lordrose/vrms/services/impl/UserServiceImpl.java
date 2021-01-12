@@ -196,11 +196,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoResponse deleteEmployee(Long userId) {
+    public UserInfoResponse toggleEmployeeStatus(Long userId) {
         User saved = userRepository.findById(userId)
                 .orElseThrow(() -> newExceptionWithId(userId));
 
-        saved.setIsActive(false);
+        saved.setIsActive(!saved.getIsActive());
 
         return toUserInfoResponse(userRepository.save(saved));
     }
