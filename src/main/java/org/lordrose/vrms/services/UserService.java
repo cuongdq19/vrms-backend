@@ -31,4 +31,6 @@ public interface UserService {
     UserInfoResponse updateUserInfo(Long id, UserInfoRequest request);
 
     UserInfoResponse registerUser(UserSignUpRequest request);
+
+    UserInfoResponse deleteEmployee(Long userId);
 }

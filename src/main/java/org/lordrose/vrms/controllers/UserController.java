@@ -57,6 +57,11 @@ public class UserController {
         return userService.updateEmployee(userId, request, image);
     }
 
+    @GetMapping("/{userId}/provider")
+    public UserInfoResponse deleteEmployeeByProvider(@PathVariable Long userId) {
+        return userService.deleteEmployee(userId);
+    }
+
     @PostMapping
     public UserInfoResponse loginWithPhoneNumber(@RequestBody LoginRequest request) {
         return userService.loginWithPhoneNumber(request);

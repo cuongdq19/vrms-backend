@@ -195,6 +195,16 @@ public class UserServiceImpl implements UserService {
         throw new InvalidArgumentException("Registration information is invalid!");
     }
 
+    @Override
+    public UserInfoResponse deleteEmployee(Long userId) {
+        User saved = userRepository.findById(userId)
+                .orElseThrow(() -> newExceptionWithId(userId));
+
+        saved.setIsActive(false);
+
+        return toUserInfoResponse(userRepository.save(saved));
+    }
+
     private boolean isValid(UserSignUpRequest request) {
         try {
             FirebaseAuth auth = FirebaseAuth.getInstance();
