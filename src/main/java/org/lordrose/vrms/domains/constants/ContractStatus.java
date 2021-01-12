@@ -3,7 +3,8 @@ package org.lordrose.vrms.domains.constants;
 public enum ContractStatus {
     PENDING("PENDING"),
     CONFIRMED("CONFIRMED"),
-    RESOLVED("RESOLVED");
+    RESOLVED("RESOLVED"),
+    DENIED("DENIED");
 
     public String textValue;
 

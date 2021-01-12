@@ -15,4 +15,6 @@ public interface ContractService {
 
     Object resolvedContract(Long contractId, ProviderRequest providerRequest,
                             ManagerCreateRequest managerRequest, MultipartFile[] images);
+
+    Object denyContract(Long contractId);
 }

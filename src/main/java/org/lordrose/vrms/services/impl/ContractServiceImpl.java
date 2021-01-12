@@ -130,4 +130,14 @@ public class ContractServiceImpl implements ContractService {
 
         return toProviderDetailResponse(created);
     }
+
+    @Override
+    public Object denyContract(Long contractId) {
+        Contract result = contractRepository.findById(contractId)
+                .orElseThrow(() -> newExceptionWithId(contractId));
+
+        result.setStatus(ContractStatus.DENIED);
+
+        return toContractResponse(contractRepository.save(result));
+    }
 }

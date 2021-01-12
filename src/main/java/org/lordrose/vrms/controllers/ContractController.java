@@ -32,13 +32,18 @@ public class ContractController {
         return contractService.registerProvider(request, images);
     }
 
-    @PostMapping("confirm/{contractId}")
+    @PostMapping("/confirm/{contractId}")
     public Object confirmContract(@PathVariable Long contractId,
                                   @RequestPart MultipartFile[] images) {
         return contractService.confirmContract(contractId, images);
     }
 
-    @PostMapping("resolve/{contractId}")
+    @GetMapping("/deny/{contractId}")
+    public Object denyContract(@PathVariable Long contractId) {
+        return contractService.denyContract(contractId);
+    }
+
+    @PostMapping("/resolve/{contractId}")
     public Object resolvedContract(@PathVariable Long contractId,
                                    @ModelAttribute ProviderRequest providerRequest,
                                    @ModelAttribute ManagerCreateRequest managerRequest,
