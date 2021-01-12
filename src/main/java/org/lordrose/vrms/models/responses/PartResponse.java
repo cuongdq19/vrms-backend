@@ -25,5 +25,6 @@ public class PartResponse {
     private Long sectionId;
     private Long categoryId;
     private String categoryName;
+    private Boolean isDeleted;
     private List<VehicleModelResponse> models;
 }

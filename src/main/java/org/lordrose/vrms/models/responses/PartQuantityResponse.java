@@ -24,4 +24,5 @@ public class PartQuantityResponse {
     private Long sectionId;
     private Long categoryId;
     private String categoryName;
+    private Boolean isDeleted;
 }

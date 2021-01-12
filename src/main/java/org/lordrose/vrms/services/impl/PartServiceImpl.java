@@ -51,7 +51,7 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public List<PartResponse> findAllByProviderId(Long providerId) {
-        return toPartResponses(partRepository.findAllByProviderId(providerId));
+        return toPartResponses(partRepository.findAllByProviderIdAndIsDeletedFalse(providerId));
     }
 
     @Override
@@ -59,8 +59,8 @@ public class PartServiceImpl implements PartService {
         VehicleModel model = modelRepository.findById(modelId)
                 .orElseThrow(() -> newExceptionWithId(modelId));
         return toPartResponses(
-                partRepository.findAllByProviderIdAndModelsContains(providerId, model)
-        );
+                partRepository.findAllByProviderIdAndIsDeletedFalseAndModelsContains(
+                        providerId, model));
     }
 
     @Override
@@ -79,6 +79,7 @@ public class PartServiceImpl implements PartService {
                 .models(new HashSet<>(modelRepository.findAllById(request.getModelIds())))
                 .provider(provider)
                 .category(category)
+                .isDeleted(false)
                 .build());
         return toPartResponse(saved);
     }
@@ -108,14 +109,14 @@ public class PartServiceImpl implements PartService {
         VehiclePart result = partRepository.findById(partId)
                 .orElseThrow(() -> newExceptionWithId(partId));
 
-        partRepository.deleteById(partId);
+       result.setIsDeleted(true);
 
-        return toPartResponse(result);
+        return toPartResponse(partRepository.save(result));
     }
 
     @Override
     public Object findAllByCategoryIdAndProviderId(Long categoryId, Long providerId) {
-        List<VehiclePart> parts = partRepository.findAllByCategoryIdAndProviderId(categoryId, providerId);
+        List<VehiclePart> parts = partRepository.findAllByCategoryIdAndProviderIdAndIsDeletedFalse(categoryId, providerId);
         return toPartResponses(parts);
     }
 
@@ -134,7 +135,7 @@ public class PartServiceImpl implements PartService {
             throw newExceptionWithIds(notFounds);
         }
 
-        List<VehiclePart> parts = partRepository.findAllByProviderIdAndCategoryIdAndModelsContains(
+        List<VehiclePart> parts = partRepository.findAllByProviderIdAndIsDeletedFalseAndCategoryIdAndModelsContains(
                 providerId, categoryId, models.stream().findFirst().orElseThrow());
 
         List<VehiclePart> results = parts.stream()
@@ -154,6 +155,7 @@ public class PartServiceImpl implements PartService {
 
         return serviceParts.stream()
                 .map(ServiceVehiclePart::getPart)
+                .filter(part -> !part.getIsDeleted())
                 .map(part -> PartProviderResponse.builder()
                         .id(part.getProvider().getId())
                         .name(part.getProvider().getName())

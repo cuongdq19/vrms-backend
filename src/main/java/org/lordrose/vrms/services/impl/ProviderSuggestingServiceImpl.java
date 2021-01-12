@@ -52,7 +52,10 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
         List<ServiceTypeDetail> typeDetails = typeDetailRepository.findAllById(request.getServiceDetailIds());
         request.getServiceDetailIds().forEach(detailId -> {
             services.addAll(
-                    serviceRepository.findAllByTypeDetailIdAndPartSet_Part_Models_Id(detailId, modelId));
+                    serviceRepository.findAllByTypeDetailIdAndPartSet_Part_Models_Id(detailId, modelId).stream()
+                            .filter(service -> service.getPartSet().stream()
+                                    .noneMatch(part -> part.getPart().getIsDeleted()))
+                            .collect(Collectors.toList()));
             services.addAll(
                     serviceRepository.findAllByTypeDetailIdAndModels_Id(detailId, modelId));});
 
@@ -74,7 +77,8 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                 .orElseThrow(() -> newExceptionWithId(request.getModelId()));
         List<ServiceVehiclePart> parts = new ArrayList<>();
         request.getCategoryIds().forEach(categoryId -> parts.addAll(
-                servicePartRepository.findAllByPartCategoryIdAndPartModelsContains(categoryId, model)));
+                servicePartRepository.findAllByPartCategoryIdAndPartIsDeletedAndPartModelsContains(
+                        categoryId, false, model)));
 
         Map<Provider, List<ServiceVehiclePart>> byProvider = parts.stream()
                 .collect(Collectors.groupingBy(part -> part.getPart().getProvider()));

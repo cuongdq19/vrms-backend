@@ -55,6 +55,9 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
     @Column(name = "months_per_maintenance")
     private Integer monthsPerMaintenance;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "provider_id")
     private Provider provider;

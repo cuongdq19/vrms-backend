@@ -23,4 +23,5 @@ public class PartCheckoutResponse {
     private String[] imageUrls;
     private Long categoryId;
     private String categoryName;
+    private Boolean isDeleted;
 }

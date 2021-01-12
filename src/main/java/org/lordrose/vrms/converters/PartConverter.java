@@ -32,6 +32,7 @@ public class PartConverter {
                 .sectionId(servicePart.getPart().getCategory().getSection().getId())
                 .categoryId(servicePart.getPart().getCategory().getId())
                 .categoryName(servicePart.getPart().getCategory().getName())
+                .isDeleted(servicePart.getPart().getIsDeleted())
                 .build();
     }
 
@@ -55,6 +56,7 @@ public class PartConverter {
                 .sectionId(part.getCategory().getSection().getId())
                 .categoryId(part.getCategory().getId())
                 .categoryName(part.getCategory().getName())
+                .isDeleted(part.getIsDeleted())
                 .models(Collections.emptyList())
                 .build();
     }
@@ -77,6 +79,7 @@ public class PartConverter {
                 .sectionId(part.getCategory().getSection().getId())
                 .categoryId(part.getCategory().getId())
                 .categoryName(part.getCategory().getName())
+                .isDeleted(part.getIsDeleted())
                 .models(toModelResponses(part.getModels()))
                 .build();
     }
@@ -101,6 +104,7 @@ public class PartConverter {
                 .imageUrls(getUrlsAsArray(servicePart.getVehiclePart().getImageUrls()))
                 .categoryId(servicePart.getVehiclePart().getCategory().getId())
                 .categoryName(servicePart.getVehiclePart().getCategory().getName())
+                .isDeleted(servicePart.getVehiclePart().getIsDeleted())
                 .build();
     }
 

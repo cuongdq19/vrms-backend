@@ -10,14 +10,12 @@ import java.util.List;
 @Repository
 public interface VehiclePartRepository extends JpaRepository<VehiclePart, Long> {
 
-    List<VehiclePart> findAllByProviderId(Long providerId);
+    List<VehiclePart> findAllByProviderIdAndIsDeletedFalse(Long providerId);
 
-    List<VehiclePart> findAllByProviderIdAndModelsContains(Long providerId, VehicleModel model);
+    List<VehiclePart> findAllByProviderIdAndIsDeletedFalseAndModelsContains(Long providerId, VehicleModel model);
 
-    List<VehiclePart> findTop10AllByModelsContains(VehicleModel model);
-
-    List<VehiclePart> findAllByProviderIdAndCategoryIdAndModelsContains(
+    List<VehiclePart> findAllByProviderIdAndIsDeletedFalseAndCategoryIdAndModelsContains(
             Long providerId, Long categoryId, VehicleModel model);
 
-    List<VehiclePart> findAllByCategoryIdAndProviderId(Long categoryId, Long providerId);
+    List<VehiclePart> findAllByCategoryIdAndProviderIdAndIsDeletedFalse(Long categoryId, Long providerId);
 }

@@ -10,13 +10,9 @@ import java.util.List;
 @Repository
 public interface ServiceVehiclePartRepository extends JpaRepository<ServiceVehiclePart, Long> {
 
-    List<ServiceVehiclePart> findAllByPartModels_Id(Long modelId);
-
-    boolean existsByServiceIdAndPart_Models_Id(Long serviceId, Long modelId);
-
     List<ServiceVehiclePart> findTop10AllByPartCategorySectionIdAndPartModelsContains(Long sectionId,
                                                                                       VehicleModel model);
 
-    List<ServiceVehiclePart> findAllByPartCategoryIdAndPartModelsContains(
-            Long categoryId, VehicleModel model);
+    List<ServiceVehiclePart> findAllByPartCategoryIdAndPartIsDeletedAndPartModelsContains(
+            Long categoryId, boolean isDeleted, VehicleModel model);
 }
