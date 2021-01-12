@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartResponse;
 import static org.lordrose.vrms.converters.PartConverter.toPartResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
@@ -111,7 +112,7 @@ public class PartServiceImpl implements PartService {
 
        result.setIsDeleted(true);
 
-        return toPartResponse(partRepository.save(result));
+        return toEmptyModelPartResponse(partRepository.save(result));
     }
 
     @Override
