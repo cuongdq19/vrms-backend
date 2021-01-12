@@ -98,7 +98,9 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public List<TechnicianResponse> findAvailableTechnician(Long providerId, Long time) {
         List<User> providerUsers = userRepository.findAllByProviderIdAndRoleName(providerId,
-                "TECHNICIAN");
+                "TECHNICIAN").stream()
+                .filter(User::getIsActive)
+                .collect(Collectors.toList());
         List<Request> requests = requestRepository.findAllByProviderIdAndBookingTime(providerId,
                         toLocalDateTime(time));
         List<Long> unavailableUserIds = requests.stream()

@@ -61,7 +61,7 @@ public class ProviderController {
 
     @GetMapping("/{providerId}/timestamp/{time}")
     public Object getAvailableTechnician(@PathVariable Long providerId,
-                                                           @PathVariable Long time) {
+                                         @PathVariable Long time) {
         return providerService.findAvailableTechnician(providerId, time);
     }
 
