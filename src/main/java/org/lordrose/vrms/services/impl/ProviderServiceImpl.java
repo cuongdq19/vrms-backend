@@ -113,4 +113,9 @@ public class ProviderServiceImpl implements ProviderService {
                 .map(UserConverter::toTechnicianResponse)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Object getRatingByProvider(Long providerId) {
+        return feedbackService.getAverageRating(providerId);
+    }
 }

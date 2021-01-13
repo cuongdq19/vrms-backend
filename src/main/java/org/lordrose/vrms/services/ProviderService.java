@@ -19,4 +19,6 @@ public interface ProviderService {
     List<FeedbackResponse> findAllFeedbackByProviderId(Long providerId);
 
     Object findAvailableTechnician(Long providerId, Long time);
+
+    Object getRatingByProvider(Long providerId);
 }

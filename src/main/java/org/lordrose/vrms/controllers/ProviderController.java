@@ -104,4 +104,9 @@ public class ProviderController {
     public Object getRatingsSummary(@PathVariable Integer year) {
         return providerChartService.getRatingsSummary(year);
     }
+
+    @GetMapping("/{providerId}")
+    public Object getRatingsByProvider(@PathVariable Long providerId) {
+        return providerService.getRatingByProvider(providerId);
+    }
 }
