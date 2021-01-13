@@ -1,0 +1,3 @@
+Lazang:Lazang
+HeadLight:Đèn đầu
+BackLight:Đèn hậu
