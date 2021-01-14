@@ -2,6 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.converters.UserConverter;
+import org.lordrose.vrms.domains.Feedback;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
 import org.lordrose.vrms.domains.User;
@@ -20,8 +21,13 @@ import org.lordrose.vrms.services.ProviderService;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -92,7 +98,6 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public List<FeedbackResponse> findAllFeedbackByProviderId(Long providerId) {
         return toFeedbackResponses(feedbackRepository.findAllByRequestProviderId(providerId));
-
     }
 
     @Override
@@ -117,5 +122,23 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public Object getRatingByProvider(Long providerId) {
         return feedbackService.getAverageRating(providerId);
+    }
+
+    @Override
+    public Object getRatingSummaryByProvider(Long providerId) {
+        Year currentYear = Year.now();
+        LocalDateTime from = currentYear.atMonth(1).atDay(1).atStartOfDay();
+        LocalDateTime to = currentYear.plusYears(1).atMonth(1).atDay(1).atStartOfDay();
+        Map<Integer, List<Feedback>> resultMap = new LinkedHashMap<>();
+        List.of(1, 2, 3, 4, 5).forEach(num -> resultMap.put(num, Collections.emptyList()));
+
+        resultMap.putAll(feedbackRepository.findAllByRequestProviderIdAndRequest_CheckoutTime_NotNullAndRequest_CheckoutTime_Between(
+                providerId, from, to).stream()
+                .collect(Collectors.groupingBy(Feedback::getRatings)));
+
+        return resultMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().size()));
     }
 }

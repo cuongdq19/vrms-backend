@@ -1,9 +1,11 @@
 package org.lordrose.vrms.repositories;
 
+import org.lordrose.vrms.domains.Role;
 import org.lordrose.vrms.domains.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByUsername(String username);
 
     List<User> findAllByProviderIdAndRoleName(Long providerId, String roleName);
+
+    long countAllByRoleAndCreateAtBetween(Role role,
+                                          LocalDateTime createAt, LocalDateTime createAt2);
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lordrose.vrms.domains.bases.TimeAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +29,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "tbl_provider")
-public class Provider {
+public class Provider extends TimeAuditable<LocalDateTime> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

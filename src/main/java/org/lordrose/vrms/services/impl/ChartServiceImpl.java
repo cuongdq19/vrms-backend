@@ -15,10 +15,13 @@ import org.lordrose.vrms.models.responses.ProviderSummaryResponse;
 import org.lordrose.vrms.models.responses.RevenueDetailResponse;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
+import org.lordrose.vrms.repositories.RoleRepository;
+import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.utils.DateTimeTuple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,15 +30,18 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.lordrose.vrms.converters.PartConverter.toEmptyModelPartResponse;
+import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithValue;
 import static org.lordrose.vrms.utils.DateTimeUtils.getDateTimeTuples;
 import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 @RequiredArgsConstructor
 @Service
-public class ProviderChartServiceImpl {
+public class ChartServiceImpl {
 
     private final RequestRepository requestRepository;
     private final ProviderRepository providerRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final FeedbackServiceImpl feedbackService;
 
     public Object getRevenueByProvider(Long providerId, int yearValue) {
@@ -174,5 +180,51 @@ public class ProviderChartServiceImpl {
         return responses.stream()
                 .sorted(Comparator.comparingDouble(ProviderSummaryResponse::getRatings).reversed())
                 .collect(Collectors.toList());
+    }
+
+    public Object getNewProviderSummary() {
+        List<DateTimeTuple> tuples = getDateTimeTuples(Year.now().getValue());
+
+        return tuples.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.from.getMonthValue(),
+                        tuple -> providerRepository.countAllByCreateAtBetween(tuple.from, tuple.to)));
+    }
+
+    public Object getNewCustomers() {
+        List<DateTimeTuple> tuples = getDateTimeTuples(Year.now().getValue());
+
+        return tuples.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.from.getMonthValue(),
+                        tuple -> userRepository.countAllByRoleAndCreateAtBetween(
+                                roleRepository.findByNameIgnoreCase("USER")
+                                        .orElseThrow(() -> newExceptionWithValue("USER")),
+                                tuple.from, tuple.to)));
+    }
+
+    public Object getNewRequests() {
+        List<DateTimeTuple> tuples = getDateTimeTuples(Year.now().getValue());
+
+        return tuples.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.from.getMonthValue(),
+                        tuple -> requestRepository.countAllByCreateAtBetween(tuple.from, tuple.to)));
+    }
+
+    public Object getNewRequestRatios() {
+        List<DateTimeTuple> tuples = getDateTimeTuples(Year.now().getValue());
+
+        return tuples.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.from.getMonthValue(),
+                        tuple -> requestRepository.countAllByStatusAndCreateAtBetween(
+                                RequestStatus.CANCELED,
+                                tuple.from,
+                                tuple.to)
+                                /
+                                requestRepository.countAllByCreateAtBetween(
+                                        tuple.from,
+                                        tuple.to)));
     }
 }

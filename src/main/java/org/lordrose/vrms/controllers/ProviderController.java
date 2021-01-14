@@ -11,7 +11,7 @@ import org.lordrose.vrms.models.responses.SlotResponse;
 import org.lordrose.vrms.services.ProviderService;
 import org.lordrose.vrms.services.ProviderSuggestingService;
 import org.lordrose.vrms.services.RequestSchedulingService;
-import org.lordrose.vrms.services.impl.ProviderChartServiceImpl;
+import org.lordrose.vrms.services.impl.ChartServiceImpl;
 import org.lordrose.vrms.utils.distances.GeoPoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +30,7 @@ public class ProviderController {
     private final RequestSchedulingService schedulingService;
     private final ProviderService providerService;
     private final ProviderSuggestingService suggestingService;
-    private final ProviderChartServiceImpl providerChartService;
+    private final ChartServiceImpl chartService;
 
     @GetMapping("/{providerId}/bookings/{secondsOfDate}")
     public List<SlotResponse> getAllAvailableSlots(@PathVariable Long providerId,
@@ -85,28 +85,53 @@ public class ProviderController {
     @GetMapping("/{providerId}/charts/revenue/{year}")
     public Object getRevenueInfo(@PathVariable Long providerId,
                                  @PathVariable Integer year) {
-        return providerChartService.getRevenueByProvider(providerId, year);
+        return chartService.getRevenueByProvider(providerId, year);
     }
 
     @GetMapping("/{providerId}/charts/request/{year}")
     public Object getRequestSummary(@PathVariable Long providerId,
                                     @PathVariable Integer year) {
-        return providerChartService.getRequestSummary(providerId, year);
+        return chartService.getRequestSummary(providerId, year);
     }
 
     @GetMapping("/{providerId}/charts/parts/{year}")
     public Object getPartSummary(@PathVariable Long providerId,
                                  @PathVariable Integer year) {
-        return providerChartService.getPartSummary(providerId, year);
+        return chartService.getPartSummary(providerId, year);
     }
 
     @GetMapping("/ratings/{year}")
     public Object getRatingsSummary(@PathVariable Integer year) {
-        return providerChartService.getRatingsSummary(year);
+        return chartService.getRatingsSummary(year);
     }
 
     @GetMapping("/{providerId}")
     public Object getRatingsByProvider(@PathVariable Long providerId) {
         return providerService.getRatingByProvider(providerId);
+    }
+
+    @GetMapping("/{providerId}/rating-summary")
+    public Object getFeedbackRatingSummary(@PathVariable Long providerId) {
+        return providerService.getRatingSummaryByProvider(providerId);
+    }
+
+    @GetMapping("/new")
+    public Object getNewestProviders() {
+        return chartService.getNewProviderSummary();
+    }
+
+    @GetMapping("/customers")
+    public Object getNewestCustomers() {
+        return chartService.getNewCustomers();
+    }
+
+    @GetMapping("/requests/summary")
+    public Object getNewestRequests() {
+        return chartService.getNewRequests();
+    }
+
+    @GetMapping("/requests/summary/ratio")
+    public Object getRequestRatioSummary() {
+        return chartService.getNewRequestRatios();
     }
 }

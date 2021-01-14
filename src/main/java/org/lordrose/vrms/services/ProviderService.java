@@ -21,4 +21,6 @@ public interface ProviderService {
     Object findAvailableTechnician(Long providerId, Long time);
 
     Object getRatingByProvider(Long providerId);
+
+    Object getRatingSummaryByProvider(Long providerId);
 }
