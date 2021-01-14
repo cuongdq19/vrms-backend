@@ -6,6 +6,7 @@ import org.lordrose.vrms.models.responses.RequestHistoryDetailResponse;
 import org.lordrose.vrms.models.responses.RequestHistoryResponse;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,7 @@ public class RequestConverter {
 
     public static List<RequestHistoryDetailResponse> toRequestHistoryDetailResponses(Collection<Request> requests) {
         return requests.stream()
+                .sorted(Comparator.comparing(Request::getCreateAt).reversed())
                 .map(RequestConverter::toRequestHistoryDetailResponse)
                 .collect(Collectors.toList());
     }
