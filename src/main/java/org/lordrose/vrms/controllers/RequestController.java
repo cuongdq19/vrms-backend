@@ -27,6 +27,11 @@ public class RequestController {
 
     private final RequestService requestService;
 
+    @GetMapping("/{requestId}")
+    public Object getRequestByIdTheoYCuaHung(@PathVariable Long requestId) {
+        return requestService.findByRequestIdTheoHung(requestId);
+    }
+
     @GetMapping("/users/{id}")
     public List<RequestHistoryDetailResponse> getAllBookingByUserId(@PathVariable Long id) {
         return requestService.findAllByUserId(id);

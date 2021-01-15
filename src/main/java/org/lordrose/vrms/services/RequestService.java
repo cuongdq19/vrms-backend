@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface RequestService {
 
+    RequestHistoryDetailResponse findByRequestIdTheoHung(Long id);
+
     List<RequestHistoryDetailResponse> findAllByUserId(Long id);
 
     List<RequestHistoryDetailResponse> findAllByVehicleId(Long vehicleId);

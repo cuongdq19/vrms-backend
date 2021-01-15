@@ -97,16 +97,16 @@ public class MaintenancePackageConverter {
                                 .getProvider()));
 
         resultMap.forEach((provider, packages) ->
-                responses.add(test(provider, currentLocation, packages, feedbackService)));
+                responses.add(toPackageProviderResponses(provider, currentLocation, packages, feedbackService)));
 
         return responses.stream()
                 .sorted(Comparator.comparingDouble(PackageProviderResponse::getDistance))
                 .collect(Collectors.toList());
     }
 
-    private static PackageProviderResponse test(Provider provider, GeoPoint currentPos,
-                                                List<MaintenancePackage> packages,
-                                                FeedbackService feedbackService) {
+    private static PackageProviderResponse toPackageProviderResponses(Provider provider, GeoPoint currentPos,
+                                                                      List<MaintenancePackage> packages,
+                                                                      FeedbackService feedbackService) {
         return PackageProviderResponse.builder()
                 .id(provider.getId())
                 .name(provider.getName())

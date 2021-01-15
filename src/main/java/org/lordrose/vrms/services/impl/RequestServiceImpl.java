@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.FeedbackConverter.toFeedbackResponse;
 import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutResponse;
 import static org.lordrose.vrms.converters.RequestConverter.toRequestCheckoutResponses;
+import static org.lordrose.vrms.converters.RequestConverter.toRequestHistoryDetailResponse;
 import static org.lordrose.vrms.converters.RequestConverter.toRequestHistoryDetailResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
 import static org.lordrose.vrms.utils.DateTimeUtils.toLocalDateTime;
@@ -68,7 +69,14 @@ public class RequestServiceImpl implements RequestService {
     private final StorageService storageService;
     private final ReminderServiceImpl reminderService;
     private final FirebaseNotificationServiceImpl firebaseNotificationService;
-    
+
+    @Transactional
+    @Override
+    public RequestHistoryDetailResponse findByRequestIdTheoHung(Long id) {
+        return toRequestHistoryDetailResponse(requestRepository.findById(id)
+                .orElseThrow(() -> newExceptionWithId(id)));
+    }
+
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
         return toRequestHistoryDetailResponses(requestRepository.findAllByVehicle_User_Id(userId));
