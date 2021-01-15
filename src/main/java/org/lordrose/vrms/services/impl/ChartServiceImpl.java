@@ -12,6 +12,7 @@ import org.lordrose.vrms.models.responses.ProviderMonthRevenueResponse;
 import org.lordrose.vrms.models.responses.ProviderPartSummaryResponse;
 import org.lordrose.vrms.models.responses.ProviderRequestSummaryResponse;
 import org.lordrose.vrms.models.responses.ProviderSummaryResponse;
+import org.lordrose.vrms.models.responses.RequestRatioResponse;
 import org.lordrose.vrms.models.responses.RevenueDetailResponse;
 import org.lordrose.vrms.repositories.ProviderRepository;
 import org.lordrose.vrms.repositories.RequestRepository;
@@ -216,15 +217,17 @@ public class ChartServiceImpl {
         List<DateTimeTuple> tuples = getDateTimeTuples(Year.now().getValue());
 
         return tuples.stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.from.getMonthValue(),
-                        tuple -> requestRepository.countAllByStatusAndCreateAtBetween(
+                .map(tuple -> RequestRatioResponse.builder()
+                        .month(tuple.from.getMonthValue())
+                        .totalRequest(requestRepository.countAllByStatusAndCreateAtBetween(
                                 RequestStatus.CANCELED,
                                 tuple.from,
-                                tuple.to)
-                                /
-                                requestRepository.countAllByCreateAtBetween(
-                                        tuple.from,
-                                        tuple.to)));
+                                tuple.to))
+                        .canceledRequest(requestRepository.countAllByCreateAtBetween(
+                                tuple.from,
+                                tuple.to))
+                        .build())
+                .sorted(Comparator.comparingInt(RequestRatioResponse::getMonth))
+                .collect(Collectors.toList());
     }
 }
