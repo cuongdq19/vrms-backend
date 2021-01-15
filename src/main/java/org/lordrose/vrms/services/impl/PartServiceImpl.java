@@ -156,6 +156,7 @@ public class PartServiceImpl implements PartService {
 
         return serviceParts.stream()
                 .map(ServiceVehiclePart::getPart)
+                .collect(Collectors.toSet()).stream()
                 .filter(part -> !part.getIsDeleted())
                 .map(part -> PartProviderResponse.builder()
                         .id(part.getProvider().getId())
