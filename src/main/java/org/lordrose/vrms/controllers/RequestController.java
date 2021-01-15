@@ -27,7 +27,7 @@ public class RequestController {
 
     private final RequestService requestService;
 
-    @GetMapping("/{requestId}")
+    @GetMapping("/{requestId}/hung")
     public Object getRequestByIdTheoYCuaHung(@PathVariable Long requestId) {
         return requestService.findByRequestIdTheoHung(requestId);
     }
