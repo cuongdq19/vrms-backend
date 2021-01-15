@@ -46,6 +46,9 @@ public class Vehicle extends TimeAuditable<LocalDateTime> {
     @Column(name = "bought_date")
     private LocalDateTime boughtDate;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;

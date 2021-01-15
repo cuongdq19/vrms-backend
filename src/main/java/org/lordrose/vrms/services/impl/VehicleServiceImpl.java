@@ -13,6 +13,7 @@ import org.lordrose.vrms.services.VehicleService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.lordrose.vrms.converters.VehicleConverter.toVehicleResponse;
 import static org.lordrose.vrms.converters.VehicleConverter.toVehicleResponses;
@@ -29,13 +30,21 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleResponse> findAllByUserId(Long id) {
-        return toVehicleResponses(vehicleRepository.findAllByUserId(id));
+        return toVehicleResponses(vehicleRepository.findAllByUserId(id).stream()
+                .filter(vehicle -> !vehicle.getIsDeleted())
+                .collect(Collectors.toList()));
     }
 
     @Override
     public VehicleResponse findById(Long id) {
-        return toVehicleResponse(vehicleRepository.findById(id)
-                .orElseThrow(() -> newExceptionWithId(id)));
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> newExceptionWithId(id));
+
+        if (vehicle.getIsDeleted()) {
+            throw newExceptionWithId(id);
+        }
+
+        return toVehicleResponse(vehicle);
     }
 
     @Override
@@ -49,6 +58,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .vinNumber(request.getVinNumber())
                 .color(request.getColor())
                 .boughtDate(toLocalDateTime(request.getBoughtDate()))
+                .isDeleted(false)
                 .model(model)
                 .user(user)
                 .build());
@@ -59,8 +69,10 @@ public class VehicleServiceImpl implements VehicleService {
     public VehicleResponse delete(Long id) {
         Vehicle result = vehicleRepository.findById(id)
                 .orElseThrow(() -> newExceptionWithId(id));
-        vehicleRepository.deleteById(result.getId());
-        return toVehicleResponse(result);
+
+        result.setIsDeleted(true);
+
+        return toVehicleResponse(vehicleRepository.save(result));
     }
 
     @Override
