@@ -110,9 +110,9 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .latitude(provider.getLatitude())
                         .longitude(provider.getLongitude())
                         .build()))
-                .suggestedParts(partList.stream()
+                .suggestedParts(new ArrayList<>(partList.stream()
                         .map(part -> toPartSuggestingResponse(part.getPart()))
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toSet())))
                 .build();
     }
 

@@ -219,11 +219,11 @@ public class ChartServiceImpl {
         return tuples.stream()
                 .map(tuple -> RequestRatioResponse.builder()
                         .month(tuple.from.getMonthValue())
-                        .totalRequest(requestRepository.countAllByStatusAndCreateAtBetween(
-                                RequestStatus.CANCELED,
+                        .totalRequest(requestRepository.countAllByCreateAtBetween(
                                 tuple.from,
                                 tuple.to))
-                        .canceledRequest(requestRepository.countAllByCreateAtBetween(
+                        .canceledRequest(requestRepository.countAllByStatusAndCreateAtBetween(
+                                RequestStatus.CANCELED,
                                 tuple.from,
                                 tuple.to))
                         .build())
