@@ -3,7 +3,6 @@ package org.lordrose.vrms.schedulers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lordrose.vrms.domains.MaintenanceReminder;
-import org.lordrose.vrms.domains.Notification;
 import org.lordrose.vrms.repositories.MaintenanceReminderRepository;
 import org.lordrose.vrms.repositories.NotificationRepository;
 import org.lordrose.vrms.services.impl.FirebaseNotificationServiceImpl;
@@ -11,7 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,10 +22,7 @@ public class MessageSendingScheduler {
 
     private final FirebaseNotificationServiceImpl notificationService;
 
-    // 0 0 7 ? * *
-    // 0 0/1 * ? * *
-
-    @Scheduled(cron = "0 0/1 * ? * *")
+    @Scheduled(cron = "0 0 7 ? * *")
     public void sendRemindingAtReminder() {
         List<MaintenanceReminder> remindingAtReminders =
                 reminderRepository.findAllByIsActiveTrueAndRemindAt(LocalDate.now());
@@ -57,7 +52,7 @@ public class MessageSendingScheduler {
     public void sendRequestBeginReminder() {
     }*/
 
-    @Scheduled(cron = "0 0/1 * ? * *")
+    /*@Scheduled(cron = "0 0/1 * ? * *")
     public void reSendFailMessage() {
         List<Notification> failedNotifications =
                 notificationRepository.findAllByIsSentFalseAndNotifyAtBefore(LocalDateTime.now());
@@ -66,5 +61,5 @@ public class MessageSendingScheduler {
                 .forEach(notificationService::resendFailedMessage);
 
         log.info("failedNotifications: " + failedNotifications.size());
-    }
+    }*/
 }
