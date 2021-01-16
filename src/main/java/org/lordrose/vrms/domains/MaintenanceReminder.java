@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -41,4 +42,17 @@ public class MaintenanceReminder {
     @ManyToOne
     @JoinColumn(name = "request_part_id")
     private ServiceRequestPart requestPart;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MaintenanceReminder reminder = (MaintenanceReminder) o;
+        return Objects.equals(id, reminder.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

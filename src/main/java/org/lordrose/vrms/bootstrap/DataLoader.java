@@ -66,12 +66,6 @@ public class DataLoader implements CommandLineRunner {
 //        requestService.cancel(((RequestCheckOutResponse)requestService.create(temp3)).getId());
 //
 //        System.out.println("CBA");
-//
-//        FeedbackRequest a = new FeedbackRequest();
-//        a.setContent("Good");
-//        a.setRatings(5);
-//        MultipartFile[] b = new MultipartFile[0];
-//        requestService.sendFeedback(temp.getId(), a, b);
     }
 
     private void replacingService_1() {

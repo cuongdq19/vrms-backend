@@ -79,7 +79,10 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestHistoryDetailResponse> findAllByUserId(Long userId) {
-        return toRequestHistoryDetailResponses(requestRepository.findAllByVehicle_User_Id(userId));
+        return toRequestHistoryDetailResponses(
+                requestRepository.findAllByVehicle_User_Id(userId).stream()
+                        .filter(request -> !request.getVehicle().getIsDeleted())
+                        .collect(Collectors.toList()));
     }
 
     @Override

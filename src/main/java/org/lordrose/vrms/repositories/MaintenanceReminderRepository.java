@@ -11,4 +11,6 @@ import java.util.List;
 public interface MaintenanceReminderRepository extends JpaRepository<MaintenanceReminder, Long> {
 
     List<MaintenanceReminder> findAllByIsActiveTrueAndRemindAt(LocalDate remindAt);
+
+    List<MaintenanceReminder> findAllByIsActiveTrueAndMaintenanceDate(LocalDate date);
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.MaintenanceReminder;
 import org.lordrose.vrms.domains.Notification;
 import org.lordrose.vrms.domains.Request;
+import org.lordrose.vrms.repositories.MaintenanceReminderRepository;
 import org.lordrose.vrms.repositories.NotificationRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class FirebaseNotificationServiceImpl {
 
     private final FirebaseMessageServiceImpl messageService;
     private final NotificationRepository notificationRepository;
+    private final MaintenanceReminderRepository reminderRepository;
 
     public void sendCreateNotification(Request request) {
         final String body = "A new booking request is received with id: " + request.getId();
@@ -53,7 +55,7 @@ public class FirebaseNotificationServiceImpl {
                 .user(null)
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository,
+        sendMessage(systemNotification, notificationRepository,
                 "CANCEL_REQUEST_" + request.getId());
         sendTopicMessage(request, topicNotification, notificationRepository,
                 "CANCEL_REQUEST_" + request.getId());
@@ -71,7 +73,7 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository,
+        sendMessage(systemNotification, notificationRepository,
                 "UPDATE_REQUEST_" + request.getId());
     }
 
@@ -95,7 +97,7 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository,
+        sendMessage(systemNotification, notificationRepository,
                 "FINISH_REQUEST_" + request.getId());
     }
 
@@ -112,23 +114,70 @@ public class FirebaseNotificationServiceImpl {
                 .user(request.getVehicle().getUser())
                 .build();
 
-        sendMessage(request, systemNotification, notificationRepository,
+        sendMessage(systemNotification, notificationRepository,
                 "CHECKOUT_REQUEST_" + request.getId());
     }
 
-    public void sendMaintenanceReminderNotification(MaintenanceReminder reminder) {
-        final String body = "Your booking is completed. " +
-                "Please give us your feedback and ratings about: " +
-                reminder.getRequestPart().getVehiclePart().getName() + ".";
+    public void sendRemindAtReminderNotification(MaintenanceReminder reminder) {
+        final String body = "Your maintenance reminder date for part: " +
+                reminder.getRequestPart().getVehiclePart().getName() + " is today.";
+
+        Notification systemNotification = Notification.builder()
+                .title("The reminder date you setup is today.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(reminder.getRequestPart().getServiceRequest().getRequest().getVehicle().getUser())
+                .build();
+
+        sendMessage(systemNotification, notificationRepository,
+                "MAINTENANCE_REMINDER" + reminder.getId());
     }
 
-    private void sendMessage(Request request,
-                             Notification notification,
+    public void sendOneMonthInAdvanceReminderNotification(MaintenanceReminder reminder) {
+        final String body = "Your part: " + reminder.getRequestPart().getVehiclePart().getName() +
+                " maintenance date will be due after 1 month from today.";
+
+        Notification systemNotification = Notification.builder()
+                .title("Your 1 month prior reminder to maintain your part.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(reminder.getRequestPart().getServiceRequest().getRequest().getVehicle().getUser())
+                .build();
+
+        sendMessage(systemNotification, notificationRepository,
+                "MAINTENANCE_REMINDER" + reminder.getId());
+    }
+
+    public void sendOneDayPriorReminderNotification(MaintenanceReminder reminder) {
+        final String body = "Your part: " + reminder.getRequestPart().getVehiclePart().getName() +
+                " maintenance date is due tomorrow.";
+
+        Notification systemNotification = Notification.builder()
+                .title("Your 1 day prior reminder to maintain your part.")
+                .content(body)
+                .notifyAt(LocalDateTime.now())
+                .isSent(false)
+                .user(reminder.getRequestPart().getServiceRequest().getRequest().getVehicle().getUser())
+                .build();
+
+        sendMessage(systemNotification, notificationRepository,
+                "MAINTENANCE_REMINDER" + reminder.getId());
+    }
+
+    public void resendFailedMessage(Notification notification) {
+        if (notification.getUser() != null) {
+            sendMessage(notification, notificationRepository, "");
+        }
+    }
+
+    private void sendMessage(Notification notification,
                              NotificationRepository notificationRepository,
                              String clickAction) {
-        if (validateDeviceToken(request)) {
+        if (validateDeviceToken(notification)) {
             Message message = Message.builder()
-                    .setToken(request.getVehicle().getUser().getDeviceToken())
+                    .setToken(notification.getUser().getDeviceToken())
                     .setNotification(notification.toFirebaseNotification())
                     .setAndroidConfig(notification.toAndroidConfig(clickAction))
                     .build();
@@ -141,14 +190,13 @@ public class FirebaseNotificationServiceImpl {
                                   Notification notification,
                                   NotificationRepository notificationRepository,
                                   String action) {
-        if (validateDeviceToken(request)) {
-            Message message = Message.builder()
-                    .setTopic("ProviderId_" + request.getProvider().getId())
-                    .setNotification(notification.toFirebaseNotification())
-                    .putData("action", action)
-                    .build();
-            notification.setIsSent(messageService.pushNotification(message));
-        }
+        Message message = Message.builder()
+                .setTopic("ProviderId_" + request.getProvider().getId())
+                .setNotification(notification.toFirebaseNotification())
+                .putData("action", action)
+                .build();
+        notification.setIsSent(messageService.pushNotification(message));
+
         notificationRepository.save(notification);
     }
 
@@ -156,8 +204,8 @@ public class FirebaseNotificationServiceImpl {
         messageService.subscribeProviderTopic(deviceToken, providerId);
     }
 
-    private boolean validateDeviceToken(Request request) {
-        return request.getVehicle().getUser().getDeviceToken() != null &&
-                !"".equals(request.getVehicle().getUser().getDeviceToken());
+    private boolean validateDeviceToken(Notification notification) {
+        return notification.getUser().getDeviceToken() != null &&
+                !"".equals(notification.getUser().getDeviceToken());
     }
 }
