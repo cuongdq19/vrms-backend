@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.constants.SuggestingValueConfig;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Service;
 import org.lordrose.vrms.domains.ServiceTypeDetail;
@@ -37,6 +38,8 @@ import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
 @org.springframework.stereotype.Service
 public class ProviderSuggestingServiceImpl implements ProviderSuggestingService {
 
+    private final SuggestingValueConfig suggestingValue;
+
     private final VehicleModelRepository modelRepository;
     private final ServiceRepository serviceRepository;
     private final FeedbackService feedbackService;
@@ -68,6 +71,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
         )));
         return responses.stream()
                 .sorted(Comparator.comparingDouble(ProviderSuggestedServiceGroupedResponse::getDistance))
+                .filter(provider -> provider.getDistance() <= suggestingValue.getDistanceLimit())
                 .collect(Collectors.toList());
     }
 
@@ -88,6 +92,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                 returnResponse(provider, request.getCurrentPos(), partList))));
         return responses.stream()
                 .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getDistance))
+                .filter(provider -> provider.getDistance() <= suggestingValue.getDistanceLimit())
                 .collect(Collectors.toList());
     }
 

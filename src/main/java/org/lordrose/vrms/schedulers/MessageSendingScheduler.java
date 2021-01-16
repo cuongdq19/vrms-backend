@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lordrose.vrms.domains.MaintenanceReminder;
 import org.lordrose.vrms.repositories.MaintenanceReminderRepository;
-import org.lordrose.vrms.repositories.NotificationRepository;
 import org.lordrose.vrms.services.impl.FirebaseNotificationServiceImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ import java.util.List;
 public class MessageSendingScheduler {
 
     private final MaintenanceReminderRepository reminderRepository;
-    private final NotificationRepository notificationRepository;
 
     private final FirebaseNotificationServiceImpl notificationService;
 
