@@ -1,8 +1,5 @@
 package org.lordrose.vrms.services.impl;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.Request;
@@ -177,22 +174,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoResponse registerUser(UserSignUpRequest request) {
-        if (isValid(request)) {
-            User saved = userRepository.findUserByPhoneNumber(request.getPhoneNumber())
-                    .orElseGet(() -> userRepository.save(User.builder()
-                            .phoneNumber(request.getPhoneNumber())
-                            .password(request.getPassword())
-                            .fullName(request.getFullName())
-                            .gender(request.getGender())
-                            .imageUrl("image url")
-                            .isActive(true)
-                            .deviceToken(request.getDeviceToken())
-                            .role(roleRepository.findByNameIgnoreCase("USER")
-                                    .orElseThrow(() -> newExceptionWithValue("USER")))
-                            .build()));
-            return toUserInfoResponse(saved);
-        }
-        throw new InvalidArgumentException("Registration information is invalid!");
+        userRepository.findUserByPhoneNumber(request.getPhoneNumber())
+                .ifPresent(user -> {
+                    throw new InvalidArgumentException("PhoneNumber: " + user.getPhoneNumber() +
+                            " is already existed.");
+                });
+        User saved = userRepository.save(User.builder()
+                .phoneNumber(request.getPhoneNumber())
+                .password(request.getPassword())
+                .fullName(request.getFullName())
+                .gender(request.getGender())
+                .imageUrl("image url")
+                .isActive(true)
+                .deviceToken(request.getDeviceToken())
+                .role(roleRepository.findByNameIgnoreCase("USER")
+                        .orElseThrow(() -> newExceptionWithValue("USER")))
+                .build());
+        return toUserInfoResponse(saved);
     }
 
     @Override
@@ -205,14 +203,14 @@ public class UserServiceImpl implements UserService {
         return toUserInfoResponse(userRepository.save(saved));
     }
 
-    private boolean isValid(UserSignUpRequest request) {
-        try {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            UserRecord record = auth.getUserByPhoneNumber(request.getPhoneNumber());
-            return record.getUid().equals(request.getUid());
-        } catch (FirebaseAuthException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    private boolean isValid(UserSignUpRequest request) {
+//        try {
+//            FirebaseAuth auth = FirebaseAuth.getInstance();
+//            UserRecord record = auth.getUserByPhoneNumber(request.getPhoneNumber());
+//            return record.getUid().equals(request.getUid());
+//        } catch (FirebaseAuthException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }

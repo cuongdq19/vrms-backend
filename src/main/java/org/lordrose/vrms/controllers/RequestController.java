@@ -59,13 +59,13 @@ public class RequestController {
 
     @PostMapping("/checkin/{bookingId}/technicians/{userId}")
     public RequestCheckOutResponse checkinWithTechnician(@PathVariable Long bookingId,
-                                                  @PathVariable Long userId) {
+                                                         @PathVariable Long userId) {
         return requestService.checkinWithTechnicianId(bookingId, userId);
     }
 
     @PostMapping("/update/{requestId}")
     public RequestCheckOutResponse updateBookingRequest(@PathVariable Long requestId,
-                                                                @RequestBody RequestIncurredUpdateRequest request) {
+                                                        @RequestBody RequestIncurredUpdateRequest request) {
         return requestService.update(requestId, request);
     }
 

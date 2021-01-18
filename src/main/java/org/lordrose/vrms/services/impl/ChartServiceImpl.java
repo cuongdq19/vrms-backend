@@ -143,8 +143,8 @@ public class ChartServiceImpl {
                     .openTime(provider.getOpenTime().toString())
                     .closeTime(provider.getCloseTime().toString())
                     .imageUrls(getUrlsAsArray(provider.getImageUrls()))
-                    .contractPhoneNumber("provider.getContract().getPhoneNumber()")
-                    .contractEmail("provider.getContract().getEmail()")
+                    .contractPhoneNumber(provider.getContract().getPhoneNumber())
+                    .contractEmail(provider.getContract().getEmail())
                     .ratings(feedbackService.getAverageRating(provider.getId()))
                     .revenues(new ArrayList<>())
                     .build();
