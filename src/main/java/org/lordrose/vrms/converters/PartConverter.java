@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.VehiclePart;
 import org.lordrose.vrms.models.responses.PartCheckoutResponse;
 import org.lordrose.vrms.models.responses.PartHistoryResponse;
 import org.lordrose.vrms.models.responses.PartQuantityResponse;
+import org.lordrose.vrms.models.responses.PartQuantityWithModelsResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
 import org.lordrose.vrms.models.responses.PartSuggestingResponse;
 
@@ -42,6 +43,33 @@ public class PartConverter {
         return parts.stream()
                 .map(PartConverter::toEmptyModelServicePartResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static List<PartQuantityWithModelsResponse> toServicePartResponses(Collection<ServiceVehiclePart> parts) {
+        if (parts == null) {
+            return Collections.emptyList();
+        }
+        return parts.stream()
+                .map(PartConverter::toServicePartResponse)
+                .collect(Collectors.toList());
+    }
+
+    public static PartQuantityWithModelsResponse toServicePartResponse(ServiceVehiclePart servicePart) {
+        return PartQuantityWithModelsResponse.builder()
+                .id(servicePart.getPart().getId())
+                .name(servicePart.getPart().getName())
+                .description(servicePart.getPart().getDescription())
+                .quantity(servicePart.getQuantity())
+                .price(servicePart.getPart().getPrice())
+                .warrantyDuration(servicePart.getPart().getWarrantyDuration())
+                .monthsPerMaintenance(servicePart.getPart().getMonthsPerMaintenance())
+                .imageUrls(getUrlsAsArray(servicePart.getPart().getImageUrls()))
+                .sectionId(servicePart.getPart().getCategory().getSection().getId())
+                .categoryId(servicePart.getPart().getCategory().getId())
+                .categoryName(servicePart.getPart().getCategory().getName())
+                .isDeleted(servicePart.getPart().getIsDeleted())
+                .models(VehicleModelConverter.toModelResponses(servicePart.getPart().getModels()))
+                .build();
     }
 
     public static PartResponse toEmptyModelPartResponse(VehiclePart part) {

@@ -13,12 +13,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceForPackageResponse {
+public class PartQuantityWithModelsResponse {
 
     private Long id;
     private String name;
+    private String description;
+    private Double quantity;
     private Double price;
-    private ServiceTypeDetailResponse typeDetail;
-    private List<PartQuantityWithModelsResponse> parts;
+    private Integer warrantyDuration;
+    private Integer monthsPerMaintenance;
+    private String[] imageUrls;
+    private Long sectionId;
+    private Long categoryId;
+    private String categoryName;
+    private Boolean isDeleted;
     private List<VehicleModelResponse> models;
 }

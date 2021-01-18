@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponse;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toMaintenancePackageResponses;
 import static org.lordrose.vrms.converters.MaintenancePackageConverter.toPackageProviderResponses;
-import static org.lordrose.vrms.converters.PartConverter.toEmptyModelServicePartResponses;
+import static org.lordrose.vrms.converters.PartConverter.toServicePartResponses;
 import static org.lordrose.vrms.converters.ServiceConverter.toServiceTypeDetailResponse;
 import static org.lordrose.vrms.converters.VehicleModelConverter.toModelResponses;
 import static org.lordrose.vrms.exceptions.ResourceNotFoundException.newExceptionWithId;
@@ -260,6 +260,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
         return toPackageProviderResponses(results, currentLocation, feedbackService);
     }
 
+    @Transactional
     @Override
     public Object findAllServicesByProviderId(Long providerId) {
         List<Service> services = serviceRepository.findAllByProviderId(providerId);
@@ -296,7 +297,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                             .name(service.getName())
                             .price(service.getPrice())
                             .typeDetail(toServiceTypeDetailResponse(service.getTypeDetail()))
-                            .parts(toEmptyModelServicePartResponses(service.getPartSet()))
+                            .parts(toServicePartResponses(service.getPartSet()))
                             .models(toModelResponses(models))
                             .build();})
                 .collect(Collectors.toList());
