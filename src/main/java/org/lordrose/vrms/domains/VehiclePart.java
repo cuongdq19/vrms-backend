@@ -40,7 +40,7 @@ public class VehiclePart extends TimeAuditable<LocalDateTime> {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 2000)
     private String description;
 
     @Column(name = "price")
