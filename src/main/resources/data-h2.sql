@@ -151,7 +151,7 @@ INSERT INTO TBL_PART_CATEGORY(name,section_id,image_url,IS_SEPARABLE,IS_ACCESSOR
 
 
 INSERT INTO TBL_MANUFACTURER(id,name,active,image_url) VALUES (1,'HONDA',1,'img');
-INSERT INTO TBL_MANUFACTURER(id,name,active,image_url) VALUES (2,'HUYNDAI',1,'img');
+INSERT INTO TBL_MANUFACTURER(id,name,active,image_url) VALUES (2,'HYUNDAI',1,'img');
 INSERT INTO TBL_MANUFACTURER(id,name,active,image_url) VALUES (3,'FORD',1,'img');
 
 
