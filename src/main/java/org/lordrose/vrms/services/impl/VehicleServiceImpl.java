@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.domains.User;
 import org.lordrose.vrms.domains.Vehicle;
 import org.lordrose.vrms.domains.VehicleModel;
+import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.VehicleRequest;
 import org.lordrose.vrms.models.responses.VehicleResponse;
 import org.lordrose.vrms.repositories.UserRepository;
@@ -53,6 +54,10 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElseThrow(() -> newExceptionWithId(request.getModelId()));
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> newExceptionWithId(request.getUserId()));
+        vehicleRepository.findByVinNumberIgnoreCase(request.getVinNumber())
+                .ifPresent(existedVehicle -> {
+                    throw new InvalidArgumentException("VIN is already existed");
+                });
         Vehicle saved = vehicleRepository.save(Vehicle.builder()
                 .plateNumber(request.getPlateNumber())
                 .vinNumber(request.getVinNumber())
