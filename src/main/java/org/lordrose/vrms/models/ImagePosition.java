@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryObject {
+public class ImagePosition {
 
-    private String name;
-    private String score;
-    private ImagePosition position;
+    private Double left;
+    private Double top;
+    private Double right;
+    private Double bottom;
 }
