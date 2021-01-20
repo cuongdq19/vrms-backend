@@ -56,8 +56,10 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElseThrow(() -> newExceptionWithId(request.getUserId()));
         vehicleRepository.findByVinNumberIgnoreCase(request.getVinNumber())
                 .ifPresent(existedVehicle -> {
-                    throw new InvalidArgumentException("VIN is already existed");
-                });
+                    throw new InvalidArgumentException("VIN is already existed");});
+        vehicleRepository.findByPlateNumberIgnoreCase(request.getPlateNumber())
+                .ifPresent(existedVehicle -> {
+                    throw new InvalidArgumentException("Plate number is already existed");});
         Vehicle saved = vehicleRepository.save(Vehicle.builder()
                 .plateNumber(request.getPlateNumber())
                 .vinNumber(request.getVinNumber())
