@@ -9,6 +9,7 @@ import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.models.requests.FindProviderWithCategoryRequest;
 import org.lordrose.vrms.models.requests.FindProviderWithServicesRequest;
+import org.lordrose.vrms.models.responses.PartSuggestingResponse;
 import org.lordrose.vrms.models.responses.ProviderSuggestedPartResponse;
 import org.lordrose.vrms.models.responses.ProviderSuggestedServiceGroupedResponse;
 import org.lordrose.vrms.repositories.ServiceRepository;
@@ -77,6 +78,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
 
     @Override
     public Object findProviders(FindProviderWithCategoryRequest request) {
+        String sortBy = request.getSortBy();
         VehicleModel model = modelRepository.findById(request.getModelId())
                 .orElseThrow(() -> newExceptionWithId(request.getModelId()));
         List<ServiceVehiclePart> parts = new ArrayList<>();
@@ -90,10 +92,9 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
         List<ProviderSuggestedPartResponse> responses = new ArrayList<>();
         byProvider.forEach(((provider, partList) -> responses.add(
                 returnResponse(provider, request.getCurrentPos(), partList))));
-        return responses.stream()
-                .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getDistance))
+        return sortBy(responses.stream()
                 .filter(provider -> provider.getDistance() <= suggestingValue.getDistanceLimit())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), sortBy);
     }
 
     @Override
@@ -138,5 +139,25 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         .build()))
                 .services(toAllServicesResponses(typeDetails, services))
                 .build();
+    }
+
+    private List<ProviderSuggestedPartResponse> sortBy(List<ProviderSuggestedPartResponse> responses, String value) {
+        String upperCasedValue = String.valueOf(value).toUpperCase();
+        switch (upperCasedValue) {
+            case "PRICE":
+                return responses.stream()
+                        .sorted(Comparator.comparingDouble(response -> response.getSuggestedParts().stream()
+                                .min(Comparator.comparingDouble(PartSuggestingResponse::getPrice))
+                                .orElseThrow().getPrice()))
+                        .collect(Collectors.toList());
+            case "RATING":
+                return responses.stream()
+                        .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getRatings).reversed())
+                        .collect(Collectors.toList());
+            default:
+                return responses.stream()
+                        .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getDistance))
+                        .collect(Collectors.toList());
+        }
     }
 }

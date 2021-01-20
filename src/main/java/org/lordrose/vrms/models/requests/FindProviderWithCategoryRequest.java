@@ -17,4 +17,5 @@ public class FindProviderWithCategoryRequest {
     private Long modelId;
     private Set<Long> categoryIds;
     private GeoPoint currentPos;
+    private String sortBy;
 }
