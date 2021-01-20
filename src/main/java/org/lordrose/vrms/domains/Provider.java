@@ -77,4 +77,12 @@ public class Provider extends TimeAuditable<LocalDateTime> {
     @OneToOne
     @JoinColumn(name = "contract_id", referencedColumnName = "id")
     private Contract contract;
+
+    public String returnContractPhoneNumber() {
+        return contract == null ? null : contract.getPhoneNumber();
+    }
+
+    public String returnContractEmail() {
+        return contract == null ? null : contract.getEmail();
+    }
 }
