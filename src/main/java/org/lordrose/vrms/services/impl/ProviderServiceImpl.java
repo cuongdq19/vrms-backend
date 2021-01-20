@@ -1,6 +1,7 @@
 package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.lordrose.vrms.constants.SuggestingValueConfig;
 import org.lordrose.vrms.converters.UserConverter;
 import org.lordrose.vrms.domains.Feedback;
 import org.lordrose.vrms.domains.Provider;
@@ -44,6 +45,8 @@ import static org.lordrose.vrms.utils.distances.DistanceCalculator.calculate;
 @Service
 public class ProviderServiceImpl implements ProviderService {
 
+    private final SuggestingValueConfig suggestingValue;
+
     private final ProviderRepository providerRepository;
     private final ManufacturerRepository manufacturerRepository;
     private final FeedbackRepository feedbackRepository;
@@ -75,6 +78,7 @@ public class ProviderServiceImpl implements ProviderService {
                                 .build()))
                         .build())
                 .sorted(Comparator.comparingDouble(ProviderDistanceResponse::getDistance))
+                .filter(provider -> provider.getDistance() <= suggestingValue.getDistanceLimit())
                 .collect(Collectors.toList());
     }
 
