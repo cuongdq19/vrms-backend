@@ -1,5 +1,6 @@
 package org.lordrose.vrms.converters;
 
+import org.lordrose.vrms.constants.SuggestingValueConfig;
 import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.ServiceRequest;
@@ -87,7 +88,8 @@ public class MaintenancePackageConverter {
 
     public static List<PackageProviderResponse> toPackageProviderResponses(Collection<MaintenancePackage> maintenancePackages,
                                                                            GeoPoint currentLocation,
-                                                                           FeedbackService feedbackService) {
+                                                                           FeedbackService feedbackService,
+                                                                           SuggestingValueConfig suggestingValue) {
         List<PackageProviderResponse> responses = new ArrayList<>();
         Map<Provider, List<MaintenancePackage>> resultMap = maintenancePackages.stream()
                 .collect(Collectors.groupingBy(maintenancePackage ->
@@ -100,6 +102,7 @@ public class MaintenancePackageConverter {
                 responses.add(toPackageProviderResponses(provider, currentLocation, packages, feedbackService)));
 
         return responses.stream()
+                .filter(provider -> provider.getDistance() <= suggestingValue.getDistanceLimit())
                 .sorted(Comparator.comparingDouble(PackageProviderResponse::getDistance))
                 .collect(Collectors.toList());
     }

@@ -2,6 +2,7 @@ package org.lordrose.vrms.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lordrose.vrms.constants.MaintenanceConstants;
+import org.lordrose.vrms.constants.SuggestingValueConfig;
 import org.lordrose.vrms.domains.MaintenancePackage;
 import org.lordrose.vrms.domains.PartSection;
 import org.lordrose.vrms.domains.Service;
@@ -49,6 +50,8 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
     private final VehicleModelRepository modelRepository;
 
     private final FeedbackService feedbackService;
+
+    private final SuggestingValueConfig suggestingValue;
     private final MaintenanceConstants.MaintenanceMilestone milestone;
 
     @Transactional
@@ -226,7 +229,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                     return count == services.size();})
                 .collect(Collectors.toList());
 
-        return toPackageProviderResponses(results, request.getCurrentLocation(), feedbackService);
+        return toPackageProviderResponses(results, request.getCurrentLocation(), feedbackService, suggestingValue);
     }
 
     @Transactional
@@ -257,7 +260,7 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                     return count == services.size();})
                 .collect(Collectors.toList());
 
-        return toPackageProviderResponses(results, currentLocation, feedbackService);
+        return toPackageProviderResponses(results, currentLocation, feedbackService, suggestingValue);
     }
 
     @Transactional
