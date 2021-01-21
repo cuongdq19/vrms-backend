@@ -50,7 +50,7 @@ public class AccessoryServiceImpl {
                     accessory.addQuantity(requestPart.getQuantity());
                 }
             }
-            storage.add(AccessoryResponse.builder()
+            AccessoryResponse response = AccessoryResponse.builder()
                     .quantity(requestPart.getQuantity())
                     .reminder(requestPart.getReminders().stream()
                             .filter(MaintenanceReminder::getIsActive)
@@ -62,7 +62,10 @@ public class AccessoryServiceImpl {
                                     .build())
                             .findFirst().orElse(null))
                     .part(toEmptyModelPartResponse(requestPart.getVehiclePart()))
-                    .build());
+                    .build();
+            if (response.getReminder() != null) {
+                storage.add(response);
+            }
         }
 
         public void addAll(Collection<ServiceRequestPart> requestParts) {
