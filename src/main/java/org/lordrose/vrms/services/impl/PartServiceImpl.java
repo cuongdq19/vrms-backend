@@ -6,6 +6,7 @@ import org.lordrose.vrms.domains.Provider;
 import org.lordrose.vrms.domains.ServiceVehiclePart;
 import org.lordrose.vrms.domains.VehicleModel;
 import org.lordrose.vrms.domains.VehiclePart;
+import org.lordrose.vrms.exceptions.InvalidArgumentException;
 import org.lordrose.vrms.models.requests.PartRequest;
 import org.lordrose.vrms.models.responses.PartProviderResponse;
 import org.lordrose.vrms.models.responses.PartResponse;
@@ -70,6 +71,8 @@ public class PartServiceImpl implements PartService {
                 .orElseThrow(() -> newExceptionWithId(request.getProviderId()));
         PartCategory category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> newExceptionWithId(request.getCategoryId()));
+        validatePartCreateRequest(request);
+
         VehiclePart saved = partRepository.save(VehiclePart.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -93,11 +96,13 @@ public class PartServiceImpl implements PartService {
                 .orElseThrow(() -> newExceptionWithId(request.getCategoryId()));
         VehiclePart result = partRepository.findById(partId)
                 .orElseThrow(() -> newExceptionWithId(partId));
+        validatePartCreateRequest(request);
 
         result.setName(request.getName());
         result.setDescription(request.getDescription());
         result.setPrice(request.getPrice());
-        result.setImageUrls(result.getImageUrls());
+        result.setWarrantyDuration(request.getWarrantyDuration());
+        result.setMonthsPerMaintenance(request.getMonthsPerMaintenance());
         result.setProvider(provider);
         result.setCategory(category);
         result.setModels(new HashSet<>(modelRepository.findAllById(request.getModelIds())));
@@ -187,5 +192,11 @@ public class PartServiceImpl implements PartService {
                         .build())
                 .sorted(Comparator.comparingDouble(PartProviderResponse::getDistance))
                 .collect(Collectors.toList());
+    }
+
+    private void validatePartCreateRequest(PartRequest request) {
+        if (request.getWarrantyDuration() < request.getMonthsPerMaintenance()) {
+            throw new InvalidArgumentException("Invalid maintenance information");
+        }
     }
 }
