@@ -112,7 +112,9 @@ public class RequestServiceImpl implements RequestService {
         List<Long> serviceIds = request.getServiceIds();
 
         if (packageIds.isEmpty() && serviceIds.isEmpty()) {
-            throw new InvalidArgumentException("At least one field is required!");
+            if (request.getNote() == null || "".equals(request.getNote())) {
+                throw new InvalidArgumentException("At least one field is required!");
+            }
         }
 
         Vehicle vehicle = vehicleRepository.findById(request.getVehicleId())
