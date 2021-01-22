@@ -144,19 +144,19 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
     private List<ProviderSuggestedPartResponse> sortBy(List<ProviderSuggestedPartResponse> responses, String value) {
         String upperCasedValue = String.valueOf(value).toUpperCase();
         switch (upperCasedValue) {
-            case "PRICE":
-                return responses.stream()
-                        .sorted(Comparator.comparingDouble(response -> response.getSuggestedParts().stream()
-                                .min(Comparator.comparingDouble(PartSuggestingResponse::getPrice))
-                                .orElseThrow().getPrice()))
-                        .collect(Collectors.toList());
             case "RATING":
                 return responses.stream()
                         .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getRatings).reversed())
                         .collect(Collectors.toList());
-            default:
+            case "DISTANCE":
                 return responses.stream()
                         .sorted(Comparator.comparingDouble(ProviderSuggestedPartResponse::getDistance))
+                        .collect(Collectors.toList());
+            default:
+                return responses.stream()
+                        .sorted(Comparator.comparingDouble(response -> response.getSuggestedParts().stream()
+                                .min(Comparator.comparingDouble(PartSuggestingResponse::getPrice))
+                                .orElseThrow().getPrice()))
                         .collect(Collectors.toList());
         }
     }
