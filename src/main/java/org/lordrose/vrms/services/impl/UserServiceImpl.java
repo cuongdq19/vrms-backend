@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResponse createEmployee(Long providerId, EmployeeRequest request,
                                            MultipartFile image) {
-        String imageUrl = "";
+        String imageUrl = "https://storage.googleapis.com/vrms-290212.appspot.com/dc45e36d-d719-4b8c-865f-5eeb3277d0a0Automotive-Service-Technicians-in-Training-Learn-the-Purpose-of-Fuel-Injection-Systems.jpg?GoogleAccessId=firebase-adminsdk-y2tzh@vrms-290212.iam.gserviceaccount.com&Expires=2475305618&Signature=gVGRP5VeWpQZbZIBEarhMD8lH3C2Hvc3lnxnywS0DTmr9cr0lVZeHfKPuo%2BU2CG%2FUgwI%2BirV9vtSVgxsJ27Uk3pLowFmjQyUr0uy2rvlfIdzmqf%2FbS6RmsFv2lZTE%2FxBevqxTu1dnhvYVJnCIiyMyrZoMGj4Vfwp%2BUnHgo%2FDsGmSHZ%2Bwi7584ev91EvPTZkTWum%2F2QaZqmgP2PFzcZK9T6rRT%2FXg0o2hZKja9bDj9SegWMwbpDeNXElDLRN%2FAMXzkfkuRLeDcWXNv6TDYkhvmzttHT6SaAewk5HsyvQg44Qs3%2Bl5Iymn%2FPn%2BQzvljf%2B6KjaulJabSZYAFhOIFuqZnA%3D%3D||";
         if (image != null) {
             imageUrl = storageService.uploadFile(image);
         }
