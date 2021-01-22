@@ -20,7 +20,7 @@ public interface UserService {
 
     UserInfoResponse createEmployee(Long providerId, EmployeeRequest request, MultipartFile image);
 
-    UserInfoResponse updateEmployee(Long userId, EmployeeRequest request, MultipartFile image);
+    UserInfoResponse updateEmployee(Long userId, EmployeeRequest request);
 
     UserInfoResponse loginWithPhoneNumber(LoginRequest request);
 

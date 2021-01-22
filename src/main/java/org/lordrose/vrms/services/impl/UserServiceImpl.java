@@ -19,6 +19,7 @@ import org.lordrose.vrms.repositories.RequestRepository;
 import org.lordrose.vrms.repositories.RoleRepository;
 import org.lordrose.vrms.repositories.UserRepository;
 import org.lordrose.vrms.repositories.VehicleRepository;
+import org.lordrose.vrms.services.StorageService;
 import org.lordrose.vrms.services.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private final VehicleRepository vehicleRepository;
     private final RequestRepository requestRepository;
 
+    private final StorageService storageService;
     private final FirebaseNotificationServiceImpl notificationService;
 
     @Override
@@ -75,6 +77,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResponse createEmployee(Long providerId, EmployeeRequest request,
                                            MultipartFile image) {
+        String imageUrl = "";
+        if (image != null) {
+            imageUrl = storageService.uploadFile(image);
+        }
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> newExceptionWithId(providerId));
         Role role;
@@ -86,7 +92,7 @@ public class UserServiceImpl implements UserService {
                     .fullName(request.getFullName())
                     .gender(request.getGender())
                     .isActive(true)
-                    .imageUrl("image url")
+                    .imageUrl(imageUrl)
                     .role(role)
                     .provider(provider)
                     .build());
@@ -98,7 +104,7 @@ public class UserServiceImpl implements UserService {
                     .password(request.getPassword())
                     .fullName(request.getFullName())
                     .gender(request.getGender())
-                    .imageUrl("image url")
+                    .imageUrl(imageUrl)
                     .isActive(true)
                     .role(role)
                     .provider(provider)
@@ -108,8 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoResponse updateEmployee(Long userId, EmployeeRequest request,
-                                           MultipartFile image) {
+    public UserInfoResponse updateEmployee(Long userId, EmployeeRequest request) {
         User saved = userRepository.findById(userId)
                 .orElseThrow(() -> newExceptionWithId(userId));
 
@@ -118,7 +123,6 @@ public class UserServiceImpl implements UserService {
         }
         saved.setFullName(request.getFullName());
         saved.setGender(request.getGender());
-        saved.setImageUrl("image url updated");
 
         return toUserInfoResponse(userRepository.save(saved));
     }

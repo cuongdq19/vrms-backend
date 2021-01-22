@@ -46,15 +46,14 @@ public class UserController {
     @PostMapping("/provider/{providerId}")
     public UserInfoResponse createUserByProvider(@PathVariable Long providerId,
                                                  @ModelAttribute EmployeeRequest request,
-                                                 @RequestPart MultipartFile image) {
+                                                 @RequestPart(required = false) MultipartFile image) {
         return userService.createEmployee(providerId, request, image);
     }
 
     @PostMapping("/{userId}/provider")
     public UserInfoResponse updateEmployeeByProvider(@PathVariable Long userId,
-                                                 @ModelAttribute EmployeeRequest request,
-                                                 @RequestPart MultipartFile image) {
-        return userService.updateEmployee(userId, request, image);
+                                                 @ModelAttribute EmployeeRequest request) {
+        return userService.updateEmployee(userId, request);
     }
 
     @GetMapping("/{userId}/provider")
