@@ -16,7 +16,7 @@ public class UserInfoResponse {
     private Long id;
     private String fullName;
     private Boolean gender;
-    private String imgUrl;
+    private String[] imgUrl;
     private Long roleId;
     private String roleName;
     private Boolean isActive;

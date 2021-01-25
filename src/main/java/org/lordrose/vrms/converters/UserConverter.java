@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import static org.lordrose.vrms.converters.VehicleConverter.toVehicleRequestInfoResponses;
 import static org.lordrose.vrms.converters.VehicleConverter.toVehicleResponse;
 import static org.lordrose.vrms.utils.DateTimeUtils.toSeconds;
+import static org.lordrose.vrms.utils.FileUrlUtils.getUrlsAsArray;
 
 public class UserConverter {
 
@@ -37,7 +38,7 @@ public class UserConverter {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .gender(user.getGender())
-                .imgUrl(user.getImageUrl())
+                .imgUrl(getUrlsAsArray(user.getImageUrl()))
                 .roleId(user.getRole().getId())
                 .roleName(user.getRole().getName())
                 .isActive(user.getIsActive())
