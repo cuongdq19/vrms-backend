@@ -103,7 +103,10 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
                     .orElseThrow(() -> newExceptionWithId(request.getSectionId()));
         }
         List<Long> serviceIds = request.getServiceIds();
-        List<Service> services = serviceRepository.findAllByProviderIdAndIdIsIn(providerId, serviceIds);
+        List<Service> services = serviceRepository.findAllByProviderIdAndIdIsIn(providerId, serviceIds).stream()
+                .filter(service -> !service.getIsDeleted())
+                .collect(Collectors.toList());
+
 
         validateRetrievedServices(services, serviceIds);
 
@@ -266,7 +269,9 @@ public class MaintenancePackageServiceImpl implements MaintenancePackageService 
     @Transactional
     @Override
     public Object findAllServicesByProviderId(Long providerId) {
-        List<Service> services = serviceRepository.findAllByProviderId(providerId);
+        List<Service> services = serviceRepository.findAllByProviderId(providerId).stream()
+                .filter(service -> !service.getIsDeleted())
+                .collect(Collectors.toList());
 
         return toServiceModelsResponses(services);
     }

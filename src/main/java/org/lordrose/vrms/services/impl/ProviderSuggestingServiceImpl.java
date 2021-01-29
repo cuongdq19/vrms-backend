@@ -57,11 +57,14 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
         request.getServiceDetailIds().forEach(detailId -> {
             services.addAll(
                     serviceRepository.findAllByTypeDetailIdAndPartSet_Part_Models_Id(detailId, modelId).stream()
+                            .filter(service -> !service.getIsDeleted())
                             .filter(service -> service.getPartSet().stream()
                                     .noneMatch(part -> part.getPart().getIsDeleted()))
                             .collect(Collectors.toList()));
             services.addAll(
-                    serviceRepository.findAllByTypeDetailIdAndModels_Id(detailId, modelId));});
+                    serviceRepository.findAllByTypeDetailIdAndModels_Id(detailId, modelId).stream()
+                            .filter(service -> !service.getIsDeleted())
+                            .collect(Collectors.toList()));});
 
         Map<Provider, List<Service>> byProvider = services.stream()
                 .collect(Collectors.groupingBy(Service::getProvider));
@@ -87,6 +90,7 @@ public class ProviderSuggestingServiceImpl implements ProviderSuggestingService 
                         categoryId, false, model)));
 
         Map<Provider, List<ServiceVehiclePart>> byProvider = parts.stream()
+                .filter(servicePart -> !servicePart.getService().getIsDeleted())
                 .collect(Collectors.groupingBy(part -> part.getPart().getProvider()));
 
         List<ProviderSuggestedPartResponse> responses = new ArrayList<>();

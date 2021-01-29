@@ -60,7 +60,12 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     public Object findAllByProviderIdAndModelId(Long providerId, Long modelId) {
         Set<Service> services = new LinkedHashSet<>(
                         serviceRepository.findAllByProviderIdAndPartSet_Part_Models_Id(providerId, modelId));
-        List<Service> list = serviceRepository.findAllByProviderIdAndModels_Id(providerId, modelId);
+        services = services.stream()
+                .filter(service -> !service.getIsDeleted())
+                .collect(Collectors.toSet());
+        List<Service> list = serviceRepository.findAllByProviderIdAndModels_Id(providerId, modelId).stream()
+                .filter(service -> !service.getIsDeleted())
+                .collect(Collectors.toList());
         services.addAll(list);
         return toAllServicesResponses(services);
     }
@@ -71,14 +76,18 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         ServiceType type = typeRepository.findById(typeId)
                 .orElseThrow(() -> newExceptionWithId(typeId));
         return toAllServicesResponses(
-                serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type));
+                serviceRepository.findAllByProviderIdAndTypeDetailType(providerId, type).stream()
+                        .filter(service -> !service.getIsDeleted())
+                        .collect(Collectors.toList()));
     }
 
     @Override
     public Object findAllByProviderIdAndModelIdAndPartIds(Long providerId, Long modelId,
                                                           Long partId) {
         List<Service> services = serviceRepository.findAllByProviderIdAndPartSet_Part_Models_IdAndPartSet_Part_Id(
-                providerId, modelId, partId);
+                providerId, modelId, partId).stream()
+                .filter(service -> !service.getIsDeleted())
+                .collect(Collectors.toList());
 
         return toServiceOptionResponses(services);
     }
@@ -99,6 +108,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
         Service service = serviceRepository.save(Service.builder()
                 .name(request.getGroupPriceRequest().getName())
                 .price(request.getGroupPriceRequest().getPrice())
+                .isDeleted(false)
                 .typeDetail(typeDetail)
                 .provider(provider)
                 .build());
@@ -130,6 +140,7 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
                 .name(request.getServiceName())
                 .price(request.getPrice())
                 .typeDetail(typeDetail)
+                .isDeleted(false)
                 .provider(provider)
                 .models(models)
                 .build());
@@ -210,7 +221,10 @@ public class ServiceProcessingServiceImpl implements ServiceProcessingService {
     public void delete(Long serviceId) {
         serviceRepository.findById(serviceId)
                 .ifPresentOrElse(
-                        service -> serviceRepository.deleteById(service.getId()),
+                        service -> {
+                            service.setIsDeleted(true);
+                            serviceRepository.save(service);
+                        },
                         () -> {throw newExceptionWithId(serviceId);});
     }
 

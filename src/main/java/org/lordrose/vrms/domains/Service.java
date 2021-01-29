@@ -42,6 +42,9 @@ public class Service {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "type_detail_id", nullable = false)
     private ServiceTypeDetail typeDetail;
